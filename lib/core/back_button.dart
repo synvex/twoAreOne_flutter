@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:two_are_one/core/containers.dart';
+import 'package:two_are_one/core/image.dart';
 
 class Back_Button extends StatelessWidget {
   final VoidCallback onTap;
@@ -8,22 +10,22 @@ class Back_Button extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: onTap,
-      child: Container(
-        width: 50,
-        height: 50,
-        decoration: BoxDecoration(
-          shape: BoxShape.circle,
-          border: Border.all(
-            color: Color(0xFF786C65),
-            width: 1.2,
-          ),
-          color: Colors.transparent,
+      child: Containers(
+        wWidth: 50,
+        wHeight: 50,
+        alignment: Alignment.center,
+        shape: BoxShape.circle,
+        hexValue: 0xFFFFFFFF,
+        border: Border.all(
+          color: const Color(0xFF786C65),
+          width: 1,
         ),
-        child:  Icon(
-        Icons.arrow_back_ios_new_rounded,
-        color: Color(0xFF786C65),
-        size: 33,
-      ),
+        child: const Images(
+          height: 30,
+          width: 30,
+          color: Color(0xFF786C65),
+          imageStr: "assets/svg_images/backButton.svg",
+        ),
       ),
     );
   }

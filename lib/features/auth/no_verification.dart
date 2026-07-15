@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:two_are_one/core/back_button.dart';
+import 'package:two_are_one/core/image.dart';
 import 'package:two_are_one/features/auth/failed.dart';
 import 'package:two_are_one/features/auth/no_otp_verification.dart';
 import 'package:two_are_one/services/auth_service.dart';
@@ -139,7 +140,7 @@ class _NoVerificationState extends State<NoVerification> {
                 const SizedBox(height: 40),
                 const Texts(
                     text: "Can we get your number?",
-                    size: 24, fontWeight: FontWeight.w400),
+                    size: 24, fontWeight: FontWeight.w600),
                 const SizedBox(height: 30),
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.end,
@@ -174,7 +175,8 @@ class _NoVerificationState extends State<NoVerification> {
                   text: "Enter your phone number. We’ll text you a code\nto verify it's really you and keep your journey safe.",
                   colorHexValue: 0xFF000000, size: 13,
                 ),
-                SizedBox(height: isLandscape ? 20 : screenHeight * 0.58),
+                SizedBox(height: isLandscape ? 20 :
+                screenHeight * 0.52),
                  Buttons(
                   text: "Next",
                   onTap: _verifyPhoneNo,
@@ -203,7 +205,7 @@ class _NoVerificationState extends State<NoVerification> {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                const FailedWidget(),
+                const Images(imageStr: "assets/svg_images/error.svg"),
                 const SizedBox(height: 10),
                 const Texts(text: "Oops, Failed!",  colorHexValue: 0xFFdf605f,
                     size: 22, fontWeight: FontWeight.bold),
@@ -227,7 +229,6 @@ class _NoVerificationState extends State<NoVerification> {
       },
     );
   }
-
   void _showCountryPicker() {
     showModalBottomSheet(
       context: context,
@@ -257,9 +258,7 @@ class _NoVerificationState extends State<NoVerification> {
       ),
     );
   }
-
   void _showError(String msg) {
     setState(() => _errorMessage = msg);
   }
 }
-

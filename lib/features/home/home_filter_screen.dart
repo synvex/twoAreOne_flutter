@@ -1,10 +1,23 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:two_are_one/core/back_button.dart';
+import 'package:two_are_one/core/image.dart';
 import 'package:two_are_one/core/texts.dart';
+import 'package:two_are_one/features/Bottom_Nav_Bar_Screens/custom_nav_bar.dart';
+import 'package:two_are_one/features/Bottom_Nav_Bar_Screens/home_screen.dart';
 import 'package:two_are_one/features/home/profile_card.dart';
 import 'package:two_are_one/models/user_match_model.dart';
 import 'package:two_are_one/services/home_service.dart'; // Ensure this matches your Service file
+import '../../core/back_button.dart';
+import '../../core/containers.dart';
+import '../../core/image.dart';
+import '../../models/user_match_model.dart';
+import '../../services/home_service.dart';
+import '../Bottom_Nav_Bar_Screens/home_screen.dart';
 import 'filer_sheet.dart';
+import '../../core/containers.dart';
+import '../../core/textfield.dart';
+import '../../core/texts.dart';
 
 class HomeFilterScreen extends StatefulWidget {
   const HomeFilterScreen({super.key});
@@ -20,7 +33,6 @@ class _HomeFilterScreenState extends State<HomeFilterScreen> {
 
   bool _isLoading = false;
   bool _hasError = false;
-
   // States for individual card loaders (Matching React states)
   final Set<int> _starLoading = {};
   final Set<int> _heartLoading = {};
@@ -31,22 +43,21 @@ class _HomeFilterScreenState extends State<HomeFilterScreen> {
 
   List<FilterMatchModel> users = [];
 
-  // Mocking Redux Filter Params
   Map<String, dynamic> filterParams = {
     "gender": "men",
-    "age_range": "",
-    "distance_range": "",
+    "age_range": "",       // Apply ke baad ye "18,45" format mein aayega
+    "distance_range": "",  // Apply ke baad ye "0,500" format mein aayega
     "country": "",
     "city": "",
   };
+  // Map<String, dynamic> filterParams = {
+  //   "gender": "men",
+  //   "age_range": "",
+  //   "distance_range": "",
+  //   "country": "",
+  //   "city": "",
+  // };
 
-  // 1. Debounced Search Logic (0.5s delay)
-  // void _onSearchChanged(String query) {
-  //   if (_debounce?.isActive ?? false) _debounce!.cancel();
-  //   _debounce = Timer(const Duration(milliseconds: 500), () {
-  //     _fetchFilteredProfiles(searchTerm: query);
-  //   });
-  // }
   void _onSearchChanged(String query) {
     if (_debounce?.isActive ?? false) _debounce!.cancel();
     _debounce = Timer(const Duration(milliseconds: 500), () {
@@ -121,23 +132,7 @@ class _HomeFilterScreenState extends State<HomeFilterScreen> {
     }
     setState(() => _starLoading.remove(user.id));
   }
-  // void _onStarPress(FilterMatchModel user) async {
-  //   setState(() => _starLoading.add(user.id));
-  //   final success = await _homeService.toggleFavorite(user.id, user.isFavorite);
-  //   if (success && mounted) {
-  //     setState(() => user.isFavorite = !user.isFavorite);
-  //   }
-  //   setState(() => _starLoading.remove(user.id));
-  // }
 
-  // void _onLikePress(FilterMatchModel  user) async {
-  //   setState(() => _heartLoading.add(user.id));
-  //   final success = await _homeService.toggleInterest(user.id, user.isInterested);
-  //   if (success && mounted) {
-  //     setState(() => user.isInterested = !user.isInterested);
-  //   }
-  //   setState(() => _heartLoading.remove(user.id));
-  // }
   void _onLikePress(FilterMatchModel user) async {
     setState(() => _heartLoading.add(user.id));
     final success = await _homeService.toggleInterest(user.id, user.isInterested);
@@ -195,76 +190,75 @@ class _HomeFilterScreenState extends State<HomeFilterScreen> {
     _searchController.dispose();
     super.dispose();
   }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios, color: Colors.black),
-          onPressed: () => Navigator.pop(context),
-        ),
-      ),
-      body: Column(
-        children: [
-          _buildSearchRow(),
-          const SizedBox(height: 20),
-          Expanded(
-            child: _isLoading
-                ? _buildLoadingState()
-                : _hasError
-                ? _buildErrorState()
-                : users.isEmpty && _searchController.text.isNotEmpty
-                ? _buildEmptyState()
-                : _buildUserGrid(),
+      body: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.all(22.0),
+          child: Column(
+            children: [
+              Align(
+                  alignment: AlignmentGeometry.topLeft,
+                  child: Back_Button(
+                      onTap: () => Navigator.push(
+                          context, MaterialPageRoute(builder: (context) => MainBarScreen())))),
+              const SizedBox(height: 35),
+              _buildSearchRow(),
+              const SizedBox(height: 20),
+              Expanded(
+                child: _isLoading
+                    ? _buildLoadingState()
+                    : _hasError
+                    ? _buildErrorState()
+                    : users.isEmpty && _searchController.text.isNotEmpty
+                    ? _buildEmptyState()
+                    : _buildUserGrid(),
+              ),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }
 
   Widget _buildSearchRow() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20),
-      child: Row(
-        children: [
-          Expanded(
-            child: Container(
-              height: 55,
-              padding: const EdgeInsets.symmetric(horizontal: 15),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(66),
-                border: Border.all(color: Colors.grey.shade300, width: 0.5),
-              ),
-              child: Row(
-                children: [
-                  const Icon(Icons.search, color: Colors.grey),
-                  const SizedBox(width: 10),
-                  Expanded(
-                    child: TextField(
-                      controller: _searchController,
-                      onChanged: _onSearchChanged,
-                      decoration: const InputDecoration(
-                        hintText: "Search User By Name",
-                        hintStyle: TextStyle(color: Colors.grey, fontSize: 14),
-                        border: InputBorder.none,
-                      ),
+    return Row(
+      children: [
+        Expanded(
+          child: Containers(
+            hexValue: 0xFFFFFFFF,
+            wHeight: 60,
+            padding: const EdgeInsets.symmetric(horizontal: 12),
+              radius: BorderRadius.circular(66),
+              border: Border.all(
+                  color: Colors.grey.shade500, width: 0.5),
+            child: Row(
+              children: [
+                const Images(imageStr: "assets/svg_images/search.svg"),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: TextField(
+                    controller: _searchController,
+                    onChanged: _onSearchChanged,
+                    decoration: const InputDecoration(
+                      hintText: "Search User By Name",
+                      hintStyle: TextStyle(color: Colors.grey, fontSize: 14),
+                      border: InputBorder.none,
                     ),
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
           ),
-          const SizedBox(width: 12),
-          GestureDetector(
-            onTap: () => _showFilterSheet(),
-            child: const Icon(Icons.tune, color: Colors.black, size: 28),
-          ),
-        ],
-      ),
+        ),
+        const SizedBox(width: 15),
+        GestureDetector(
+          onTap: () => _showFilterSheet(),
+          child: const Images(imageStr: "assets/svg_images/filter.svg")
+        ),
+      ],
     );
   }
 
@@ -295,6 +289,21 @@ class _HomeFilterScreenState extends State<HomeFilterScreen> {
     );
   }
   // State Builders ... (keep your existing Loading/Empty/Error state widgets)
+  void _showFilterSheet() {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) => FilterBottomSheet(
+        initialFilters: filterParams, // ✅ add this
+        onApply: (filters) {
+          setState(() => filterParams = filters);
+          _fetchFilteredProfiles();
+        },
+        onReset: _resetFilters,
+      ),
+    );
+  }
   void _resetFilters() {
     setState(() {
       filterParams = {
@@ -310,23 +319,18 @@ class _HomeFilterScreenState extends State<HomeFilterScreen> {
     });
   }
 
-  void _showFilterSheet() {
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
-      builder: (context) => FilterBottomSheet(
-        onApply: (filters) {
-          setState(() => filterParams = filters);
-          _fetchFilteredProfiles();
-        },
-        onReset: _resetFilters,
-      ),
-    );
-  }
-
   Widget _buildLoadingState() => const Center(
-    child: CircularProgressIndicator(color: Color(0xFF77153C)),
+    child: Column(
+      children: [
+        Align(
+            alignment: AlignmentGeometry.topCenter,
+            child: CircularProgressIndicator(color: Color(0xFF77153C))),
+        SizedBox(height: 12),
+        Align(
+            alignment: AlignmentGeometry.topLeft,
+            child: Texts(text: "Searching profiles...", size: 14,colorHexValue: 0xFF9E9E9E,fontWeight: FontWeight.w300, )),
+      ],
+    ),
   );
 
   Widget _buildErrorState() => Center(
@@ -348,9 +352,9 @@ class _HomeFilterScreenState extends State<HomeFilterScreen> {
     child: Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        Text("No matches found", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Color(0xFF333333))),
+        Text("No matches found", style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500, color: Color(0xFF333333))),
         SizedBox(height: 8),
-        Text("Try changing your search or filters", style: TextStyle(fontSize: 14, color: Colors.grey), textAlign: TextAlign.center),
+        Text("Try changing your search or filters", style: TextStyle(fontSize: 14, color: Colors.black), textAlign: TextAlign.center),
       ],
     ),
   );

@@ -8,12 +8,14 @@ class Texts extends StatelessWidget {
   final EdgeInsetsGeometry? edgeInsets;
   final int? underLineColor;
   final TextAlign? textAlign;
+  final int? maxLines;
+  final double? letterSpacing;
   const Texts({
     super.key,
     required this.text,
     this.size,
     this.fontWeight,
-    this.colorHexValue, this.underLineColor, this.textAlign, this.edgeInsets,
+    this.colorHexValue, this.underLineColor, this.textAlign, this.edgeInsets, this.maxLines, this.letterSpacing,
   });
 
   @override
@@ -23,8 +25,11 @@ class Texts extends StatelessWidget {
       child: Text(
         text,
         textAlign: textAlign,
+        maxLines: maxLines,
         // overflow: TextOverflow.ellipsis,
         style: TextStyle(
+          letterSpacing: letterSpacing,
+
           fontWeight: fontWeight,
           // Provided a default color if colorHexValue is null to avoid the crash
           color: colorHexValue != null ? Color(

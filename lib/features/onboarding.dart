@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:two_are_one/core/buttons.dart';
-import 'package:two_are_one/core/image.dart';
-import 'package:two_are_one/core/texts.dart';
-import 'package:two_are_one/features/auth/login.dart';
-import 'package:two_are_one/features/auth/no_verification.dart';
+
+import '../core/buttons.dart';
+import '../core/image.dart';
+import '../core/texts.dart';
+import 'auth/login.dart';
+import 'auth/no_verification.dart';
+
 
 class OnboardingScreen extends StatefulWidget {
   const OnboardingScreen({super.key});
@@ -19,8 +21,6 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     final double screenHeight = MediaQuery.of(context).size.height;
     final bool isLandscape = MediaQuery.of(context).orientation == Orientation.landscape;
 
-    // 2. Define a base size for the graphics.
-    // In portrait, it's based on width. In landscape, it's based on height.
     final double scaleBase = isLandscape ? screenHeight * .94 : screenWidth;
 
     return Scaffold(
@@ -88,16 +88,6 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
             ),
             // 2. Page Indicators
             const SizedBox(height: 20),
-            // Row(
-            //   mainAxisAlignment: MainAxisAlignment.center,
-            //   children: [
-            //     _buildIndicator(screenWidth, false),
-            //     SizedBox(width: screenWidth * 0.02),
-            //     _buildIndicator(screenWidth, true),
-            //     SizedBox(width: screenWidth * 0.02),
-            //     _buildIndicator(screenWidth, false),
-            //   ],
-            // ),
                 Image.asset("assets/images/two_are_one.png",
                   height: 52,
                   width: 214,
@@ -109,18 +99,18 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                     _buildFeatureItem(context,
                         "assets/images/one.png",
                       "Smart Matching\nEngine",
-                      45
+                      50
                     ),
                     _buildFeatureItem(context,
                         "assets/images/two.png",
                         "Interactive\nReal Profiles",
-                      45
+                      37
                     ),
                     _buildFeatureItem(
                         context,
                       "assets/images/three.png",
                       "Secure & Private\nConnections",
-                      45,
+                      51,
                     ),
                   ],
                 ),

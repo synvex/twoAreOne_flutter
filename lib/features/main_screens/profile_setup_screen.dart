@@ -12,14 +12,12 @@ import '../../core/drop_down_field.dart';
 import '../../core/image.dart';
 import '../../core/texts.dart';
 import '../../models/user_profile_model.dart';
+import '../../services/Api_Helper/api_manager.dart';
 import '../../services/auth_service.dart';
 
 class ProfileSetupScreen extends StatefulWidget {
-  // Original params kept for backward-compat.
   final String? gender;
   final String? lookingFor;
-
-  // NEW: full model from MainScreen – carries gender/sexuality already saved.
   final UserProfileModel profileModel;
 
   const ProfileSetupScreen({
@@ -34,7 +32,6 @@ class ProfileSetupScreen extends StatefulWidget {
 }
 
 class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
-  // ── Controllers ──────────────────────────────────────────────────────────
   final TextEditingController _bioController  = TextEditingController();
   final TextEditingController _workController = TextEditingController();
 
@@ -46,7 +43,6 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
   String? _selectedHeight;
   String? _selectedWeight;
   bool _isLoading = false;
-
   bool _heightError = false;
   bool _weightError = false;
   bool _workError = false;
@@ -63,98 +59,28 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
       List.generate(374, (i) => "${66 + i} lbs");
 
   @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    _syncToken();
+  }
+  @override
   void dispose() {
     _bioController.dispose();
     _workController.dispose();
     super.dispose();
   }
-
-  // Future<void> _onNextTapped() async {
-  //   setState(() {
-  //     _heightError = _selectedHeight == null;
-  //     _weightError = _selectedWeight == null;
-  //     _workError = _workController.text.trim().isEmpty;
-  //     _bioError = _bioController.text.trim().isEmpty;
-  //   });
-  //   if (_heightError || _weightError || _workError || _bioError) return;
-  //   // Basic validation -------------------------------------------------------
-  //   if (_selectedHeight == null) {
-  //     _showError("Height is required");
-  //     return;
-  //   }
-  //   if (_selectedWeight == null) {
-  //     _showError("Weight is required");
-  //     return;
-  //   }
-  //
-  //   setState(() => _isLoading = true);
-  //
-  //   // Step 1: Save text fields ------------------------------------------------
-  //   final textResult = await _authService.updateProfileSetup(
-  //     height: _selectedHeight!,
-  //     weight: _selectedWeight!,
-  //     work:   _workController.text.trim(),
-  //     bio:    _bioController.text.trim(),
-  //     gender:    widget.profileModel?.gender ?? '',
-  //     sexuality: widget.profileModel?.sexuality ?? '',
-  //   );
-  //
-  //   if (!mounted) return;
-  //
-  //   if (textResult['success'] != true) {
-  //     setState(() => _isLoading = false);
-  //     _showError(textResult['error'] ?? "Failed to save profile. Try again.");
-  //     return;
-  //   }
-  //
-  //   // Step 2: Upload media (fire even if no media – server handles gracefully)
-  //   final mediaResult = await _authService.uploadFullProfile(
-  //     profileImage:      _profileImage,
-  //     additionalImages:  _additionalImages,
-  //     additionalVideos:  _additionalVideos,
-  //     height: '', weight: '',
-  //     work: '', bio: '',
-  //     gender: '',
-  //     sexuality: '',
-  //     extraImages:
-  //   );
-  //
-  //   if (!mounted) return;
-  //   setState(() => _isLoading = false);
-  //
-  //   if (mediaResult['success'] != true) {
-  //     final prefs = await SharedPreferences.getInstance();
-  //     String? newImageUrl = mediaResult['profile_image_url'];
-  //     if (newImageUrl != null) {
-  //       await prefs.setString('profile_image_url', newImageUrl);
-  //     }
-  //     // Media upload is non-blocking for navigation; warn but continue.
-  //     _showError("Profile saved, but media upload failed. You can re-upload later.");
-  //   }
-  //   // Step 3: Persist locally so future screens can read without API calls ----
-  //   await _persistProfileLocally();
-  //
-  //   // Step 4: Build fully-populated model and navigate ------------------------
-  //   final updatedModel = widget.profileModel.copyWith(
-  //     profileImage:     _profileImage,
-  //     additionalImages: List<File>.from(_additionalImages),
-  //     additionalVideos: List<File>.from(_additionalVideos),
-  //     height:  _selectedHeight,
-  //     weight:  _selectedWeight,
-  //     work:    _workController.text.trim(),
-  //     bio:     _bioController.text.trim(),
-  //   );
-  //
-  //   Navigator.push(
-  //     context,
-  //     MaterialPageRoute(
-  //       builder: (_) => QuestionnaireScreen(
-  //           profileModel: updatedModel),
-  //     ),
-  //   );
-  // }
-// Inside _ProfileSetupScreenState
-
+  Future<void> _syncToken() async {
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('auth_token');
+    if (token != null && token.isNotEmpty) {
+      // Force ApiManager to have the token before any request is made
+      ApiManager.setUpRequestToken(token);
+      debugPrint("Token synced in ProfileSetup: $token");
+    } else {
+      debugPrint("WARNING: No token found in ProfileSetup initState");
+    }
+  }
   Future<void> _onNextTapped() async {
     // 1. Validation
     setState(() {
@@ -214,8 +140,6 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
       _showError(result['error'] ?? "Failed to upload profile info.");
     }
   }
-  /// Saves profile fields to SharedPreferences so any screen can read them
-  /// without making an extra network call.
   Future<void> _persistProfileLocally() async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString('profile_height', _selectedHeight ?? '');
@@ -227,7 +151,6 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
     // Note: file paths for images are not stored – the server is the
     // authoritative source for media URLs after upload.
   }
-
   void _showError(String message) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
@@ -237,7 +160,6 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
       ),
     );
   }
-
   Future<void> _pickMedia(int type) async {
     showModalBottomSheet(
       context: context,
@@ -388,7 +310,6 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
       );
     });
   }
-
   Future<void> _handleMediaSelection(int type, ImageSource source) async {
     try {
       final isCamera = source == ImageSource.camera;
@@ -424,11 +345,19 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
               setState(() => _additionalImages.add(File(picked.path)));
             }
           } else {
-            // Gallery — image_picker requests permission automatically
             final List<XFile> picked = await _picker.pickMultiImage();
             if (picked.isNotEmpty && mounted) {
-              setState(() =>
-                  _additionalImages.addAll(picked.map((e) => File(e.path))));
+              final remainingSlots = 6 - _additionalImages.length;
+              if (remainingSlots <= 0) {
+                showDialog(context: context, builder: (context) => AlertDialog(
+                  title: const Text("Limit Reached"),
+                  content: const Text("You can upload a maximum of 6 images."),
+                  actions: [TextButton(onPressed: () => Navigator.pop(context), child: const Text("OK"))],
+                ));
+                return;
+              }
+              setState(() => _additionalImages.addAll(
+                  picked.take(remainingSlots).map((e) => File(e.path))));
             }
           }
           break;
@@ -452,7 +381,6 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
       if (mounted) _showError("Something went wrong. Please try again.");
     }
   }
-
   Widget _mediaActionButton(
       String title, String icon, VoidCallback onTap) {
     return GestureDetector(
@@ -645,17 +573,6 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
                   ),
                 ),
               ),
-              if (_bioError)
-                const Padding(
-                  padding: EdgeInsets.only(left: 16, top: 4),
-                  child: Align(
-                    alignment: Alignment.centerLeft,
-                    child: Text(
-                      "Bio is required",
-                      style: TextStyle(color: Colors.red, fontSize: 12),
-                    ),
-                  ),
-                ),
               const SizedBox(height: 20),
               // Add Photos / Videos buttons ----------------------------------
               Row(

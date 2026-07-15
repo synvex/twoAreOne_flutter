@@ -1,13 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:two_are_one/core/my_icons.dart';
-import 'package:two_are_one/features/auth/email_otp_verification.dart';
-import 'package:two_are_one/features/auth/failed.dart';
+// import 'package:two_are_one/core/my_icons.dart';
+// import 'package:two_are_one/features/auth/email_otp_verification.dart';
+// import 'package:two_are_one/features/auth/failed.dart';
 import '../../core/back_button.dart';
 import '../../core/buttons.dart';
 import '../../core/containers.dart';
+import '../../core/my_icons.dart';
 import '../../core/textfield.dart';
 import '../../core/texts.dart';
 import '../../services/auth_service.dart';
+import 'email_otp_verification.dart';
+import 'failed.dart';
 
 class ForgetPassword extends StatefulWidget {
   final String? email;
@@ -34,11 +37,11 @@ class _ForgetPasswordState extends State<ForgetPassword> {
 
     // 1. Validation (Matches RN validateInputs)
     if (email.isEmpty) {
-      _showSnackBar("Email is required");
+      _showErrorDialog("Email is required");
       return;
     }
     if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(email)) {
-      _showSnackBar("Email is invalid");
+      _showErrorDialog("Email is invalid");
       return;
     }
 
@@ -63,18 +66,18 @@ class _ForgetPasswordState extends State<ForgetPassword> {
             ),
           );
         } else {
-          _showSnackBar(result['error'] ?? "Failed to send OTP");
+          _showErrorDialog(result['error'] ?? "Failed to send OTP");
         }
       }
     } catch (e) {
-      _showSnackBar("An error occurred: $e");
+      _showErrorDialog("An error occurred: $e");
     } finally {
       if (mounted) setState(() => _isLoading = false);
     }
   }
-  void _showSnackBar(String msg) {
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(msg)));
-  }
+  // void _showSnackBar(String msg) {
+  //   ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(msg)));
+  // }
   void _showUserNotFoundDialog() {
     showDialog(
       context: context,
@@ -111,7 +114,35 @@ class _ForgetPasswordState extends State<ForgetPassword> {
       },
     );
   }
-
+  void _showErrorDialog(String message, {String title = "Oops, Failed!"}) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        backgroundColor: Colors.white,
+        surfaceTintColor: Colors.white,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+        content: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const FailedWidget(),
+              const SizedBox(height: 15),
+              Texts(text: title, colorHexValue: 0xFFdf605f, size: 22, fontWeight: FontWeight.bold),
+              const SizedBox(height: 15),
+              Texts(textAlign: TextAlign.center, text: message, size: 14, colorHexValue: 0xFF4D4D4D),
+              const SizedBox(height: 25),
+              Buttons(
+                height: 50,
+                text: "Close",
+                onTap: () => Navigator.pop(context),
+                gradient: const LinearGradient(colors: [Color(0xFF77153C), Color(0xFFDD276F)]),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
   @override
   Widget build(BuildContext context) {
     final double screenHeight = MediaQuery.of(context).size.height;

@@ -1,4 +1,4 @@
-package com.example.two_are_one
+package com.example.twoAreOne.app
 
 import io.flutter.embedding.android.FlutterActivity
 

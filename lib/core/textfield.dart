@@ -42,16 +42,6 @@ class _CustomInputFieldState extends State<CustomInputField> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // Padding(
-        //   padding: const EdgeInsets.only(
-        //       left: 15,
-        //   ),
-        //   child: Texts(
-        //     text: label ?? "",
-        //     size: height ?? 16,
-        //   ),
-        // ),
-        // Input Field
         TextField(
           keyboardType:widget.textInputType,
           controller: widget.controller,
@@ -66,7 +56,8 @@ class _CustomInputFieldState extends State<CustomInputField> {
             iconColor: Color(0xFF787878),
               prefixIconColor: Color(0xFF787878),
               isDense: true,
-            label: widget.label != null ? null : null,
+            label: widget.label != null ? Texts(
+              text:widget.label!, colorHexValue: 0xFF787878,) : null,
             hintText: widget.hintText,
             hintStyle: TextStyle(
                 color: Color(widget.textColor ?? 0xFF787878), fontSize: 16),
@@ -106,10 +97,16 @@ class TxtField extends StatelessWidget {
       autofocus: true,
       minLines: minLines,
       autofillHints: const[AutofillHints.telephoneNumber],
-      style: TextStyle(fontSize: 16),
-      cursorColor: Colors.black,
+      style: TextStyle(fontSize: 13 , color: Colors.black),
+      cursorColor: Colors.green.shade800,
+      cursorHeight: 16,
+      cursorWidth: 2.5,
       decoration: InputDecoration(
         hintText: "XXX-XXXXXX",
+        hintStyle: TextStyle(
+          fontSize: 13,
+        ),
+
         isDense: true,
         contentPadding: EdgeInsets.symmetric(horizontal: 10, vertical: 1),
         enabledBorder: UnderlineInputBorder(

@@ -2,20 +2,24 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:two_are_one/core/containers.dart';
-import 'package:two_are_one/core/texts.dart';
-import 'package:two_are_one/models/location_data.dart';
+// import 'package:two_are_one/core/containers.dart';
+// import 'package:two_are_one/core/texts.dart';
+// import 'package:two_are_one/models/location_data.dart';
 
+import '../../core/containers.dart';
 import '../../core/textfield.dart';
+import '../../core/texts.dart';
+import '../../models/location_data.dart';
 
 class LocationSelectorField extends StatefulWidget {
-  final String labels;
+  final String? labels;
+  final int? fillColor;
   final Function(LocationData) onLocationSelected;
 
   const LocationSelectorField({
     super.key,
-    required this.labels,
-    required this.onLocationSelected,
+    this.labels,
+    required this.onLocationSelected, this.fillColor,
   });
 
   @override
@@ -140,16 +144,13 @@ class _LocationSelectorFieldState extends State<LocationSelectorField> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         // 1. Label
-        Texts(edgeInsets: EdgeInsets.only(bottom: 10),
-                      text: "Locations",
-                      size: 16,
-                      // colorHexValue: 0xFF666666,
-                      fontWeight: FontWeight.w400,),
         // 2. Search Input Field
         // Containers(
         //   wHeight: 49,
         //   hexValue: 0xFFF3F3F3, radius: 30,
           CustomInputField(
+            fillColor: widget.fillColor ?? 0xFFF0EFEF,
+            label: widget.labels,
             controller: _controller,
             onChanged: _onSearchChanged,
               prefixIcon:  Icons.location_on,
@@ -221,192 +222,3 @@ class _LocationSelectorFieldState extends State<LocationSelectorField> {
 }
 
 
-// import 'dart:convert';
-// import 'package:flutter/material.dart';
-// import 'package:http/http.dart' as http;
-// import 'package:two_are_one/core/containers.dart';
-// import 'package:two_are_one/core/texts.dart';
-// import 'package:two_are_one/models/location_data.dart';
-// import '../../core/textfield.dart';
-//
-// class LocationSelectorField extends StatefulWidget {
-//   final String labels;
-//   final Function(LocationData) onLocationSelected;
-//
-//   const LocationSelectorField({
-//     super.key,
-//     required this.labels,
-//     required this.onLocationSelected,
-//   });
-//
-//   @override
-//   State<LocationSelectorField> createState() => _LocationSelectorFieldState();
-// }
-//
-// class _LocationSelectorFieldState extends State<LocationSelectorField> {
-//   final TextEditingController _controller = TextEditingController();
-//   List<dynamic> _predictions = [];
-//   bool _showSuggestions = false;
-//   bool _isSearching = false;
-//
-//   // TODO: Replace with your actual Google Maps API Key
-//   final String _googleApiKey = "your_google_maps_api_key_here";
-//
-//   /// 1. Fetches Autocomplete Suggestions from Google Places API
-//   void _onSearchChanged(String query) async {
-//     if (query.trim().isEmpty) {
-//       setState(() {
-//         _predictions = [];
-//         _showSuggestions = false;
-//       });
-//       return;
-//     }
-//
-//     setState(() => _isSearching = true);
-//
-//     final url = Uri.parse(
-//         'https://maps.googleapis.com/maps/api/place/autocomplete/json?input=$query&key=$_googleApiKey&language=en'
-//     );
-//
-//     try {
-//       final response = await http.get(url);
-//       if (response.statusCode == 200) {
-//         final data = json.decode(response.body);
-//         if (data['status'] == 'OK') {
-//           setState(() {
-//             _predictions = data['predictions'];
-//             _showSuggestions = _predictions.isNotEmpty;
-//           });
-//         }
-//       }
-//     } catch (e) {
-//       debugPrint("Error fetching autocomplete: $e");
-//     } finally {
-//       setState(() => _isSearching = false);
-//     }
-//   }
-//
-//   /// 2. Fetches Place Details to extract Address Components (City, State, Country, Lat, Lng)
-//   /// Mirrors the React Native project's 'getComponent' address breakdown logic perfectly.
-//   void _getPlaceDetails(String placeId) async {
-//     final url = Uri.parse(
-//         'https://maps.googleapis.com/maps/api/place/details/json?place_id=$placeId&fields=address_components,formatted_address,geometry&key=$_googleApiKey'
-//     );
-//
-//     try {
-//       final response = await http.get(url);
-//       if (response.statusCode == 200) {
-//         final data = json.decode(response.body);
-//         if (data['status'] == 'OK' && data['result'] != null) {
-//           final result = data['result'];
-//           final List<dynamic> addressComponents = result['address_components'] ?? [];
-//
-//           // Helper method matching the original React Native 'getComponent' breakdown helper
-//           String getComponent(String type) {
-//             final comp = addressComponents.firstWhere(
-//                   (c) => (c['types'] as List).contains(type),
-//               orElse: () => null,
-//             );
-//             return comp != null ? comp['long_name'] ?? '' : '';
-//           }
-//
-//           final String country = getComponent('country');
-//           final String state = getComponent('administrative_area_level_1');
-//
-//           // Matches: locality or administrative_area_level_2 fallback definition
-//           String city = getComponent('locality');
-//           if (city.isEmpty) {
-//             city = getComponent('administrative_area_level_2');
-//           }
-//
-//           final String address = result['formatted_address'] ?? '';
-//           final double? latitude = result['geometry']?['location']?['lat'];
-//           final double? longitude = result['geometry']?['location']?['lng'];
-//
-//           // Build our data object model layer safely
-//           final locationData = LocationData(
-//             address: address,
-//             country: country,
-//             state: state,
-//             city: city,
-//             latitude: latitude,
-//             longitude: longitude,
-//           );
-//
-//           _controller.text = address;
-//
-//           // Pass the structured live record back to SignUpPage state
-//           widget.onLocationSelected(locationData);
-//         }
-//       }
-//     } catch (e) {
-//       debugPrint("Error fetching place details: $e");
-//     } finally {
-//       setState(() => _showSuggestions = false);
-//     }
-//   }
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     return Column(
-//       crossAxisAlignment: CrossAxisAlignment.start,
-//       children: [
-//         // 1. Label
-//         const Texts(
-//           edgeInsets: EdgeInsets.only(bottom: 7),
-//           text: "Locations",
-//           size: 16,
-//           fontWeight: FontWeight.w400,
-//         ),
-//         // 2. Search Input Field
-//         CustomInputField(
-//           controller: _controller,
-//           onChanged: _onSearchChanged,
-//           prefixIcon: Icons.location_on,
-//           hintText: 'Search',
-//           suffixIcon: _isSearching
-//               ? const SizedBox(
-//             width: 20,
-//             height: 20,
-//             child: CircularProgressIndicator(strokeWidth: 2, color: Colors.grey),
-//           )
-//               : null,
-//         ),
-//         // 3. Suggestions List
-//         if (_showSuggestions)
-//           Containers(
-//             margin: const EdgeInsets.only(top: 5),
-//             radius: BorderRadius.circular(10),
-//             boxShadow: [
-//               BoxShadow(
-//                 color: Colors.black.withOpacity(0.05),
-//                 blurRadius: 10,
-//                 offset: const Offset(0, 5),
-//               )
-//             ],
-//             hexValue: 0xFFFFFFFF,
-//             child: ListView.separated(
-//               shrinkWrap: true,
-//               physics: const NeverScrollableScrollPhysics(),
-//               itemCount: _predictions.length,
-//               separatorBuilder: (context, index) => const Divider(height: 1, color: Color(0xFFEEEEEE)),
-//               itemBuilder: (context, index) {
-//                 final prediction = _predictions[index];
-//                 final String description = prediction['description'] ?? '';
-//                 final String placeId = prediction['place_id'] ?? '';
-//
-//                 return ListTile(
-//                   title: Texts(
-//                     text: description,
-//                     size: 14,
-//                     colorHexValue: 0xFF4D4D4D,
-//                   ),
-//                   onTap: () => _getPlaceDetails(placeId),
-//                 );
-//               },
-//             ),
-//           ),
-//       ],
-//     );
-//   }
-// }

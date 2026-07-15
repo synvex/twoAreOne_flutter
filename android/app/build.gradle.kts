@@ -7,7 +7,7 @@ plugins {
 }
 
 android {
-    namespace = "com.example.two_are_one"
+    namespace = "com.example.twoAreOne.app"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = flutter.ndkVersion
 
@@ -22,6 +22,7 @@ android {
 
     defaultConfig {
         applicationId = "com.example.two_are_one"
+//        applicationId = "com.twoAreOne.app"
         // You can update the following values to match your application needs.
         // For more information, see: https://flutter.dev/to/review-gradle-config.
         minSdk = flutter.minSdkVersion
@@ -41,10 +42,8 @@ android {
 
 dependencies {
     // Import the Firebase BoM
-    implementation(platform("com.google.firebase:firebase-bom:34.14.0"))
+    implementation(platform("com.google.firebase:firebase-bom:34.15.0"))
 
-    // Add the dependencies for the Firebase products you want to use
-    // When using the BoM, you don't specify versions in Firebase library dependencies
     implementation("com.google.firebase:firebase-auth")
     implementation("com.google.firebase:firebase-analytics")
 }

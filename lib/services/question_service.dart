@@ -1,21 +1,19 @@
-
 import 'dart:convert';
-import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
+import 'Api_Helper/api_manager.dart';
 
 class QuestionService {
-  static const String baseUrl = 'https://twoareone.love/api';
-
-  Future<Map<String, dynamic>> getQuestions({int page = 1}) async
-  {
+  // FIX: matches ApiManager.baseUrl / the React Native app (www subdomain).
+  static const String baseUrl = 'https://www.twoareone.love/api';
+  final ApiManager _api = ApiManager();
+  Future<Map<String, dynamic>> getQuestions({int page = 1}) async {
     try {
       final prefs = await SharedPreferences.getInstance();
       final token = prefs.getString('auth_token') ?? '';
 
       final url = Uri.parse('$baseUrl/questions/listing.php?page=$page');
-      debugPrint('Fetching questions: $url');
 
       final response = await http.get(
         url,
@@ -23,17 +21,13 @@ class QuestionService {
           'Authorization': 'Bearer $token',
           'x-api-key': token,
         },
-      ).timeout(const Duration(seconds: 15));
-
-      debugPrint('Questions Status: ${response.statusCode}');
-      debugPrint('Questions Body: ${response.body}');
-
-      final decoded = json.decode(response.body) as Map<String, dynamic>;
-
-      if (response.statusCode == 200 && decoded['error'] == false) {
-        return {'success': true, 'data': decoded['data']};
-      }
-      return {'success': false, 'error': decoded['message'] ?? 'Failed'};
+      ).timeout(const Duration(seconds: 30));
+      return await _api.fetch(
+          Api(url: "questions/listing.php?page=$page",
+              method: "GET"),
+        {},
+      );
+      // return _handleResponse(response);
     } catch (e) {
       debugPrint('getQuestions error: $e');
       return {'success': false, 'error': e.toString()};
@@ -44,8 +38,7 @@ class QuestionService {
     required int categoryId,
     required int questionId,
     required int answerId,
-  }) async
-  {
+  }) async {
     try {
       final prefs = await SharedPreferences.getInstance();
       final token = prefs.getString('auth_token') ?? '';
@@ -58,8 +51,6 @@ class QuestionService {
         'answer_id': answerId.toString(),
       });
 
-      debugPrint('Saving answer: $body');
-
       final response = await http.post(
         url,
         headers: {
@@ -69,196 +60,173 @@ class QuestionService {
           'x-api-key': token,
         },
         body: body,
-      ).timeout(const Duration(seconds: 15));
+      ).timeout(const Duration(seconds: 25));
 
-      debugPrint('Save answer Status: ${response.statusCode}');
-      debugPrint('Save answer Body: ${response.body}');
-
-      final decoded = json.decode(response.body) as Map<String, dynamic>;
-      if (response.statusCode == 200 && decoded['error'] == false) {
-        return {'success': true};
-      }
-      return {'success': false, 'error': decoded['message'] ?? 'Failed'};
+      return _handleResponse(response);
     } catch (e) {
       debugPrint('saveUserAnswer error: $e');
       return {'success': false, 'error': e.toString()};
     }
   }
+
+  Future<Map<String, dynamic>> getUserQuestionsByCategory({
+    required int categoryId,
+    required int userId,
+  }) async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final token = prefs.getString('auth_token') ?? '';
+
+      final url = Uri.parse(
+          '$baseUrl/questions/get-user-questions-by-category.php?category_id=$categoryId&user_id=$userId');
+
+      final response = await http.get(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+          'x-api-key': token,
+        },
+      ).timeout(const Duration(seconds: 15));
+      return await _api.fetch(Api(url: "questions/get-user-questions-by-category.php?category_id=$categoryId&user_id=$userId",
+          method: "GET"), {
+        'category_id': categoryId.toString(),
+        'user_id': userId.toString(),
+      });
+      // return _handleListResponse(response);
+    } catch (e) {
+      debugPrint('getUserQuestionsByCategory error: $e');
+      return {'success': false, 'error': e.toString()};
+    }
+  }
+
+  /// Fetches the question + all answer options for ONE question (used by
+  /// the "Change" / edit-answer screen). Mirrors RN's
+  /// GetUserQuestionAnswerByIdService.
+  Future<Map<String, dynamic>> getQuestionAnswersById(int questionId) async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final token = prefs.getString('auth_token') ?? '';
+
+      final url = Uri.parse(
+          '$baseUrl/questions/get-question-answers.php?question_id=$questionId');
+
+      final response = await http.get(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+          'x-api-key': token,
+        },
+      ).timeout(const Duration(seconds: 15));
+
+      return _handleListResponse(response);
+    } catch (e) {
+      debugPrint('getQuestionAnswersById error: $e');
+      return {'success': false, 'error': e.toString()};
+    }
+  }
+
+  /// Saves a changed answer for an already-answered question. Mirrors RN's
+  /// updateQuestionService.
+  Future<Map<String, dynamic>> updateUserQuestionAnswer({
+    required int categoryId,
+    required int questionId,
+    required int answerId,
+  }) async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final token = prefs.getString('auth_token') ?? '';
+
+      final url = Uri.parse('$baseUrl/questions/update-user-question-answer.php');
+
+      final response = await http.post(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          'Authorization': 'Bearer $token',
+          'x-api-key': token,
+        },
+        body: json.encode({
+          'category_id': categoryId.toString(),
+          'question_id': questionId.toString(),
+          'answer_id': answerId.toString(),
+        }),
+      ).timeout(const Duration(seconds: 15));
+
+      return _handleResponse(response);
+    } catch (e) {
+      debugPrint('updateUserQuestionAnswer error: $e');
+      return {'success': false, 'error': e.toString()};
+    }
+  }
+
+  /// Shared parser for the two "list" endpoints above. RN's version doesn't
+  /// check any success flag for these — it just trusts a normal HTTP
+  /// response and reads `.data.data` (falling back to `.data`). This mirrors
+  /// that exactly, while still using the app's unified 401 handling.
+  Map<String, dynamic> _handleListResponse(http.Response response) {
+    debugPrint('Question service (list) status: ${response.statusCode}');
+    debugPrint('Question service (list) body: ${response.body}');
+
+    if (response.statusCode == 401) {
+      ApiManager.handleUnauthorized();
+      return {
+        'success': false,
+        'error': 'Session expired. Please login again.',
+        'isSessionExpired': true,
+      };
+    }
+
+    dynamic decoded;
+    try {
+      decoded = json.decode(response.body);
+    } catch (e) {
+      return {'success': false, 'error': 'Invalid server response format.'};
+    }
+
+    if (response.statusCode >= 200 && response.statusCode < 300) {
+      final extracted =
+      (decoded is Map && decoded['data'] != null) ? decoded['data'] : decoded;
+      return {'success': true, 'data': extracted};
+    }
+
+    final message = decoded is Map ? decoded['message'] : null;
+    return {'success': false, 'error': message ?? 'Failed to fetch questions.'};
+  }
+  /// FIX: now handles HTTP 401 the same way as the rest of the app — shows
+  /// the session-expired dialog and logs the user out via
+  /// `ApiManager.handleUnauthorized()`. Previously an expired token here
+  /// just returned a plain error string with no dialog, no logout, and no
+  /// redirect, leaving the user stuck on the Questions screen.
+  Map<String, dynamic> _handleResponse(http.Response response) {
+    debugPrint('Question service status: ${response.statusCode}');
+    debugPrint('Question service body: ${response.body}');
+
+    dynamic decoded;
+    try {
+      decoded = json.decode(response.body);
+    } catch (e) {
+      return {'success': false, 'error': 'Invalid server response format.'};
+    }
+
+    if (response.statusCode == 401) {
+      ApiManager.handleUnauthorized();
+      return {
+        'success': false,
+        'error': 'Session expired. Please login again.',
+        'isSessionExpired': true,
+      };
+    }
+
+    if (response.statusCode == 200 &&
+        decoded is Map &&
+        decoded['error'] == false) {
+      return {'success': true, 'data': decoded['data']};
+    }
+
+    final message = decoded is Map ? decoded['message'] : null;
+    return {'success': false, 'error': message ?? 'Failed'};
+  }
 }
-
-
-
-//
-// import 'dart:convert';
-// import 'package:http/http.dart' as http;
-// import 'package:shared_preferences/shared_preferences.dart';
-//
-// class QuestionService {
-//   final String baseUrl = 'https://twoareone.love/api';
-//
-//   // Get all questions with pagination
-//   Future<Map<String, dynamic>> getQuestions({
-//     int page = 1,
-//     int perPage = 10,
-//   }) async {
-//     try {
-//       final token = await _getToken();
-//       final url = Uri.parse(
-//           '$baseUrl/questions/listing.php?page=$page&per_page=$perPage');
-//       final response = await http.get(
-//         url,
-//         headers: {
-//           'Accept': 'application/json',
-//           'Authorization': 'Bearer $token',
-//           'X-API-KEY': token ?? '',
-//           'X-Requested-With': 'XMLHttpRequest',
-//         },
-//       ).timeout(const Duration(seconds: 60));
-//
-//       return _handleResponse(response);
-//     } catch (e) {
-//       return {'success': false, 'error': "Connection error: $e"};
-//     }
-//   }
-//
-//   // Get questions by category
-//   Future<Map<String, dynamic>> getQuestionsByCategory({
-//     required int categoryId,
-//     int page = 1,
-//     int perPage = 10,
-//   }) async {
-//     try {
-//       final token = await _getToken();
-//       final url = Uri.parse(
-//           '$baseUrl/questions/get-questions-by-category.php?category_id=$categoryId&page=$page&per_page=$perPage'
-//       );
-//
-//       final response = await http.get(
-//         url,
-//         headers: {
-//           'Accept': 'application/json',
-//           'Authorization': 'Bearer $token',
-//           'X-Requested-With': 'XMLHttpRequest',
-//         },
-//       ).timeout(const Duration(seconds: 30));
-//
-//       return _handleResponse(response);
-//     } catch (e) {
-//       return {'success': false, 'error': "Connection error: $e"};
-//     }
-//   }
-//
-//   // Save user's answer to a question
-//   Future<Map<String, dynamic>> saveUserAnswer({
-//     required int categoryId,
-//     required int questionId,
-//     required int answerId,
-//   }) async {
-//     try {
-//       final token = await _getToken();
-//       final url = Uri.parse('$baseUrl/questions/save-user-question-answer.php');
-//
-//       final response = await http.post(
-//         url,
-//         headers: {
-//           'Accept': 'application/json',
-//           'Content-Type': 'application/json',
-//           'Authorization': 'Bearer $token',
-//           'X-API-KEY': token ?? '',
-//           'X-Requested-With': 'XMLHttpRequest',
-//         },
-//         body: jsonEncode({
-//           'category_id': categoryId.toString(),
-//           'question_id': questionId.toString(),
-//           'answer_id': answerId.toString(),
-//         }),
-//       ).timeout(const Duration(seconds: 30));
-//
-//       return _handleResponse(response);
-//     } catch (e) {
-//       return {'success': false, 'error': "Connection error: $e"};
-//     }
-//   }
-//
-//   // Update user's answer to a question
-//   Future<Map<String, dynamic>> updateUserAnswer({
-//     required int categoryId,
-//     required int questionId,
-//     required int answerId,
-//   }) async {
-//     try {
-//       final token = await _getToken();
-//       final url = Uri.parse('$baseUrl/questions/update-user-question-answer.php');
-//
-//       final response = await http.post(
-//         url,
-//         headers: {
-//           'Accept': 'application/json',
-//           'Content-Type': 'application/json',
-//           'Authorization': 'Bearer $token',
-//           'X-API-KEY': token ?? '',
-//           'X-Requested-With': 'XMLHttpRequest',
-//         },
-//         body: jsonEncode({
-//           'category_id': categoryId.toString(),
-//           'question_id': questionId.toString(),
-//           'answer_id': answerId.toString(),
-//         }),
-//       ).timeout(const Duration(seconds: 30));
-//
-//       return _handleResponse(response);
-//     } catch (e) {
-//       return {'success': false, 'error': "Connection error: $e"};
-//     }
-//   }
-//
-//   // Get user's answers
-//   Future<Map<String, dynamic>> getUserAnswers({
-//     int page = 1,
-//     int perPage = 10,
-//   }) async {
-//     try {
-//       final token = await _getToken();
-//       final url = Uri.parse(
-//           '$baseUrl/questions/get-user-answer.php?page=$page&per_page=$perPage'
-//       );
-//
-//       final response = await http.get(
-//         url,
-//         headers: {
-//           'Accept': 'application/json',
-//           'Authorization': 'Bearer $token',
-//           'X-Requested-With': 'XMLHttpRequest',
-//         },
-//       ).timeout(const Duration(seconds: 30));
-//
-//       return _handleResponse(response);
-//     } catch (e) {
-//       return {'success': false, 'error': "Connection error: $e"};
-//     }
-//   }
-//
-//   Map<String, dynamic> _handleResponse(http.Response response) {
-//     print("Status: ${response.statusCode}");
-//     print("Body: ${response.body}");
-//
-//     if (response.statusCode == 200 || response.statusCode == 201) {
-//       try {
-//         final data = jsonDecode(response.body);
-//         return {'success': true, 'data': data};
-//       } catch (e) {
-//         return {'success': true, 'data': response.body};
-//       }
-//     } else {
-//       return {
-//         'success': false,
-//         'error': 'Error ${response.statusCode}: ${response.body}'
-//       };
-//     }
-//   }
-//
-//   Future<String?> _getToken() async {
-//     final prefs = await SharedPreferences.getInstance();
-//     return prefs.getString('auth_token');
-//   }
-// }

@@ -1,16 +1,16 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:two_are_one/core/containers.dart';
-import 'package:two_are_one/core/image.dart';
-import 'package:two_are_one/core/textfield.dart';
-import 'package:two_are_one/core/texts.dart';
-import 'package:two_are_one/features/auth/login.dart';
-import 'package:two_are_one/features/auth/new_password.dart';
-import 'package:two_are_one/features/main_screens/main_screen.dart';
-import 'package:two_are_one/services/auth_service.dart';
 import '../../core/back_button.dart';
 import '../../core/buttons.dart';
+import '../../core/containers.dart';
+import '../../core/image.dart';
+import '../../core/textfield.dart';
+import '../../core/texts.dart';
+import '../../services/auth_service.dart';
+import '../main_screens/main_screen.dart';
+import 'login.dart';
+import 'new_password.dart';
 
 class EmailOtpVerification extends StatefulWidget {
   final String email;
@@ -118,7 +118,9 @@ class _EmailOtpVerificationState extends State<EmailOtpVerification> {
       if (result['success']) {
         if (!mounted) return;
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text("Account verified successfully!")),
+          const SnackBar(
+              content: Text(
+                  "Account verified successfully!")),
         );
         if (widget.isFromForget) {
           Navigator.pushReplacement(
@@ -131,7 +133,8 @@ class _EmailOtpVerificationState extends State<EmailOtpVerification> {
             MaterialPageRoute(builder: (context) => const MainScreen()),
           );
         }
-      }else {
+      }
+      else {
         if (!mounted) return;
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text(result['error'] ?? "Verification failed")),
@@ -233,7 +236,8 @@ class _EmailOtpVerificationState extends State<EmailOtpVerification> {
                   children: [
                     const Texts(text: "Already have an account?", colorHexValue: 0xFF77153C, size: 15),
                     InkWell(
-                      onTap: () => Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const LoginPage())),
+                      onTap: () => Navigator.pushReplacement(
+                          context, MaterialPageRoute(builder: (context) => const LoginPage())),
                       child: const Texts(text: " Login", fontWeight: FontWeight.w500, colorHexValue: 0xFF000000, size: 14),
                     )
                   ],

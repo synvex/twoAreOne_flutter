@@ -11,7 +11,7 @@ class Images extends StatelessWidget {
     super.key,
     required this.imageStr,
     this.height,
-    this.width, 
+    this.width,
     this.color,
   });
 
@@ -46,10 +46,11 @@ class Avatar extends StatelessWidget {
   final double size;
   final String imageStr;
   final Color? color;
+
   const Avatar(
       {super.key, this.top, this.bottom,
         this.left, this.right, required this.size,
-        required this.imageStr, this.color});
+        required this.imageStr, this.color, });
   @override
   Widget build(BuildContext context) {
     return Positioned(
@@ -61,6 +62,7 @@ class Avatar extends StatelessWidget {
         width: size,
         height: size,
         decoration: BoxDecoration(
+          color: color,
           shape: BoxShape.circle,
           image: DecorationImage(
               image: AssetImage(imageStr),

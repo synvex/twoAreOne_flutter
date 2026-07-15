@@ -2,9 +2,6 @@ import 'dart:async';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:two_are_one/core/my_icons.dart';
-import 'package:two_are_one/features/auth/forget_password.dart';
-import 'package:two_are_one/features/main_screens/main_screen.dart';
 import '../../core/back_button.dart';
 import '../../core/buttons.dart';
 import '../../core/image.dart';
@@ -14,6 +11,7 @@ import '../../services/Api_Helper/api_manager.dart';
 import '../../services/auth_service.dart';
 import '../Bottom_Nav_Bar_Screens/custom_nav_bar.dart';
 import 'failed.dart';
+import 'forget_password.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -70,28 +68,18 @@ class _LoginPageState extends State<LoginPage> {
       });
       return;
     }
-    // if (email.isEmpty) {
-    //   setState(() => _emailError = "Email is required");
-    //   return;
-    // }
-    // if (password.isEmpty) {
-    //   setState(() => _passwordError = "Password is required");
-    //   return;
-    // }
     setState(() {
       _isLoading = true;
       _emailError = emailError;
       _passwordError = passwordError;
     });
-
     try {
       final result = await _authService.login(
           email: email, password: password);
 
       if (!mounted) return;
       if (result['success'] == true) {
-        final responseBody = result['data'];
-        final userData = responseBody['data']; // The nested 'data' object
+        final userData = result['data']; // The nested 'data' object
 
         // final token = result['data']?['api_token']?.toString() ?? '';
         final token = userData?['api_token']?.toString() ??
@@ -116,7 +104,7 @@ class _LoginPageState extends State<LoginPage> {
       }
       else {
         // FAILURE - The alert/snackbar will now show the real error from PHP
-         String _errorMsg = result[
+         String errorMsg = result[
                   'error'] ?? "Incorrect email or password";
         showDialog(
           context: context,
@@ -142,7 +130,7 @@ class _LoginPageState extends State<LoginPage> {
                     const SizedBox(height: 15),
                      Texts(
                       textAlign: TextAlign.center,
-                      text: _errorMsg.isEmpty ? "Login failed" : _errorMsg,
+                      text: errorMsg.isEmpty ? "Login failed" : errorMsg,
                       size: 14, colorHexValue: 0xFF4D4D4D,
                     ),
                     const SizedBox(height: 25),
@@ -159,6 +147,7 @@ class _LoginPageState extends State<LoginPage> {
             );
           },
         );
+        debugPrint("❌ Login failed: $errorMsg");
       }
     } on SocketException{
       _showErrorDialog("No internet connection. Please check your network and try again.");
@@ -540,171 +529,3 @@ class _LoginPageState extends State<LoginPage> {
   }
 
 }
-
-
-
-
-
-
-
-
-
-
-
-// class LoginPage extends StatelessWidget {
-//   const LoginPage({super.key});
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//       backgroundColor: Colors.white,
-//       body: SafeArea(
-//         child: SingleChildScrollView(
-//           padding: const EdgeInsets.symmetric(
-//               horizontal: 20),
-//           child: Column(
-//             crossAxisAlignment: CrossAxisAlignment.center,
-//             children: [
-//               const SizedBox(height: 40),
-//               Align(
-//                 alignment: Alignment.topLeft,
-//                 child: Back_Button(
-//                   onTap: () {
-//                     Navigator.pop(context);
-//                   },),
-//               ),
-//               const SizedBox(height: 37),
-//               Images(imageStr: 'assets/images/two_are_one.png',
-//                 height: 51,
-//                 width: 215,
-//               ),
-//               const SizedBox(height: 10),
-//               const Texts(
-//                 text: "Welcome Back",
-//                 colorHexValue: 0xFF4D4D4D,
-//                 size: 20,
-//                 fontWeight: FontWeight.w500,
-//               ),
-//               const Texts(
-//                 textAlign: TextAlign.center,
-//                 text: "Reconnect with your matches and explore\nexciting new connections.",
-//                 colorHexValue: 0xFF333333,
-//                 size: 12,
-//                 fontWeight: FontWeight.w300,
-//               ),
-//               const SizedBox(height: 30),
-//               const CustomInputField(
-//                 prefixIcon: Icons.email_outlined,
-//                 label: "Email",
-//                 hintText: "Enter your full name",
-//               ),
-//               const CustomInputField(
-//                 label: "Password",
-//                 hintText: "● ● ● ● ● ● ● ●",
-//                 prefixIcon: Icons.lock_open,
-//                 isPassword: true,
-//                 suffixIcon: Icon(Icons.visibility_outlined, color: Color(0xFF787878)),
-//               ),
-//               Row(
-//                 children: [
-//                   Checkbox(
-//                     side: BorderSide(
-//                       width: 0.5,
-//                       color: Color(0xFF808080),
-//                     ),
-//                     onChanged: (value) {
-//                     }, value: true,),
-//                   Texts(text: "Save Login Info",
-//                     size: 12,
-//                     fontWeight: FontWeight.w500,
-//                     colorHexValue: 0xFF808080,),
-//                   const Spacer(),
-//                   TxtButton(
-//                     fontWeight: FontWeight.w500,
-//                     text: "Forget Password?",
-//                     sizeTxt: 12,
-//                     colorHex: 0xFF808080,
-//                     onTap: (){
-//                       Navigator.push(context,
-//                           MaterialPageRoute(builder: (context) => ForgetPassword(),));
-//                     },)
-//                 ],
-//               ),
-//               const SizedBox(height: 30),
-//               SizedBox(
-//                 width: double.infinity,
-//                 height: 55,
-//                 child: Buttons(
-//                   text: 'Login',
-//                   hexValue: 0xFFFFFFFF,
-//                   onTap: () {
-//                     Navigator.pushReplacement(
-//                         context, MaterialPageRoute(builder: (context) => QuestionnaireScreen(),));
-//                   },
-//                   gradient: const LinearGradient(
-//                     colors: [Color(0xFF77153C),
-//                       Color(0xFFDD276F)],
-//                   ),
-//                 ),
-//               ),
-//               const SizedBox(height: 30),
-//               Row(
-//                 children: [
-//                   const Expanded(
-//                     child: Images(
-//                       imageStr: "assets/images/left_polygon.svg",
-//                     ),
-//                   ),
-//                   Padding(
-//                     padding: const EdgeInsets.symmetric(horizontal: 10),
-//                     child: Texts(
-//                         text: "Or Login with",
-//                         colorHexValue: 0xFF000000,
-//                         size: 12,
-//                         fontWeight: FontWeight.w300),
-//                   ),
-//                   const Expanded(
-//                     child: Images(
-//                       imageStr: 'assets/images/right_polygon.svg',
-//                     ),
-//                   ),
-//                 ],
-//               ),
-//               const SizedBox(height: 30),
-//               // Social Icons
-//               Row(
-//                 mainAxisAlignment: MainAxisAlignment.center,
-//                 children: [
-//                   Images(imageStr: "assets/images/apple_img.png",
-//                       height: 42, width: 42),
-//                   const SizedBox(width: 17),
-//                   Images(
-//                       imageStr: "assets/images/google_img.png",
-//                       height: 42, width: 42
-//                   ),
-//                 ],
-//               ),
-//               const SizedBox(height: 80),
-//               // Footer
-//               Row(
-//                 mainAxisAlignment: MainAxisAlignment.center,
-//                 children: [
-//                   const Text("Don't have an account? ", style: TextStyle(color: Colors.grey)),
-//                   GestureDetector(
-//                     onTap: () {},
-//                     child: const Text(
-//                       "Sign Up",
-//                       style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black),
-//                     ),
-//                   ),
-//                 ],
-//               ),
-//               const SizedBox(height: 20),
-//             ],
-//           ),
-//         ),
-//       ),
-//     );
-//
-//   }
-// }

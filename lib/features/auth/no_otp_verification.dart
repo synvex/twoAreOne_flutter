@@ -143,10 +143,6 @@ class _NoOtpVerificationState extends State<NoOtpVerification> {
           child: SingleChildScrollView(
             child: Column(
               children: [
-                Align(
-                  alignment: Alignment.centerLeft,
-                  child: Back_Button(onTap: () => Navigator.pop(context)),
-                ),
                 const SizedBox(height: 20),
                 Containers(
                   hexValue: 0xFF77153C,
@@ -164,9 +160,10 @@ class _NoOtpVerificationState extends State<NoOtpVerification> {
                       const SizedBox(height: 15),
                       const Texts(text: "OTP VERIFICATION", size: 24, fontWeight: FontWeight.w600),
                       const SizedBox(height: 15),
-                      const Texts(text: "We've sent a 6 digit OTP to your", colorHexValue: 0xFF727272, size: 13, fontWeight: FontWeight.w500),
+                      const Texts(text: "We've sent a 6 digit OTP to your",
+                          colorHexValue: 0xFF727272, size: 13, fontWeight: FontWeight.w500),
                       Texts(text: widget.phoneNumber, colorHexValue: 0xFF000000, size: 13, fontWeight: FontWeight.w500),
-                      const Texts(text: "Enter the code below to confirm that it's really you", colorHexValue: 0xFF727272, size: 13, fontWeight: FontWeight.w500),
+                      const Texts(edgeInsets:EdgeInsets.only(top: 3), text: "Enter the code below to confirm that it's really you", colorHexValue: 0xFF727272, size: 13, fontWeight: FontWeight.w500),
                       const SizedBox(height: 40),
                       CircleField(controller: _otpController),
                       const SizedBox(height: 25),
