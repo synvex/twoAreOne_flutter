@@ -1,18 +1,19 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:two_are_one/services/Api_Helper/api_manager.dart';
-import 'package:two_are_one/services/home_service.dart';
-import 'features/Bottom_Nav_Bar_Screens/custom_nav_bar.dart';
-import 'features/Screens/edit_profile_screen.dart';
-import 'features/auth/login.dart';
-import 'features/home/profile_details_screen.dart';
-import 'features/main_screens/main_screen.dart';
-import 'features/main_screens/profile_setup_screen.dart';
-import 'features/main_screens/question_screen.dart';
-import 'features/onboarding.dart';
+import 'package:two_are_one/data/services/Api_Helper/api_manager.dart';
+import 'package:two_are_one/data/services/home_service.dart';
+import 'package:two_are_one/ui/views/auth/login.dart';
+import 'package:two_are_one/ui/views/bottom_nav/custom_nav_bar.dart';
+import 'package:two_are_one/ui/views/home/profile_details_screen.dart';
+import 'package:two_are_one/ui/views/main/main_screen.dart';
+import 'package:two_are_one/ui/views/main/profile_setup_screen.dart';
+import 'package:two_are_one/ui/views/main/question_screen.dart';
+import 'package:two_are_one/ui/views/onboarding/onboarding.dart';
+import 'package:two_are_one/ui/views/profile/edit_profile_screen.dart';
+
+import 'data/models/user_profile_model.dart';
 import 'firebase_options.dart';
-import 'models/user_profile_model.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();

@@ -1,0 +1,264 @@
+import 'dart:async';
+import 'dart:io';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:two_are_one/core/back_button.dart';
+import 'package:two_are_one/core/image.dart';
+import 'package:two_are_one/ui/views/auth/failed.dart';
+import 'package:two_are_one/ui/views/auth/no_otp_verification.dart';
+import 'package:two_are_one/data/services/auth_service.dart';
+import 'package:two_are_one/core/buttons.dart';
+import 'package:two_are_one/core/textfield.dart';
+import 'package:two_are_one/core/texts.dart';
+
+class NoVerification extends StatefulWidget {
+  const NoVerification({super.key});
+
+  @override
+  State<NoVerification> createState() => _NoVerificationState();
+}
+
+class _NoVerificationState extends State<NoVerification> {
+  final TextEditingController _phoneController = TextEditingController();
+  final AuthService _authService = AuthService();
+  bool _isLoading = false;
+  String _selectedCountryCode = "+92";
+  String _selectedCountryName = "PK";
+  String? _errorMessage;
+
+  void _verifyPhoneNo() async {
+
+    // 1. Sanitize Input
+    String inputDigits = _phoneController.text.replaceAll(RegExp(r'\D'), '');
+    String selectedCodeDigits = _selectedCountryCode.replaceAll(RegExp(r'\D'), '');
+    String localNumber = inputDigits;
+
+    // Handle double-prefixing
+    if (inputDigits.startsWith(selectedCodeDigits) &&
+        inputDigits.length > selectedCodeDigits.length) {
+      localNumber = inputDigits.substring(selectedCodeDigits.length);
+    }
+
+    // Strip leading zeros
+    if (localNumber.startsWith('0')) {
+      localNumber = localNumber.substring(1);
+    }
+
+    // Validation
+    if (localNumber.length < 9 || localNumber.length > 11) {
+      setState(() => _errorMessage = "Please enter a valid phone number");
+      return;
+    }
+
+    final phoneNoWithCode = "$_selectedCountryCode$localNumber";
+    setState(() {
+      _isLoading = true;
+      _errorMessage = null;
+    });
+
+    try {
+      // Step A: Check database (Matches RN's ApiManager.fetch)
+      final result = await _authService.checkPhoneExists(
+          phoneNo: phoneNoWithCode);
+
+      if (!mounted) return;
+
+      if (result['success'] == true) {
+        // Phone is available -> Start Firebase (Matches RN's onApiResponse)
+        _startFirebaseOTP(phoneNoWithCode);
+      } else {
+        // Phone exists or other error (Matches RN's onApiError)
+        setState(() => _isLoading = false);
+        String errorMsg = result['error']?.toString() ?? "";
+        if (errorMsg.toLowerCase().contains(
+            "already exists") || errorMsg.contains("linked")) {
+          _showResultPopup(phoneNoWithCode);
+        }else if (errorMsg =="no_internet") {
+          _showError("No internet connection. Please check your network and try again.");
+        } else if (errorMsg =="timeout") {
+          _showError("Server is taking too long. Please try again.");
+        } else if (errorMsg =="something_went_wrong") {
+          _showError("Something went wrong. Please try again.");
+        } else {
+          _showError(
+              errorMsg.isEmpty ? "Verification check failed" : errorMsg);
+        }
+      }
+    } on SocketException {
+      if (!mounted) return;
+      setState(() => _isLoading = false);
+      _showError("No internet connection. Please check your network and try again.");
+    } on TimeoutException {
+      if (!mounted) return;
+      setState(() => _isLoading = false);
+      _showError("Server is taking too long. Please try again.");
+    } catch (e) {
+      if (!mounted) return;
+      setState(() => _isLoading = false);
+      _showError("Something went wrong. Please try again.");
+    }
+  }
+
+  void _startFirebaseOTP(String phoneNumber) {
+    _authService.verifyPhoneNumber(
+      phoneNumber: phoneNumber,
+      onCodeSent: (verificationId) {
+        if (!mounted) return;
+        setState(() => _isLoading = false);
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => NoOtpVerification(
+              phoneNumber: phoneNumber,
+              verificationId: verificationId,
+            ),
+          ),
+        );
+      },
+      onVerificationFailed: (e) {
+        if (!mounted) return;
+        setState(() => _isLoading = false);
+        _showError(e.message ?? "Firebase could not send OTP");
+      },
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final double screenHeight = MediaQuery.of(context).size.height;
+    final bool isLandscape = MediaQuery.of(context).orientation == Orientation.landscape;
+    return Scaffold(
+      backgroundColor: Colors.white,
+      body: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+          child: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Back_Button(onTap: () => Navigator.of(context).pop()),
+                const SizedBox(height: 40),
+                const Texts(
+                    text: "Can we get your number?",
+                    size: 24, fontWeight: FontWeight.w600),
+                const SizedBox(height: 30),
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    GestureDetector(
+                      onTap: _showCountryPicker,
+                      child: Container(
+                        width: 90,
+                        padding: const EdgeInsets.only(bottom: 1),
+                        decoration: const BoxDecoration(
+                          border: Border(bottom: BorderSide(color: Colors.black, width: 1.5)),
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Texts(text: "$_selectedCountryName $_selectedCountryCode", size: 14, fontWeight: FontWeight.w600),
+                            const Icon(CupertinoIcons.arrowtriangle_down_fill, size: 12),
+                          ],
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 15),
+                    Expanded(child: TxtField(controller: _phoneController)),
+                  ],
+                ),
+                const SizedBox(height: 13),
+                if (_errorMessage != null)
+                  Texts(text: _errorMessage!, colorHexValue: 0xFFD32F2F, size: 13,
+                      fontWeight: FontWeight.w400),
+                const SizedBox(height: 13),
+                const Texts(
+                  text: "Enter your phone number. We’ll text you a code\nto verify it's really you and keep your journey safe.",
+                  colorHexValue: 0xFF000000, size: 13,
+                ),
+                SizedBox(height: isLandscape ? 20 :
+                screenHeight * 0.52),
+                 Buttons(
+                  text: "Next",
+                  onTap: _verifyPhoneNo,
+                  isLoading: _isLoading,
+                  gradient: const LinearGradient(colors: [Color(0xFF77153C), Color(0xFFDD276F)]),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  void _showResultPopup(String phoneNumber) {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) {
+        bool isLandscape = MediaQuery.of(context).orientation == Orientation.landscape;
+        return AlertDialog(
+          backgroundColor: Colors.white,
+          surfaceTintColor: Colors.white,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+          content: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Images(imageStr: "assets/svg_images/error.svg"),
+                const SizedBox(height: 10),
+                const Texts(text: "Oops, Failed!",  colorHexValue: 0xFFdf605f,
+                    size: 22, fontWeight: FontWeight.bold),
+                const SizedBox(height: 15),
+                const Texts(
+                  textAlign: TextAlign.center,
+                  text: "This Number is already linked to another account. Please use a different phone number",
+                  size: 14, colorHexValue: 0xFF4D4D4D,
+                ),
+                const SizedBox(height: 25),
+                Buttons(
+                  height: 50,
+                  text: "Close",
+                  onTap: () => Navigator.pop(context),
+                  gradient: const LinearGradient(colors: [Color(0xFF77153C), Color(0xFFDD276F)]),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+  void _showCountryPicker() {
+    showModalBottomSheet(
+      context: context,
+      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
+      builder: (context) => Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          const Padding(padding: EdgeInsets.all(16.0), child: Texts(text: "Select Country")),
+          ListTile(
+            leading: const Text("🇺🇸", style: TextStyle(fontSize: 24)),
+            title: const Text("United States (+1)"),
+            onTap: () {
+              setState(() { _selectedCountryCode = "+1"; _selectedCountryName = "US"; });
+              Navigator.pop(context);
+            },
+          ),
+          ListTile(
+            leading: const Text("🇵🇰", style: TextStyle(fontSize: 24)),
+            title: const Text("Pakistan (+92)"),
+            onTap: () {
+              setState(() { _selectedCountryCode = "+92"; _selectedCountryName = "PK"; });
+              Navigator.pop(context);
+            },
+          ),
+          const SizedBox(height: 20),
+        ],
+      ),
+    );
+  }
+  void _showError(String msg) {
+    setState(() => _errorMessage = msg);
+  }
+}
