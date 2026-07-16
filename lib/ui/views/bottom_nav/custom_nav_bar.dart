@@ -6,7 +6,7 @@ import 'favourite_screen.dart';
 import 'home_screen.dart';
 
 const double _kCurveDepth = 90.0;
-const double _kBarHeight  = 73.0;
+const double _kBarHeight  = 100.0;
 
 class MainBarScreen extends StatefulWidget {
   final int initialIndex; // agar kisi screen se direct tab open karna ho
@@ -50,7 +50,7 @@ class _MainBarScreenState extends State<MainBarScreen> {
           // ── Navbar bilkul bottom pe overlay hoti hai ──────────────────
           // Exactly like RN: position: 'absolute', bottom: 0
           Positioned(
-            bottom: -25,
+            bottom: 0,
             left: 0,
             right: 0,
             child: CustomBottomNavBar(

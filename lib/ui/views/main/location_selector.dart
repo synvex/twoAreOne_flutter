@@ -7,6 +7,7 @@ import 'package:http/http.dart' as http;
 // import 'package:two_are_one/models/location_data.dart';
 
 import 'package:two_are_one/core/containers.dart';
+import 'package:two_are_one/core/image.dart';
 import 'package:two_are_one/core/textfield.dart';
 import 'package:two_are_one/core/texts.dart';
 import 'package:two_are_one/data/models/location_data.dart';
@@ -148,9 +149,14 @@ class _LocationSelectorFieldState extends State<LocationSelectorField> {
             label: widget.labels,
             controller: _controller,
             onChanged: _onSearchChanged,
-            imgHeight: 10,
-            imgWidth: 10,
-            prefixImg: 'assets/svg_images/location_detail_screen.svg',
+            prefixImg: Padding(
+              padding: const EdgeInsets.only(left: 8.0),
+              child: Images(
+                imageStr: "assets/svg_images/locationImg.svg",
+
+                height: 20,width: 20,
+                ),
+            ),
              hintText: 'Search',
           ),
         // 3. Suggestions List
@@ -164,7 +170,8 @@ class _LocationSelectorFieldState extends State<LocationSelectorField> {
                 blurRadius: 10,
                 offset: const Offset(0, 5),
               )
-            ], hexValue: 0xFFFFFFFF,
+            ],
+            hexValue: 0xFFFFFFFF,
             child: ListView.separated(
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),

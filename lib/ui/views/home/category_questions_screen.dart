@@ -18,10 +18,6 @@ class CategoryQuestionsScreen extends StatefulWidget {
   final int categoryId;
   final String categoryName;
   final int userId;
-
-  /// true only when viewing/editing your OWN answers (mirrors RN's
-  /// `route.params.isEdit`). ProfileDetailsScreen (viewing someone else's
-  /// profile) should always pass `false` — this hides the "Change" button.
   final bool editable;
 
   const CategoryQuestionsScreen({

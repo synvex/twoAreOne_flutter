@@ -391,8 +391,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       hexValue: 0x00000000,
                       iconImg: "assets/svg_images/Profile/accountSetting.svg",
                       label: "Account settings",
-                      onTap: () => TopToast.show(context,
-                          title: "Coming soon", type: ToastType.info),
+                      onTap: () => Navigator.pushNamed(
+                          context, '/settings_screen'),
                     ),
                     _menuItem(
                       iconImg: "assets/svg_images/Profile/settingHeart.svg",

@@ -8,9 +8,7 @@ class CustomInputField extends StatefulWidget {
   final String hintText;
   final IconData? prefixIcon;
   final Widget? suffixIcon;
-  final double? imgHeight;
-  final double? imgWidth;
-  final String? prefixImg;
+  final Widget? prefixImg;
   final bool isPassword;
   final int? borderColor;
   final int? fillColor;
@@ -26,7 +24,9 @@ class CustomInputField extends StatefulWidget {
     this.prefixIcon,
     this.suffixIcon,
     this.isPassword= false, this.fillColor,
-    this.borderColor, this.controller, this.textInputType, this.height, this.onChanged, this.onTap, this.textColor, this.prefixImg, this.imgHeight, this.imgWidth,
+    this.borderColor, this.controller, this.textInputType,
+    this.height, this.onChanged, this.onTap, this.textColor,
+    this.prefixImg,
   });
 
   @override
@@ -57,7 +57,10 @@ class _CustomInputFieldState extends State<CustomInputField> {
             color: Color( 0xFF787878)
           ),
           decoration: InputDecoration(
-            iconColor: Color(0xFF787878),
+              prefixIconConstraints: const BoxConstraints(
+                minWidth: 0,
+                minHeight: 0,
+              ),            iconColor: Color(0xFF787878),
               prefixIconColor: Color(0xFF787878),
               isDense: true,
             label: widget.label != null ? Texts(
@@ -65,18 +68,9 @@ class _CustomInputFieldState extends State<CustomInputField> {
             hintText: widget.hintText,
             hintStyle: TextStyle(
                 color: Color(widget.textColor ?? 0xFF787878), fontSize: 16),
-              prefixIcon: widget.prefixImg != null    ?
-              SizedBox(
-                height: 14,
-                width: 14,
-                child: Images(
-                    imageStr: widget.prefixImg!,
-                    color: Colors.grey,
-                    height: widget.imgHeight ?? 20, width: widget.imgWidth ?? 20
-                ),
-              )
-                  : (widget.prefixIcon != null ?
-              Icon(widget.prefixIcon) : null),
+              prefixIcon: Padding( padding: EdgeInsets.only(left: 10), child:widget.prefixImg
+                  ?? (widget.prefixIcon != null ?
+              Icon(widget.prefixIcon) : null),),
               suffixIcon: widget.suffixIcon != null
                   ? InkWell(
                 borderRadius: BorderRadius.circular(30),

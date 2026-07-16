@@ -28,18 +28,14 @@
 //    reproduced exactly.
 
 import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:two_are_one/core/image.dart';
-import 'package:two_are_one/core/my_icons.dart';
 import 'package:two_are_one/ui/views/bottom_nav/profile_screen.dart';
 import 'package:video_player/video_player.dart';
-
 import 'package:two_are_one/core/back_button.dart';
 import 'package:two_are_one/core/buttons.dart';
-import 'package:two_are_one/core/containers.dart';
 import 'package:two_are_one/core/texts.dart';
 import 'package:two_are_one/core/top_toast.dart';
 import 'package:two_are_one/data/models/location_data.dart';
@@ -54,7 +50,6 @@ const Color _kGradientStart = Color(0xFFB06A82);
 const Color _kGradientEnd = Color(0xFF84A2D4);
 const Color _kMehroon = Color(0xFF77153C);
 
-// updated design. Purely cosmetic — no business logic lives here.
 const Color _kCardBorder = Color(0xFFE3E3E3);
 const Color _kFieldBorder = Color(0xFFDCDCDC);
 const Color _kFieldText = Color(0xFF9B9B9B);
@@ -119,9 +114,7 @@ class _EditProfileScreenState extends State<EditProfileScreen>
   String _nameError = '';
   String _workError = '';
   String _bioError = '';
-
   // ── dropdown option lists — mirrors RN's global/constants.js exactly ────
-
   static const List<_DropdownOption> _genderOptions = [
     _DropdownOption('Male', 'male'),
     _DropdownOption('Female', 'female'),
@@ -233,9 +226,6 @@ class _EditProfileScreenState extends State<EditProfileScreen>
     if (path == null || path.isEmpty) return '';
     return path.startsWith('http') ? path : '$kEditProfileUploadBase$path';
   }
-
-  // ── permissions (RN: requestCameraPermission) ───────────────────────────
-
   Future<bool> _requestCameraPermission() async {
     final status = await Permission.camera.status;
     if (status.isGranted) return true;
@@ -324,9 +314,6 @@ class _EditProfileScreenState extends State<EditProfileScreen>
     );
   }
 
-  // ── additional images (RN: handleAddImages / handleUpdateImage / ───────
-  // handleRemoveImage) ─────────────────────────────────────────────────────
-
   Future<void> _addImage(File file) async {
     setState(() => _imageEntries.add(
       _ImageEntry(localFile: file, uploading: true),
@@ -400,8 +387,6 @@ class _EditProfileScreenState extends State<EditProfileScreen>
       },
     );
   }
-
-  // ── video (RN: handleAddVideo / handleUpdateVideo / handleRemoveVideo) ──
 
   Future<void> _addVideo(File file) async {
     setState(() {
@@ -534,26 +519,36 @@ class _EditProfileScreenState extends State<EditProfileScreen>
       ),
     );
   }
-  // ── validation + save (RN: UploadProfileButton.validateInput / onPress) ─
 
   bool _validate() {
     final nameOk = RegExp(r'^[A-Za-z\s]+$').hasMatch(_nameController.text.trim());
     final workOk =
-    RegExp(r"^[a-zA-Z0-9\s,.'-]+$").hasMatch(_workController.text);
+    RegExp(
+
+        // r'^[\s\S]*$'
+        r"^[a-zA-Z0-9\s,.'-]+$"
+    ).hasMatch(_workController.text);
+    if ((_pickedLocation?.state ?? _user?.state ?? '').isEmpty) {
+      TopToast.show(context, title: "Error", message: "Please select a location with a valid state");
+      return false;
+    }
     final bioOk = RegExp(r"^[a-zA-Z0-9\s,.'-]+$").hasMatch(_bioController.text);
+    // final bioOk = RegExp(r'^[\s\S]*$').hasMatch(_bioController.text);
 
     setState(() {
       _nameError = nameOk ? '' : "Name can only contain letters and spaces";
       _workError = workOk ? '' : "Work must not contain special characters";
       _bioError = bioOk ? '' : "Bio must not contain special characters";
     });
+    debugPrint("nameOk: $nameOk, workOk: $workOk, bioOk: $bioOk");
     return nameOk && workOk && bioOk;
-  }
 
+  }
   Future<void> _onUpdate() async {
     if (!_validate()) return;
 
     setState(() => _saving = true);
+
     final payload = {
       "bio": _bioController.text,
       "full_name": _nameController.text,
@@ -567,11 +562,16 @@ class _EditProfileScreenState extends State<EditProfileScreen>
       "work": _workController.text,
     };
 
+    print("Payload: $payload");
     final res = await _profileService.updateUserProfile(payload);
+    debugPrint("Response: $res");
     if (!mounted) return;
-    setState(() => _saving = false);
 
     if (res['success'] == true) {
+      await _loadUser();
+      if (!mounted) return;
+
+      setState(() => _saving = false);
       TopToast.show(
         context,
         title: "Success",
@@ -579,15 +579,56 @@ class _EditProfileScreenState extends State<EditProfileScreen>
         type: ToastType.success,
       );
     } else {
+      setState(() => _saving = false);
       TopToast.show(
         context,
         title: "Error",
-        message:
-        res['error']?.toString() ?? "Something went wrong while uploading",
+        message: res['error']?.toString() ??
+            "Something went wrong while uploading",
         type: ToastType.error,
       );
     }
   }
+  //
+  // Future<void> _onUpdate() async {
+  //   if (!_validate()) return;
+  //
+  //   setState(() => _saving = true);
+  //   final payload = {
+  //     "bio": _bioController.text,
+  //     "full_name": _nameController.text,
+  //     "country": _pickedLocation?.country ?? _user?.country ?? '',
+  //     "state": _pickedLocation?.state ?? _user?.state ?? '',
+  //     "city": _pickedLocation?.city ?? _user?.city ?? '',
+  //     "gender": _selectedGender,
+  //     "height": _selectedHeight,
+  //     "age": _selectedAge,
+  //     "weight": _selectedWeight,
+  //     "work": _workController.text,
+  //   };
+  //   print("Payload: $payload");
+  //   final res = await _profileService.updateUserProfile(
+  //       payload);
+  //   debugPrint("Response: $res");
+  //   if (!mounted) return;
+  //   setState(() => _saving = false);
+  //   if (res['success'] == true) {
+  //     TopToast.show(
+  //       context,
+  //       title: "Success",
+  //       message: "User Information Updated Successfully",
+  //       type: ToastType.success,
+  //     );
+  //   } else {
+  //     TopToast.show(
+  //       context,
+  //       title: "Error",
+  //       message:
+  //       res['error']?.toString() ?? "Something went wrong while uploading",
+  //       type: ToastType.error,
+  //     );
+  //   }
+  // }
 
   void _onPressCategory(dynamic category) {
     final userId = _user?.id ?? 0;
@@ -601,7 +642,6 @@ class _EditProfileScreenState extends State<EditProfileScreen>
     ));
   }
 
-  // ── UI ───────────────────────────────────────────────────────────────────
   @override
   Widget build(BuildContext context) {
     if (_loadingUser) {
@@ -821,6 +861,7 @@ class _EditProfileScreenState extends State<EditProfileScreen>
       ),
     );
   }
+
   Widget _buildHeader() {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
@@ -1217,7 +1258,6 @@ class _EditProfileScreenState extends State<EditProfileScreen>
       ),
     );
   }
-
   Widget _buildQuestionsSection() {
     final categories = _user?.categories ?? [];
     if (categories.isEmpty) return const SizedBox.shrink();

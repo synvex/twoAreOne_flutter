@@ -3,6 +3,9 @@ import 'package:flutter/material.dart';
 
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../../../core/Error/api_error.dart';
+import '../../end_points.dart';
+
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
 class Api {
@@ -237,5 +240,110 @@ class ApiManager {
       _sessionDialogShowing = false;
     });
 
+  }
+}
+
+class Api_Manager {
+  Api_Manager._internal() {
+    _dio = Dio(
+      BaseOptions(
+        baseUrl: _baseUrl,
+        connectTimeout: const Duration(seconds: 30),
+        receiveTimeout: const Duration(seconds: 30),
+        headers: {'Content-Type': 'application/json'},
+      ),
+    );
+  }
+
+  static final Api_Manager instance = Api_Manager._internal();
+
+  final String _baseUrl = 'https://www.twoareone.love/api';
+
+  late final Dio _dio;
+
+  void setAuthToken(String token) {
+    _dio.options.headers['Authorization'] = 'Bearer $token';
+    _dio.options.headers['x-api-key'] = token;
+  }
+  /// Clears auth headers — call on logout.
+  void clearAuthToken() {
+    _dio.options.headers.remove('Authorization');
+    _dio.options.headers.remove('x-api-key');
+  }
+
+  /// Fires [request], resolving with the raw [Response] on success or
+  /// throwing a normalized [ApiError] on failure. Callers (ViewModels)
+  /// wrap this in their own try/catch instead of passing success/error
+  /// callbacks — this reads far more naturally with `async/await`.
+  Future<Response<dynamic>> fetch(
+      ApiRequest request, {
+        Map<String, dynamic>? parameters,
+      }) async {
+    try {
+      final response = await _dio.request(
+        request.url,
+        data: request.method != ApiMethod.get ? parameters : null,
+        queryParameters: request.method == ApiMethod.get ? parameters : null,
+        options: Options(
+          method: request.method.name.toUpperCase(),
+          headers: request.headers,
+        ),
+      );
+      return response;
+    } on DioException catch (error) {
+      throw await _mapError(error, request, parameters);
+    }
+  }
+
+  Future<ApiError> _mapError(
+      DioException error,
+      ApiRequest request,
+      Map<String, dynamic>? parameters,
+      ) async {
+    final status = error.response?.statusCode;
+    final message = error.response?.data is Map
+        ? error.response?.data['message']?.toString()
+        : null;
+
+    // ── Token expired / invalid ────────────────────────────────────────
+    if (status == 401 ||
+        message == 'Invalid or expired token' ||
+        message == 'Invalid or expired token.' ||
+        message == 'Unauthorized') {
+      await _handleSessionExpired();
+      return ApiError(
+        title: 'Session Expired',
+        message: 'Please login again to continue.',
+        response: error.response,
+      );
+    }
+
+    // ── Network error ──────────────────────────────────────────────────
+    if (error.type == DioExceptionType.connectionError ||
+        error.type == DioExceptionType.connectionTimeout) {
+      return ApiError(
+        title: 'No internet',
+        message: 'Please check your internet connection',
+        isNetworkError: true,
+        response: error.response,
+        retryAction: () => fetch(request, parameters: parameters),
+        alertActionButton: 'Retry',
+      );
+    }
+
+    // ── Everything else (validation errors, 500s, timeouts, etc.) ─────
+    return ApiError(
+      title: 'Server response',
+      message: message ?? error.message ?? 'Something went wrong',
+      response: error.response,
+      alertActionButton: 'Ok',
+    );
+  }
+
+  Future<void> _handleSessionExpired() async {
+    clearAuthToken();
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.clear();
+    // AuthSessionManager.instance.notifySessionExpired();
   }
 }

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:two_are_one/data/services/Api_Helper/api_manager.dart';
 import 'package:two_are_one/data/services/home_service.dart';
+import 'package:two_are_one/ui/views/Settings/settings_screen.dart';
 import 'package:two_are_one/ui/views/auth/login.dart';
 import 'package:two_are_one/ui/views/bottom_nav/custom_nav_bar.dart';
 import 'package:two_are_one/ui/views/home/profile_details_screen.dart';
@@ -10,8 +11,11 @@ import 'package:two_are_one/ui/views/main/main_screen.dart';
 import 'package:two_are_one/ui/views/main/profile_setup_screen.dart';
 import 'package:two_are_one/ui/views/main/question_screen.dart';
 import 'package:two_are_one/ui/views/onboarding/onboarding.dart';
+import 'package:two_are_one/ui/views/privacy.dart';
 import 'package:two_are_one/ui/views/profile/edit_profile_screen.dart';
+import 'package:two_are_one/ui/views/terms_and_conditions_screen.dart';
 
+import 'core/routes/routes.dart';
 import 'data/models/user_profile_model.dart';
 import 'firebase_options.dart';
 
@@ -34,9 +38,12 @@ class MyApp extends StatelessWidget {
         useMaterial3: true,
       ),
       routes: {
+        '/settings_screen': (context) => const SettingsScreen(),
         '/profile_detail': (context) => const ProfileDetailsScreen(),
         '/login': (context) => const LoginPage(),
         '/edit_profile': (context) => const EditProfileScreen(),
+        SettingsRoutes.privacyPolicy: (context) => const PrivacyPolicyScreen(),
+        SettingsRoutes.termsOfUse: (context) => const TermsAndConditionsScreen(),
       },
       home: FutureBuilder<Widget>(
         future: getInitialScreen(),

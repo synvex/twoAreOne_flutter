@@ -53,11 +53,7 @@ class UserFullProfile {
   final int totalInterested;
   final int totalBlocks;
 
-  // ── EditProfileScreen fields (RN: `user.bio`, `.gender`, `.age`, ... ) ──
   final String bio;
-  // These four store the *value* the dropdown sends to the API (e.g.
-  // "male", "5.6", "150"), exactly like RN's `user.gender / .height /
-  // .weight / .age` before they're re-selected in the dropdown.
   final String gender;
   final String age;
   final String height;
