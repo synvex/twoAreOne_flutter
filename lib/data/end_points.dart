@@ -1,8 +1,6 @@
-/// HTTP verbs supported by [ApiRequest]. Kept as an enum instead of a raw
-/// string so a typo like "gett" fails at compile time, not at runtime.
+import '../core/network/interested_api_request.dart';
+
 enum ApiMethod { get, post, put, delete, patch }
-
-
 class ApiRequest {
   final ApiMethod method;
   final String url;
@@ -20,12 +18,60 @@ class ApiEndpoints {
 
   static const ApiRequest privacyPolicy = ApiRequest(
     method: ApiMethod.get,
-    url: '/pages/privacy-policy', // adjust to match actual backend route
+    url: 'privacy-policy-tc.php?page_slug=privacy-policy',
   );
 
-  // Example of how the next screen (e.g. Terms & Conditions) plugs in:
   static const ApiRequest termsAndConditions = ApiRequest(
     method: ApiMethod.get,
-    url: '/pages/terms-and-conditions',
+    url: 'privacy-policy-tc.php?page_slug=terms-and-conditions',
+  );
+}
+class InterestedEndpoints {
+  InterestedEndpoints._();
+
+  static InterestedApiRequest getInterestedList(int page, int perPage) => InterestedApiRequest(
+    method: 'GET',
+    path: '/user/users-interest.php?page=$page&per_page=$perPage',
+    headers: const {
+      'Content-Type': 'application/json',
+      'Cache-Control': 'no-cache',
+      'Pragma': 'no-cache',
+    },
+  );
+
+  static InterestedApiRequest getYouInterestedList() => const InterestedApiRequest(
+    method: 'GET',
+    path: '/user/interested/you-int.php',
+    headers: {
+      'Content-Type': 'application/json',
+      'Cache-Control': 'no-cache',
+      'Pragma': 'no-cache',
+    },
+  );
+
+  /// RN: unInterestedMeUserService(id)
+  /// GET /user/interested/you-remove.php?viewer_id=
+  static InterestedApiRequest unInterestedMeUser(int viewerId) => InterestedApiRequest(
+    method: 'GET',
+    path: '/user/interested/you-remove.php?viewer_id=$viewerId',
+  );
+
+  /// RN: UserUnInterestedService (Home.js)
+  /// POST /user/user-uninterest.php  body: { profile_user_id }
+  static InterestedApiRequest userUnInterested() => const InterestedApiRequest(
+    method: 'POST',
+    path: '/user/user-uninterest.php',
+  );
+
+  /// RN: BlockUserService (Favorite.js)
+  /// POST /user/user-add-block-profile.php  body: { profile_user_id }
+  static InterestedApiRequest blockUser() => const InterestedApiRequest(
+    method: 'POST',
+    path: '/user/user-add-block-profile.php',
+    headers: {
+      'Content-Type': 'application/json',
+      'Cache-Control': 'no-cache',
+      'Pragma': 'no-cache',
+    },
   );
 }

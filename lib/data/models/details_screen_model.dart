@@ -57,8 +57,12 @@ class ProfileDetailModel {
         (json['user_details'] as Map?)?.cast<String, dynamic>() ?? {};
 
     final List<dynamic> rawImages = (json['images'] as List?) ?? [];
-    final dynamic rawVideo = json['videos'];
+    dynamic rawVideo = json['videos'] ?? json['video'] ?? json['user_video'];
+    if (rawVideo is List && rawVideo.isNotEmpty) rawVideo = rawVideo.first;
 
+    video: (rawVideo is Map)
+        ? (rawVideo['url'] ?? rawVideo['video'] ?? '').toString()
+        : rawVideo?.toString();
     final List<dynamic> rawCategories = (json['categories'] as List?) ?? [];
 
     return ProfileDetailModel(

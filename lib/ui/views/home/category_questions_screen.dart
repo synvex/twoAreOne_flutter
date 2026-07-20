@@ -43,15 +43,14 @@ class _CategoryQuestionsScreenState extends State<CategoryQuestionsScreen> {
     super.initState();
     _getData();
   }
-
   Future<void> _getData() async {
     setState(() => _loading = true);
-
+    debugPrint('CategoryQuestionsScreen loading category=${widget.categoryId} user=${widget.userId}');
     final res = await _service.getUserQuestionsByCategory(
       categoryId: widget.categoryId,
       userId: widget.userId,
     );
-
+    debugPrint('CategoryQuestionsScreen _getData() response: ${res}');
     if (!mounted) return;
 
     if (res['success'] == true && res['data'] is List) {
@@ -71,7 +70,6 @@ class _CategoryQuestionsScreenState extends State<CategoryQuestionsScreen> {
       );
     }
   }
-
   Future<void> _onChangePress(Map<String, dynamic> item) async {
     final changed = await Navigator.of(context).push<bool>(
       MaterialPageRoute(
@@ -83,11 +81,12 @@ class _CategoryQuestionsScreenState extends State<CategoryQuestionsScreen> {
     );
     // Mirrors RN's redux `refresh` trigger — re-fetch the list after a
     // successful edit so the shown answer text stays in sync.
+    debugPrint('EditSingleQuestionScreen returned: $changed');
     if (changed == true) _getData();
   }
-
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
@@ -124,6 +123,7 @@ class _CategoryQuestionsScreenState extends State<CategoryQuestionsScreen> {
                     final item = _questions[index];
                     final answerText =
                         item['user_answer_text']?.toString() ?? '';
+                    debugPrint('Rendering item $index answer=$answerText');
                     return _QuestionCard(
                       question: item['question']?.toString() ?? '',
                       answer:

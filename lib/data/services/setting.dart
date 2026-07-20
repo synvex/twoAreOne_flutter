@@ -47,10 +47,6 @@ class SettingsService {
     );
   }
 
-  /// POST user/update-email-otp-send.php (RN: `updateUserEmailOtpSentService`)
-  ///
-  /// RN payload (exact match):
-  ///   { old_email: user?.email, new_email: "", type: "old" }
   Future<Map<String, dynamic>> sendEmailChangeOtp({
     required String oldEmail,
   }) {

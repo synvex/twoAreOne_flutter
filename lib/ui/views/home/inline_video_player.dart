@@ -10,7 +10,6 @@ class InlineVideoPlayer extends StatefulWidget {
   @override
   State<InlineVideoPlayer> createState() => _InlineVideoPlayerState();
 }
-
 class _InlineVideoPlayerState extends State<InlineVideoPlayer> {
   VideoPlayerController? _controller;
   bool _initialized = false;
@@ -308,6 +307,7 @@ class _InlineVideoPlayerState extends State<InlineVideoPlayer> {
     );
   }
 }
+
 
 //
 // import 'dart:async';

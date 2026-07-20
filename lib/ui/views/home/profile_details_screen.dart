@@ -13,7 +13,6 @@ import 'package:flutter/material.dart';
 import 'package:two_are_one/core/image.dart';
 import 'package:two_are_one/core/texts.dart';
 import 'package:video_player/video_player.dart';
-
 import 'package:two_are_one/core/back_button.dart';
 import 'package:two_are_one/core/containers.dart';
 import 'package:two_are_one/core/top_toast.dart';

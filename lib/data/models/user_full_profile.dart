@@ -29,7 +29,6 @@ class ProfileMediaImage {
     );
   }
 }
-/// `user_video` (RN: `user.user_video`, `{ id, url }` or null).
 class ProfileMediaVideo {
   final int id;
   final String url;
@@ -94,7 +93,8 @@ class UserFullProfile {
     final List<dynamic> rawCategories = (json['categories'] as List?) ?? [];
 
     return UserFullProfile(
-      id: int.tryParse(json['id']?.toString() ?? '0') ?? 0,
+      // id: int.tryParse(json['id']?.toString() ?? '0') ?? 0,
+      id: int.tryParse((json['id'] ?? json['user_id'])?.toString() ?? '0') ?? 0,
       fullName: (json['full_name'] ?? json['name'])?.toString() ?? '',
       email: json['email']?.toString() ?? '',
       // RN stores just the raw filename/path here too (Upload_Images is

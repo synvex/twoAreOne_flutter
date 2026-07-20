@@ -21,7 +21,6 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-  // 1. Define Controllers and State
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final AuthService _authService = AuthService();
@@ -31,7 +30,6 @@ class _LoginPageState extends State<LoginPage> {
   bool _obscurePassword = true;
   String? _emailError;
   String? _passwordError;
-
   @override
   void initState() {
     // TODO: implement initState
@@ -379,72 +377,10 @@ class _LoginPageState extends State<LoginPage> {
                 ],
               ),
               const SizedBox(height: 60),
-              // Footer: Sign Up Link
-              // Row(
-              //   mainAxisAlignment: MainAxisAlignment.center,
-              //   children: [
-              //     const Text("Don't have an account? ", style: TextStyle(color: Colors.grey)),
-              //     GestureDetector(
-              //       onTap: () => Navigator.pushReplacement(
-              //         context,
-              //         MaterialPageRoute(builder: (context) => const MainScreen()),
-              //       ),
-              //       child: const Text(
-              //         "Sign Up",
-              //         style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black),
-              //       ),
-              //     ),
-              //   ],
-              // ),
-
             ],
           ),
         ),
       ),
     );
   }
-  void _showError(String? msgEmail, String? msgPassword) {
-    setState(() {
-    _passwordError = msgPassword;
-    _emailError = msgEmail;
-    });
-  }
-  void _showResultPopup(String phoneNumber) {
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (context) {
-        bool isLandscape = MediaQuery.of(context).orientation == Orientation.landscape;
-        return AlertDialog(
-          backgroundColor: Colors.white,
-          surfaceTintColor: Colors.white,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
-          content: SingleChildScrollView(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                const FailedWidget(),
-                const SizedBox(height: 10),
-                const Text("Oops, Failed!", style: TextStyle(color: Color(0xFFdf605f), fontSize: 22, fontWeight: FontWeight.bold)),
-                const SizedBox(height: 15),
-                const Texts(
-                  textAlign: TextAlign.center,
-                  text: "This Number is already linked to another account. Please use a different phone number",
-                  size: 14, colorHexValue: 0xFF4D4D4D,
-                ),
-                const SizedBox(height: 25),
-                Buttons(
-                  height: 50,
-                  text: "Close",
-                  onTap: () => Navigator.pop(context),
-                  gradient: const LinearGradient(colors: [Color(0xFF77153C), Color(0xFFDD276F)]),
-                ),
-              ],
-            ),
-          ),
-        );
-      },
-    );
-  }
-
 }

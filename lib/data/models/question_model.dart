@@ -3,7 +3,7 @@ class Question {
   final int categoryId;
   final String categoryName;
   final String text;
-  final int orderNo; // Added this to match RN
+  final int orderNo;
   final List<Answer> answers;
 
   Question({

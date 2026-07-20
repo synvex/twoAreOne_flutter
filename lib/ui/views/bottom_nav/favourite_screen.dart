@@ -1,7 +1,4 @@
 import 'package:flutter/material.dart';
-// import 'package:two_are_one/core/my_icons.dart';
-// import 'package:two_are_one/features/Bottom_Nav_Bar_Screens/customs/bottom_bar.dart';
-// import 'package:two_are_one/services/fav_services.dart';
 import 'package:two_are_one/core/containers.dart';
 import 'package:two_are_one/core/image.dart';
 import 'package:two_are_one/core/my_icons.dart';
@@ -461,41 +458,3 @@ class _FavouriteScreenState extends State<FavouriteScreen> {
   }
 
 }
-
-// class _MenuItem extends StatelessWidget {
-//   final Widget icon;
-//   final String label;
-//   final VoidCallback onPress;
-//   final bool isLoading;
-//
-//   const _MenuItem({
-//     required this.icon,
-//     required this.label,
-//     required this.onPress,
-//     this.isLoading = false,
-//   });
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     return InkWell(
-//       onTap: onPress,
-//       child: Padding(
-//         padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
-//         child: Row(
-//           children: [
-//             SizedBox(
-//               width: 24,
-//               height: 24,
-//               child: isLoading
-//                   ? const CircularProgressIndicator(strokeWidth: 2, color: Colors.black)
-//                   : icon,
-//             ),
-//             const SizedBox(width: 16),
-//             Text(label, style: const TextStyle(fontSize: 15)),
-//           ],
-//         ),
-//       ),
-//     );
-//   }
-//
-// }

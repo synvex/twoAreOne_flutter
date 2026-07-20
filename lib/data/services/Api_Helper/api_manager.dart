@@ -5,9 +5,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../core/Error/api_error.dart';
 import '../../end_points.dart';
-
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
-
 class Api {
   final String url;
   final String method;
@@ -18,9 +16,7 @@ class Api {
 
 class ApiManager {
   static const String baseUrl = "https://www.twoareone.love/api/";
-
   static bool _sessionDialogShowing = false;
-
   static final Dio _dio = Dio(BaseOptions(
     baseUrl: baseUrl,
     connectTimeout: const Duration(seconds: 30),
@@ -33,7 +29,6 @@ class ApiManager {
       'X-Requested-With': 'XMLHttpRequest',
     },
   ));
-
   static void setUpRequestToken(String token) {
     _dio.options.headers["Authorization"] = "Bearer $token";
     _dio.options.headers["x-api-key"] = token;
@@ -44,18 +39,15 @@ class ApiManager {
     final prefs = await SharedPreferences.getInstance();
     await prefs.clear();
   }
-
   static void removeRequestToken() {
     _dio.options.headers.remove("Authorization");
     _dio.options.headers.remove("x-api-key");
   }
-
   /// Normalizes a path so it never produces a double slash when combined
   /// with [baseUrl] (which already ends in "/"). Fixes endpoints that were
   /// written with a leading "/" (e.g. "/user/user-add-block-profile.php").
   static String _normalize(String url) =>
       url.startsWith('/') ? url.substring(1) : url;
-
   Future<Map<String, dynamic>> fetch(Api api, dynamic parameters) async {
     try {
       final Response response = await _dio.request(
@@ -71,7 +63,6 @@ class ApiManager {
       return _handleDioError(e, api, parameters);
     }
   }
-
   Future<Map<String, dynamic>> fetchMultipart(
       Api api, FormData formData) async
   {
@@ -132,7 +123,6 @@ class ApiManager {
       "error": res['message'],
     };
   }
-
   Map<String, dynamic> _handleDioError(
       DioException error, Api api, dynamic parameters)
   {
@@ -196,7 +186,6 @@ class ApiManager {
 
     logout();
   }
-
   static void _showSessionExpiredDialogStatic() {
     // Guard against multiple 401s firing at once (e.g. several parallel
     // requests all expiring together) which used to stack dialogs and
@@ -257,7 +246,7 @@ class Api_Manager {
 
   static final Api_Manager instance = Api_Manager._internal();
 
-  final String _baseUrl = 'https://www.twoareone.love/api';
+  final String _baseUrl = 'https://www.twoareone.love/api/';
 
   late final Dio _dio;
 
@@ -271,14 +260,11 @@ class Api_Manager {
     _dio.options.headers.remove('x-api-key');
   }
 //kkk
-  /// Fires [request], resolving with the raw [Response] on success or
-  /// throwing a normalized [ApiError] on failure. Callers (ViewModels)
-  /// wrap this in their own try/catch instead of passing success/error
-  /// callbacks — this reads far more naturally with `async/await`.
   Future<Response<dynamic>> fetch(
       ApiRequest request, {
         Map<String, dynamic>? parameters,
-      }) async {
+      }) async
+  {
     try {
       final response = await _dio.request(
         request.url,
@@ -299,7 +285,8 @@ class Api_Manager {
       DioException error,
       ApiRequest request,
       Map<String, dynamic>? parameters,
-      ) async {
+      ) async
+  {
     final status = error.response?.statusCode;
     final message = error.response?.data is Map
         ? error.response?.data['message']?.toString()
@@ -331,7 +318,6 @@ class Api_Manager {
       );
     }
 
-    // ── Everything else (validation errors, 500s, timeouts, etc.) ─────
     return ApiError(
       title: 'Server response',
       message: message ?? error.message ?? 'Something went wrong',

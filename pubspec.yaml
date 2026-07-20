@@ -56,16 +56,11 @@ dependencies:
   provider: ^6.1.5+1
   flutter_html: ^3.0.0
 
-
 dev_dependencies:
   flutter_test:
     sdk: flutter
 
-  # The "flutter_lints" package below contains a set of recommended lints to
-  # encourage good coding practices. The lint set provided by the package is
-  # activated in the `analysis_options.yaml` file located at the root of your
-  # package. See that file for information about deactivating specific lint
-  # rules and activating additional ones.
+
   flutter_lints: ^6.0.0
 
 # For information on the generic Dart part of this file, see the
@@ -102,13 +97,48 @@ flutter:
   # "family" key with the font family name, and a "fonts" key with a
   # list giving the asset and other descriptors for the font. For
   # example:
-  # fonts:
-  #   - family: Schyler
-  #     fonts:
-  #       - asset: fonts/Schyler-Regular.ttf
-  #       - asset: fonts/Schyler-Italic.ttf
-  #         style: italic
-  #   - family: Trajan Pro
+  fonts:
+    - family: Urbanist
+      fonts:
+        - asset: assets/fonts/Urbanist-Regular.ttf
+        - asset: assets/fonts/Urbanist-Medium.ttf
+        - asset: assets/fonts/Urbanist-SemiBold.ttf
+        - asset: assets/fonts/Urbanist-Bold.ttf
+        - asset: assets/fonts/Urbanist-Italic.ttf
+
+    - family: Inter
+      fonts:
+        - asset: assets/fonts/Inter-Regular.otf
+        - asset: assets/fonts/Inter-Medium.otf
+        - asset: assets/fonts/Inter-SemiBold.otf
+        - asset: assets/fonts/Inter-Bold.otf
+        - asset: assets/fonts/Inter-ExtraBold.otf
+        - asset: assets/fonts/Inter-Italic.otf
+
+    - family: Poppins
+      fonts:
+        - asset: assets/fonts/Poppins-Regular.ttf
+          weight: 400
+        - asset: assets/fonts/Poppins-Medium.ttf
+          weight: 500
+        - asset: assets/fonts/Poppins-SemiBold.ttf
+          weight: 600
+        - asset: assets/fonts/Poppins-Bold.ttf
+          weight: 700
+        - asset: assets/fonts/Poppins-Light.ttf
+          weight: 300
+        - asset: assets/fonts/Poppins-Italic.ttf
+          style: italic
+
+    - family: PoltawskiNowy
+      fonts:
+        - asset: assets/fonts/PoltawskiNowy-Regular.ttf
+        - asset: assets/fonts/PoltawskiNowy-Medium.ttf
+        - asset: assets/fonts/PoltawskiNowy-SemiBold.ttf
+        - asset: assets/fonts/PoltawskiNowy-Bold.ttf
+        - asset: assets/fonts/PoltawskiNowy-BoldItalic.ttf
+        - asset: assets/fonts/PoltawskiNowy-MediumItalic.ttf
+        - asset: assets/fonts/PoltawskiNowy-SemiBoldItalic.ttf  #   - family: Trajan Pro
   #     fonts:
   #       - asset: fonts/TrajanPro.ttf
   #       - asset: fonts/TrajanPro_Bold.ttf

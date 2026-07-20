@@ -75,15 +75,13 @@ class _EditSingleQuestionScreenState extends State<EditSingleQuestionScreen> {
 
   Future<void> _handleUpdate() async {
     if (_selectedAnswerId == null) {
-      setState(() =>
-      _answerError = "Select answer first to move to the next question");
+      setState(() => _answerError = "Select answer first to move to the next question");
       return;
     }
     setState(() {
       _saving = true;
       _answerError = null;
     });
-
     final res = await _service.updateUserQuestionAnswer(
       categoryId: widget.categoryId,
       questionId: _questionId,
@@ -95,6 +93,7 @@ class _EditSingleQuestionScreenState extends State<EditSingleQuestionScreen> {
 
     if (res['success'] == true) {
       _showResultDialog(
+
           res['message']?.toString() ?? 'Question Updated Successfully',
           success: true);
     } else {
@@ -103,9 +102,34 @@ class _EditSingleQuestionScreenState extends State<EditSingleQuestionScreen> {
     }
   }
 
+  // void _showResultDialog(String message, {required bool success}) {
+  //   showDialog(
+  //     context: context,
+  //     builder: (dialogContext) => AlertDialog(
+  //       backgroundColor: Colors.white,
+  //       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+  //       title: Text(success ? "Success" : "Oops, Failed!"),
+  //       content: Text(message),
+  //       actions: [
+  //         TextButton(
+  //           onPressed: () {
+  //             Navigator.of(dialogContext).pop(); // close dialog
+  //             if (success) {
+  //               Navigator.of(context).pop(true); // pop screen, ask list to refresh
+  //             }
+  //           },
+  //           child: const Text("OK",
+  //               style: TextStyle(
+  //                   color: _kMehroon, fontWeight: FontWeight.bold)),
+  //         ),
+  //       ],
+  //     ),
+  //   );
+  // }
   void _showResultDialog(String message, {required bool success}) {
     showDialog(
       context: context,
+      barrierDismissible: false, // Prevents closing by tapping outside
       builder: (dialogContext) => AlertDialog(
         backgroundColor: Colors.white,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
@@ -114,9 +138,10 @@ class _EditSingleQuestionScreenState extends State<EditSingleQuestionScreen> {
         actions: [
           TextButton(
             onPressed: () {
-              Navigator.of(dialogContext).pop(); // close dialog
+              Navigator.of(dialogContext).pop();
               if (success) {
-                Navigator.of(context).pop(true); // pop screen, ask list to refresh
+                if (!mounted) return;
+                Navigator.of(context).pop(true);
               }
             },
             child: const Text("OK",
@@ -257,6 +282,11 @@ class _EditSingleQuestionScreenState extends State<EditSingleQuestionScreen> {
                 height: 50,
                 child: ElevatedButton(
                   onPressed: _saving ? null : _handleUpdate,
+
+                  // {
+                  //   _saving ? null : _handleUpdate;
+                  //   _handleUpdate();
+                  // },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: _kMehroon,
                     shape:

@@ -397,8 +397,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     _menuItem(
                       iconImg: "assets/svg_images/Profile/settingHeart.svg",
                       label: "Interested User",
-                      onTap: () => TopToast.show(context,
-                          title: "Coming soon", type: ToastType.info),
+                      onTap: () => Navigator.pushNamed(context, '/interested_screen')
                     ),
                     _menuItem(
                       iconImg: "assets/svg_images/Profile/settingStar.svg",

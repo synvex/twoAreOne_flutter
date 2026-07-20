@@ -4,7 +4,7 @@ import 'package:two_are_one/core/image.dart';
 
 class Back_Button extends StatelessWidget {
   final VoidCallback onTap;
-  const Back_Button({super.key, required this.onTap});
+  const Back_Button( {super.key, required this.onTap});
 
   @override
   Widget build(BuildContext context) {
