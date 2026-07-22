@@ -3,9 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:two_are_one/core/constants/app_colors.dart';
 import 'package:two_are_one/core/constants/app_icons.dart';
-import 'package:two_are_one/core/widgets/back_button.dart';
+import 'package:two_are_one/data/services/chat_service.dart';
 
 /// Simple model for a chat message.
 /// type: 'text' or 'voice'
@@ -23,10 +24,36 @@ class _ChatMessage {
     required this.time,
     this.text,
   });
+
+  /// 🔧 Adjust these keys to match your real API's JSON field names
+  factory _ChatMessage.fromJson(
+    Map<String, dynamic> json, {
+    required int currentUserId,
+  }) {
+    final senderId = json['sender_id'] ?? json['from_id'];
+    return _ChatMessage(
+      type: json['type'] ?? 'text',
+      isMe: senderId != null && senderId.toString() == currentUserId.toString(),
+      text: json['message'] ?? json['text'] ?? '',
+      time: json['time'] ?? json['created_at'] ?? json['sent_at'] ?? '',
+    );
+  }
 }
 
 class ChatScreen extends StatefulWidget {
-  const ChatScreen({super.key});
+  const ChatScreen({
+    super.key,
+    required this.receiverId,
+    this.name = 'Ronda',
+    this.avatarUrl =
+        'https://thumbs.dreamstime.com/b/profile-beautiful-smiling-girl-6243612.jpg',
+    this.statusText = 'Online 45 mins ago',
+  });
+
+  final int receiverId;
+  final String name;
+  final String avatarUrl;
+  final String statusText;
 
   @override
   State<ChatScreen> createState() => _ChatScreenState();
@@ -35,30 +62,89 @@ class ChatScreen extends StatefulWidget {
 class _ChatScreenState extends State<ChatScreen> {
   final TextEditingController _messageController = TextEditingController();
 
-  final String _avatarUrl =
-      'https://thumbs.dreamstime.com/b/profile-beautiful-smiling-girl-6243612.jpg';
+  ChatService? _chatService;
+  int? _currentUserId;
 
-  final List<_ChatMessage> _messages = [
-    _ChatMessage(
-      type: 'text',
-      isMe: false,
-      text: "Hey Baby what's up?",
-      time: '12:52 Pm',
-    ),
-    _ChatMessage(
-      type: 'text',
-      isMe: true,
-      text: 'Great honey how about you?',
-      time: '1:00 Pm',
-    ),
-    _ChatMessage(
-      type: 'text',
-      isMe: false,
-      text: 'Everything is fine wil you be my boyfriend',
-      time: '1:25 Pm',
-    ),
-    _ChatMessage(type: 'voice', isMe: true, time: '13 min ago'),
-  ];
+  List<_ChatMessage> _messages = [];
+  bool _isLoading = true;
+  String? _errorMessage;
+  bool _isSending = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _init();
+  }
+
+  Future<void> _init() async {
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('auth_token');
+
+    // 🔧 `getInt` returns null if 'user_id' was ever stored as a String
+    // elsewhere in the app (e.g. prefs.setString('user_id', '123')).
+    // Fall back to reading it as a string and parsing it, so isMe
+    // comparisons don't silently break just because of a type mismatch.
+    _currentUserId =
+        prefs.getInt('user_id') ??
+        int.tryParse(prefs.getString('user_id') ?? '');
+
+    debugPrint('🔑 token: ${token != null ? "present" : "MISSING"}');
+    debugPrint('🔑 currentUserId: $_currentUserId');
+
+    if (token == null || token.isEmpty) {
+      // Calling authenticated endpoints without a token is a common reason
+      // "nothing loads" — surface this clearly instead of a generic error.
+      setState(() {
+        _isLoading = false;
+        _messages = [];
+        _errorMessage = 'Not logged in (no auth token found).';
+      });
+      return;
+    }
+
+    _chatService = ChatService(token: token);
+    await _fetchHistory();
+  }
+
+  Future<void> _fetchHistory() async {
+    if (_chatService == null) return;
+
+    setState(() {
+      _isLoading = true;
+      _errorMessage = null;
+    });
+
+    try {
+      final history = await _chatService!.fetchChatHistory(
+        receiverId: widget.receiverId,
+      );
+
+      debugPrint('📨 fetchChatHistory returned ${history.length} item(s)');
+
+      final parsed = history
+          .whereType<Map<String, dynamic>>()
+          .map(
+            (e) =>
+                _ChatMessage.fromJson(e, currentUserId: _currentUserId ?? -1),
+          )
+          .toList();
+
+      setState(() {
+        _messages = parsed;
+        _isLoading = false;
+      });
+    } catch (e) {
+      // Show the *real* error instead of a generic message — this is the
+      // single most useful thing for figuring out what's actually wrong
+      // (auth failure, wrong field names, network issue, etc). Check the
+      // console too: ChatService prints the raw JSON response above this.
+      debugPrint('❌ _fetchHistory error: $e');
+      setState(() {
+        _errorMessage = 'Failed to load chat: $e';
+        _isLoading = false;
+      });
+    }
+  }
 
   @override
   void dispose() {
@@ -66,15 +152,39 @@ class _ChatScreenState extends State<ChatScreen> {
     super.dispose();
   }
 
-  void _sendMessage() {
+  Future<void> _sendMessage() async {
     final text = _messageController.text.trim();
-    if (text.isEmpty) return;
+    if (text.isEmpty || _chatService == null || _isSending) return;
+
+    setState(() => _isSending = true);
+
+    // Optimistically add to UI first
+    final optimisticMessage = _ChatMessage(
+      type: 'text',
+      isMe: true,
+      text: text,
+      time: 'Now',
+    );
     setState(() {
-      _messages.add(
-        _ChatMessage(type: 'text', isMe: true, text: text, time: 'Now'),
-      );
+      _messages.add(optimisticMessage);
     });
     _messageController.clear();
+
+    try {
+      await _chatService!.sendMessage(
+        receiverId: widget.receiverId,
+        message: text,
+      );
+    } catch (e) {
+      debugPrint('❌ sendMessage error: $e');
+      if (mounted) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Failed to send message: $e')));
+      }
+    } finally {
+      if (mounted) setState(() => _isSending = false);
+    }
   }
 
   @override
@@ -102,7 +212,9 @@ class _ChatScreenState extends State<ChatScreen> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         GestureDetector(
-                          onTap: () => Navigator.pop(context),
+                          onTap: () {
+                            Navigator.pop(context);
+                          },
                           child: SvgPicture.asset(
                             AppIcons.backIcon,
                             colorFilter: ColorFilter.mode(
@@ -119,11 +231,16 @@ class _ChatScreenState extends State<ChatScreen> {
                             color: AppColors.background,
                           ),
                         ),
-                        SvgPicture.asset(
-                          AppIcons.vert_more,
-                          colorFilter: ColorFilter.mode(
-                            AppColors.background,
-                            BlendMode.srcIn,
+                        GestureDetector(
+                          onTap: () {
+                            _sendMessage();
+                          },
+                          child: SvgPicture.asset(
+                            AppIcons.vert_more,
+                            colorFilter: ColorFilter.mode(
+                              AppColors.background,
+                              BlendMode.srcIn,
+                            ),
                           ),
                         ),
                       ],
@@ -138,13 +255,13 @@ class _ChatScreenState extends State<ChatScreen> {
                             shape: BoxShape.circle,
                             color: Colors.white,
                             border: Border.all(
-                              color: AppColors.white, // border color
+                              color: AppColors.white,
                               width: 2,
                             ),
                           ),
                           child: ClipOval(
                             child: Image.network(
-                              _avatarUrl,
+                              widget.avatarUrl,
                               height: 60.h,
                               width: 60.w,
                               fit: BoxFit.cover,
@@ -164,7 +281,7 @@ class _ChatScreenState extends State<ChatScreen> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              'Ronda',
+                              widget.name,
                               style: GoogleFonts.roboto(
                                 fontSize: 18.sp,
                                 fontWeight: FontWeight.w500,
@@ -172,7 +289,7 @@ class _ChatScreenState extends State<ChatScreen> {
                               ),
                             ),
                             Text(
-                              'Online 45 mins ago',
+                              widget.statusText,
                               style: GoogleFonts.inter(
                                 fontSize: 11.sp,
                                 fontWeight: FontWeight.w400,
@@ -208,22 +325,56 @@ class _ChatScreenState extends State<ChatScreen> {
                   SizedBox(height: 20.h),
 
                   Expanded(
-                    child: ListView.builder(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: 16.w,
-                        vertical: 20.h,
-                      ),
-                      itemCount: _messages.length,
-                      itemBuilder: (context, index) {
-                        final msg = _messages[index];
-                        return Padding(
-                          padding: EdgeInsets.only(bottom: 22.h),
-                          child: msg.type == 'voice'
-                              ? _VoiceBubble(msg: msg)
-                              : _TextBubble(msg: msg, avatarUrl: _avatarUrl),
-                        );
-                      },
-                    ),
+                    child: _isLoading
+                        ? const Center(child: CircularProgressIndicator())
+                        : _errorMessage != null
+                        ? Center(
+                            child: Padding(
+                              padding: EdgeInsets.symmetric(horizontal: 24.w),
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Text(
+                                    _errorMessage!,
+                                    textAlign: TextAlign.center,
+                                    style: GoogleFonts.roboto(fontSize: 14),
+                                  ),
+                                  SizedBox(height: 12.h),
+                                  TextButton(
+                                    onPressed: _init,
+                                    child: const Text('Retry'),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          )
+                        : _messages.isEmpty
+                        ? Center(
+                            child: Text(
+                              'No chat available.',
+                              textAlign: TextAlign.center,
+                              style: GoogleFonts.roboto(fontSize: 14),
+                            ),
+                          )
+                        : ListView.builder(
+                            padding: EdgeInsets.symmetric(
+                              horizontal: 16.w,
+                              vertical: 20.h,
+                            ),
+                            itemCount: _messages.length,
+                            itemBuilder: (context, index) {
+                              final msg = _messages[index];
+                              return Padding(
+                                padding: EdgeInsets.only(bottom: 22.h),
+                                child: msg.type == 'voice'
+                                    ? _VoiceBubble(msg: msg)
+                                    : _TextBubble(
+                                        msg: msg,
+                                        avatarUrl: widget.avatarUrl,
+                                      ),
+                              );
+                            },
+                          ),
                   ),
                   _MessageInputBar(
                     controller: _messageController,
@@ -329,7 +480,6 @@ class _VoiceBubble extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Deterministic pseudo-random waveform bar heights.
     final heights = List.generate(24, (i) {
       final values = [8, 16, 22, 12, 26, 10, 18, 24, 14, 20, 9, 17];
       return values[i % values.length].toDouble();
@@ -468,10 +618,11 @@ class _MessageInputBar extends StatelessWidget {
                     horizontal: 10.w,
                     vertical: 10.0,
                   ),
-                  child: SvgPicture.asset('assets/svg_images/send_msg.svg'),
+                  child: GestureDetector(
+                    onTap: onSend,
+                    child: SvgPicture.asset('assets/svg_images/send_msg.svg'),
+                  ),
                 ),
-
-                // Icon(Icons.send_rounded, color: Colors.white, size: 18.sp),
               ),
             ),
           ],
