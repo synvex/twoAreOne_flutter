@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:two_are_one/core/widgets/image.dart';
 import 'package:two_are_one/features/views/bottom_nav/profile_screen.dart';
-import '../chat/chat_screen.dart';
+import '../chat/message_screen.dart';
 import 'favourite_screen.dart';
 import 'home_screen.dart';
 
@@ -21,7 +21,7 @@ class _MainBarScreenState extends State<MainBarScreen> {
   final List<Widget> _screens = const [
     HomeScreen(),
     FavouriteScreen(),
-    ChatScreen(),
+    MessageScreen(),
     ProfileScreen(),
   ];
 
@@ -38,6 +38,7 @@ class _MainBarScreenState extends State<MainBarScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       backgroundColor: Colors.white,
       // React Native ki tarah Stack + Positioned use karo
       body: Stack(

@@ -9,6 +9,7 @@ class AppColors {
   static const Color link = Color(0xFF007BFF);
   static const Color menuGray = Color(0xFF808080); // approximate RN 'gray'
   static const Color lightGray = Color(0xFFF0F0F0);
+  static const Color chatGradientSecondary = Color(0xffDD276F);
 
   AppColors._();
 
