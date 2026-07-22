@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:two_are_one/core/widgets/image.dart';
 import 'package:two_are_one/features/views/bottom_nav/profile_screen.dart';
-import 'chat_screen.dart';
+import '../chat/chat_screen.dart';
 import 'favourite_screen.dart';
 import 'home_screen.dart';
 
 const double _kCurveDepth = 90.0;
-const double _kBarHeight  = 100.0;
+const double _kBarHeight = 100.0;
 
 class MainBarScreen extends StatefulWidget {
   final int initialIndex; // agar kisi screen se direct tab open karna ho
@@ -43,10 +43,7 @@ class _MainBarScreenState extends State<MainBarScreen> {
       body: Stack(
         children: [
           // ── Screens full screen leti hain ─────────────────────────────
-          IndexedStack(
-            index: _selectedIndex,
-            children: _screens,
-          ),
+          IndexedStack(index: _selectedIndex, children: _screens),
           // ── Navbar bilkul bottom pe overlay hoti hai ──────────────────
           // Exactly like RN: position: 'absolute', bottom: 0
           Positioned(
@@ -63,6 +60,7 @@ class _MainBarScreenState extends State<MainBarScreen> {
     );
   }
 }
+
 class CustomBottomNavBar extends StatelessWidget {
   final int selectedIndex;
   final ValueChanged<int> onTabChanged;
@@ -85,12 +83,7 @@ class CustomBottomNavBar extends StatelessWidget {
     "assets/svg_images/Tabbar/chatTapped.svg",
     "assets/svg_images/Tabbar/Profile.svg",
   ];
-  static const List<String> _tabNames = [
-    "Home",
-    "Favorite",
-    "Chat",
-    "Profile",
-  ];
+  static const List<String> _tabNames = ["Home", "Favorite", "Chat", "Profile"];
 
   @override
   Widget build(BuildContext context) {
@@ -126,7 +119,7 @@ class CustomBottomNavBar extends StatelessWidget {
           ),
           // ── Layer 3: Tab items
           Positioned(
-            top: _kCurveDepth-10,
+            top: _kCurveDepth - 10,
             left: 0,
             // bottom: 10,
             right: 0,
@@ -139,7 +132,9 @@ class CustomBottomNavBar extends StatelessWidget {
                 return Padding(
                   padding: const EdgeInsets.only(bottom: 16),
                   child: _NavItem(
-                    imgStr: isSelected ? _selectedImgStr[index] : _imgStr[index],
+                    imgStr: isSelected
+                        ? _selectedImgStr[index]
+                        : _imgStr[index],
                     label: _tabNames[index],
                     isSelected: isSelected,
                     onTap: () => onTabChanged(index),
@@ -204,11 +199,7 @@ class _NavItem extends StatelessWidget {
                   // ── The SVG Icon ──
                   // Yahan humne koi color assign nahi kiya taake images ka
                   // apna gradient/color mutasir na ho.
-                  Images(
-                    imageStr: imgStr,
-                    height: 26,
-                    width: 26,
-                  ),
+                  Images(imageStr: imgStr, height: 26, width: 26),
                 ],
               ),
             ),
@@ -239,10 +230,7 @@ class _CurveClipper extends CustomClipper<Path> {
   Path getClip(Size size) {
     return Path()
       ..moveTo(0, curveDepth)
-      ..quadraticBezierTo(
-        size.width / 2, 0,
-        size.width, curveDepth,
-      )
+      ..quadraticBezierTo(size.width / 2, 0, size.width, curveDepth)
       ..lineTo(size.width, size.height)
       ..lineTo(0, size.height)
       ..close();
@@ -252,6 +240,7 @@ class _CurveClipper extends CustomClipper<Path> {
   bool shouldReclip(covariant _CurveClipper old) =>
       old.curveDepth != curveDepth || old.barHeight != barHeight;
 }
+
 class _ShadowPainter extends CustomPainter {
   final double curveDepth;
   final double barHeight;
@@ -279,4 +268,3 @@ class _ShadowPainter extends CustomPainter {
   bool shouldRepaint(covariant _ShadowPainter old) =>
       old.curveDepth != curveDepth || old.barHeight != barHeight;
 }
-

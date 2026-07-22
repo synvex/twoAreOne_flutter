@@ -8,6 +8,7 @@ class AppColors {
   static const Color mehroon = Color(0xFF77153C);
   static const Color link = Color(0xFF007BFF);
   static const Color menuGray = Color(0xFF808080); // approximate RN 'gray'
+  static const Color lightGray = Color(0xFFF0F0F0);
 
   AppColors._();
 
@@ -38,7 +39,7 @@ class AppColors {
   static const Color grey1 = Color(0xFFD9D9D9);
   static const Color grey2 = Color(0xFF757575);
   static const Color grey3 = Color(0xFF969696);
-// Skeleton shimmer specific (from InterestedUserScreen.js inline styles)
+  // Skeleton shimmer specific (from InterestedUserScreen.js inline styles)
   static const Color skeletonBase = Color(0xFFD4D4D4);
   static const Color skeletonCardBg = Color(0xFFF5F5F5);
 }
@@ -102,9 +103,9 @@ class AppTheme {
     brightness: Brightness.light,
     primaryColor: ThemeColors.primary,
     scaffoldBackgroundColor: ThemeColors.screenBackground,
-// backgroundColor: ThemeColors.white,
+    // backgroundColor: ThemeColors.white,
     cardColor: ThemeColors.white,
-// errorColor: ThemeColors.red,
+    // errorColor: ThemeColors.red,
     dividerColor: ThemeColors.sheetSeparator,
     splashColor: ThemeColors.mehroon.withOpacity(0.12),
     appBarTheme: const AppBarTheme(
@@ -176,9 +177,7 @@ class AppTheme {
       ),
     ),
     textButtonTheme: TextButtonThemeData(
-      style: TextButton.styleFrom(
-        foregroundColor: ThemeColors.mehroon,
-      ),
+      style: TextButton.styleFrom(foregroundColor: ThemeColors.mehroon),
     ),
     floatingActionButtonTheme: const FloatingActionButtonThemeData(
       backgroundColor: ThemeColors.primary,
