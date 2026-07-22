@@ -1,6 +1,6 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import '../constants/app_constants.dart';
+import 'package:two_are_one/core/constants/app_constants.dart';
 import 'interested_api_request.dart';
 
 /// Thrown by [InterestedApiClient.fetch] on any failure (network, non-2xx,

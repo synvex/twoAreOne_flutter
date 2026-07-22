@@ -10,13 +10,10 @@ import 'package:uuid/uuid.dart';
 import 'dart:io';
 
 import 'Api_Helper/api_manager.dart';
-
 class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final String baseUrl = 'https://www.twoareone.love/api';
-
   final ApiManager _api = ApiManager();
-
   Future<Map<String, dynamic>> checkPhoneExists({required String phoneNo}) async {
     try {
       final url = Uri.parse('$baseUrl/auth/verify-phone-no.php');
@@ -35,7 +32,6 @@ class AuthService {
       return _catchError(e);
     }
   }
-
   Future<void> verifyPhoneNumber({
     required String phoneNumber,
     required Function(String verificationId) onCodeSent,
@@ -58,7 +54,6 @@ class AuthService {
       timeout: const Duration(seconds: 120),
     );
   }
-
   Future<Map<String, dynamic>> signUp({
     required String fullName,
     required String email,
@@ -109,7 +104,6 @@ class AuthService {
       return _catchError(e);
     }
   }
-
   Future<Map<String, dynamic>> verifyEmailOtp({
     required String email,
     required String otp,
@@ -158,7 +152,6 @@ class AuthService {
       return _catchError(e);
     }
   }
-
   Future<Map<String, dynamic>> updateIntroduce({
     required String genderId,
     required String sexualityId,
@@ -192,7 +185,6 @@ class AuthService {
       return _catchError(e);
     }
   }
-
   Future<Map<String, dynamic>> checkEmailExists({required String email}) async {
     try {
       final url = Uri.parse('$baseUrl/auth/verify-email.php');
@@ -210,7 +202,6 @@ class AuthService {
       return _catchError(e);
     }
   }
-
   Future<Map<String, dynamic>> verifyEmailWithToken({
     required String otp,
     required String token,
@@ -233,7 +224,6 @@ class AuthService {
       return _catchError(e);
     }
   }
-
   Future<Map<String, dynamic>> resendEmailOtp({required String email}) async {
     try {
       final url = Uri.parse('$baseUrl/auth/resend-otp.php');
@@ -253,7 +243,6 @@ class AuthService {
       return _catchError(e);
     }
   }
-
   Future<Map<String, dynamic>> login({
     required String email,
     required String password,
@@ -279,7 +268,6 @@ class AuthService {
     }
     return res;
   }
-
   Future<Map<String, dynamic>> forgotPassword({required String email}) async {
     try {
       final url = Uri.parse('$baseUrl/auth/forgotpassword.php');
@@ -299,7 +287,6 @@ class AuthService {
       return _catchError(e);
     }
   }
-
   Future<Map<String, dynamic>> resetPassword({
     required String email,
     required String newPassword,
@@ -327,7 +314,6 @@ class AuthService {
       return _catchError(e);
     }
   }
-
   Future<Map<String, dynamic>> uploadFullProfile({
     required String height,
     required String weight,
@@ -395,13 +381,11 @@ class AuthService {
       formData,
     );
   }
-
   Map<String, dynamic> _catchError(Object e) {
     if (e is SocketException) return {'success': false, 'error': "no_internet"};
     if (e is TimeoutException) return {'success': false, 'error': "timeout"};
     return {'success': false, 'error': "something_went_wrong"};
   }
-
   Future<Map<String, String>> getDeviceInfo() async {
     final deviceInfo = DeviceInfoPlugin();
 

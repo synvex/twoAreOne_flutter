@@ -1,23 +1,25 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:two_are_one/data/services/Api_Helper/api_manager.dart';
 import 'package:two_are_one/data/services/home_service.dart';
-import 'package:two_are_one/ui/views/Interested/interrested_user_screen.dart';
-import 'package:two_are_one/ui/views/Settings/settings_screen.dart';
-import 'package:two_are_one/ui/views/auth/login.dart';
-import 'package:two_are_one/ui/views/bottom_nav/custom_nav_bar.dart';
-import 'package:two_are_one/ui/views/home/profile_details_screen.dart';
-import 'package:two_are_one/ui/views/main/main_screen.dart';
-import 'package:two_are_one/ui/views/main/profile_setup_screen.dart';
-import 'package:two_are_one/ui/views/main/question_screen.dart';
-import 'package:two_are_one/ui/views/onboarding/onboarding.dart';
-import 'package:two_are_one/ui/views/privacy.dart';
-import 'package:two_are_one/ui/views/profile/edit_profile_screen.dart';
-import 'package:two_are_one/ui/views/terms_and_conditions_screen.dart';
-
+import 'package:two_are_one/features/views/Interested/interrested_user_screen.dart';
+import 'package:two_are_one/features/views/Settings/settings_screen.dart';
+import 'package:two_are_one/features/views/auth/login.dart';
+import 'package:two_are_one/features/views/bottom_nav/custom_nav_bar.dart';
+import 'package:two_are_one/features/views/home/profile_details_screen.dart';
+import 'package:two_are_one/features/views/main/main_screen.dart';
+import 'package:two_are_one/features/views/main/profile_setup_screen.dart';
+import 'package:two_are_one/features/views/main/question_screen.dart';
+import 'package:two_are_one/features/views/profile/edit_profile_screen.dart';
 import 'core/routes/routes.dart';
 import 'data/models/user_profile_model.dart';
+import 'features/views/Blocked/blocked_screen.dart';
+import 'features/views/auth/onboarding.dart';
+import 'features/views/others/privacy.dart';
+import 'features/views/others/terms_and_conditions_screen.dart';
+import 'features/views/visted_screen.dart';
 import 'firebase_options.dart';
 
 void main() async {
@@ -30,32 +32,38 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Two Are One',
-      debugShowCheckedModeBanner: false,
-      navigatorKey: navigatorKey, // Global key so ApiManager can show dialogs/navigate
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-        useMaterial3: true,
-      ),
-      routes: {
-        '/settings_screen': (context) => const SettingsScreen(),
-        '/profile_detail': (context) => const ProfileDetailsScreen(),
-        '/login': (context) => const LoginPage(),
-        '/interested_screen': (context) => const InterestedUserScreen(
+    return ScreenUtilInit(
+      designSize: Size(390,1000),
+      minTextAdapt: true,
+      splitScreenMode: true,
+      child: MaterialApp(
+        title: 'Two Are One',
+        debugShowCheckedModeBanner: false,
+        navigatorKey: navigatorKey, // Global key so ApiManager can show dialogs/navigate
+        theme: ThemeData(
+          colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+          useMaterial3: true,
         ),
-        '/edit_profile': (context) => const EditProfileScreen(),
-        SettingsRoutes.privacyPolicy: (context) => const PrivacyPolicyScreen(),
-        SettingsRoutes.termsOfUse: (context) => const TermsAndConditionsScreen(),
-      },
-      home: FutureBuilder<Widget>(
-        future: getInitialScreen(),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Scaffold(body: Center(child: CircularProgressIndicator()));
-          }
-          return snapshot.data ?? const OnboardingScreen();
+        routes: {
+          '/settings_screen': (context) => const SettingsScreen(),
+          '/profile_detail': (context) => const ProfileDetailsScreen(),
+          '/login': (context) => const LoginPage(),
+          '/interested_screen': (context) => const InterestedUserScreen(),
+          '/edit_profile': (context) => const EditProfileScreen(),
+          '/blocked_screen': (context) => const BlockedUserScreen(),
+          'visited_screen': (context) => const VisitedUserScreen(),
+          SettingsRoutes.privacyPolicy: (context) => const PrivacyPolicyScreen(),
+          SettingsRoutes.termsOfUse: (context) => const TermsAndConditionsScreen(),
         },
+        home: FutureBuilder<Widget>(
+          future: getInitialScreen(),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Scaffold(body: Center(child: CircularProgressIndicator()));
+            }
+            return snapshot.data ?? const OnboardingScreen();
+          },
+        ),
       ),
     );
   }
@@ -115,9 +123,6 @@ Future<Widget> getInitialScreen() async {
 
   if (res['success'] == true) {
     final data = res['data'] as Map<String, dynamic>;
-    // FIX: cache the server's answer locally so that a future launch with
-    // no internet can still route the user correctly instead of forcing
-    // them back to the login screen.
     await _writeCachedUserInfo(prefs, data);
     return _screenFromCache(await _readCachedUserInfo(prefs));
   }

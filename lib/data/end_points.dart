@@ -15,12 +15,20 @@ class ApiRequest {
 
 class ApiEndpoints {
   ApiEndpoints._();
+  //Blocked users
+  static const String getBlockedList = "user/user-block-list.php";
+  static const String userBlock = "user/user-add-block-profile.php";
+  static const String userUnblock = "user/user-unblock-profile.php";
+
+  // Visited users
+  static const String visitedListing = "user/visited/listing.php";
+  static const String visitedRemove = "user/visited/remove.php";
+  static const String visitedAdd = "user/visited/add.php";
 
   static const ApiRequest privacyPolicy = ApiRequest(
     method: ApiMethod.get,
     url: 'privacy-policy-tc.php?page_slug=privacy-policy',
   );
-
   static const ApiRequest termsAndConditions = ApiRequest(
     method: ApiMethod.get,
     url: 'privacy-policy-tc.php?page_slug=terms-and-conditions',

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../ui/views/terms_and_conditions_screen.dart';
+import '../../features/views/others/terms_and_conditions_screen.dart';
 class AppRoutes {
   AppRoutes._();
 

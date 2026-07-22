@@ -37,8 +37,8 @@ This report identifies **unused code**, **duplicates**, and **code quality issue
 **Usage of Legacy `Api_Manager`:**
 ```dart
 // Only used in 2 files:
-// lib/ui/viewmodels/privacy_model.dart:14
-// lib/ui/views/terms_and_conditions_screen.dart:18
+// lib/features/viewmodels/privacy_model.dart:14
+// lib/features/views/terms_and_conditions_screen.dart:18
 ```
 
 **Recommendation:** 

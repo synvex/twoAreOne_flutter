@@ -280,7 +280,6 @@ class Api_Manager {
       throw await _mapError(error, request, parameters);
     }
   }
-
   Future<ApiError> _mapError(
       DioException error,
       ApiRequest request,
