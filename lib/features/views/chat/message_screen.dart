@@ -1,17 +1,16 @@
-import 'dart:ffi';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:two_are_one/core/constants/app_colors.dart';
 import 'package:two_are_one/core/constants/app_icons.dart';
 import 'package:two_are_one/core/utils/date_time_formater.dart';
 import 'package:two_are_one/data/models/chat_member_model.dart';
 import 'package:two_are_one/data/services/chat_service.dart';
+import 'package:two_are_one/data/viewmodels/chat_viewmodel.dart';
 import 'package:two_are_one/features/views/chat/chat_screen.dart';
+import 'package:provider/provider.dart';
 
 class MessageScreen extends StatefulWidget {
   const MessageScreen({super.key});
@@ -21,68 +20,26 @@ class MessageScreen extends StatefulWidget {
 }
 
 class _MessageScreenState extends State<MessageScreen> {
-  ChatService? chatService;
-
-  List<ChatMemberModel> _messages = [];
-  bool _isLoading = true;
-  String? _errorMessage;
-
   @override
   void initState() {
     super.initState();
-    _loadAuthToken();
-    _fetchMessages();
-  }
 
-  Future<void> _loadAuthToken() async {
-    final prefs = await SharedPreferences.getInstance();
-    final token = prefs.getString('auth_token');
-    print('Loaded auth token: $token');
-
-    setState(() {
-      chatService = ChatService(token: token);
+    // Call API when screen opens
+    Future.microtask(() {
+      context.read<ChatViewModel>().getChatMembers();
     });
-
-    // ✅ Only fetch AFTER chatService is created
-    await _fetchMessages();
-  }
-
-  Future<void> _fetchMessages() async {
-    if (chatService == null) return;
-
-    setState(() {
-      _isLoading = true;
-      _errorMessage = null;
-    });
-
-    try {
-      // fetchChatMembers now returns List<ChatMemberModel> directly.
-      final List<ChatMemberModel> response = await chatService!
-          .fetchChatMembers();
-
-      setState(() {
-        _messages = response;
-        _isLoading = false;
-      });
-    } catch (e) {
-      setState(() {
-        _errorMessage = "Failed to load messages";
-        _isLoading = false;
-      });
-
-      print("❌ Error fetching chat members: $e");
-    }
   }
 
   @override
   Widget build(BuildContext context) {
+    final chatViewModel = context.watch<ChatViewModel>();
     return Scaffold(
       resizeToAvoidBottomInset: false,
       body: Stack(
         children: [
           Container(
-            height: MediaQuery.of(context).size.height,
-            width: MediaQuery.of(context).size.width,
+            height: double.maxFinite,
+            width: double.maxFinite,
             decoration: BoxDecoration(
               gradient: LinearGradient(
                 begin: Alignment.topCenter,
@@ -112,7 +69,7 @@ class _MessageScreenState extends State<MessageScreen> {
                           alignment: Alignment.centerRight,
                           child: GestureDetector(
                             onTap: () async {
-                              await _fetchMessages();
+                              await chatViewModel.getChatMembers();
                             },
                             child: SvgPicture.asset(
                               AppIcons.vert_more,
@@ -192,16 +149,9 @@ class _MessageScreenState extends State<MessageScreen> {
                   topRight: Radius.circular(36.r),
                 ),
               ),
-              child: _isLoading
+              child: chatViewModel.isLoading
                   ? const Center(child: CircularProgressIndicator())
-                  : _errorMessage != null
-                  ? Center(
-                      child: Text(
-                        _errorMessage!,
-                        style: GoogleFonts.roboto(fontSize: 14),
-                      ),
-                    )
-                  : _messages.isEmpty
+                  : chatViewModel.chatMembers.isEmpty
                   ? Center(
                       child: Text(
                         'No messages yet',
@@ -212,11 +162,11 @@ class _MessageScreenState extends State<MessageScreen> {
                       child: Column(
                         children: [
                           ListView.builder(
-                            itemCount: _messages.length,
+                            itemCount: chatViewModel.chatMembers.length,
                             shrinkWrap: true,
                             physics: const NeverScrollableScrollPhysics(),
                             itemBuilder: (context, index) {
-                              final item = _messages[index];
+                              final item = chatViewModel.chatMembers[index];
 
                               return GestureDetector(
                                 onTap: () => Navigator.push(

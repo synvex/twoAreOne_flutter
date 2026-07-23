@@ -1,36 +1,4 @@
 class ChatHistoryModel {
-  final List<ChatHistoryData> data;
-  final bool error;
-  final String message;
-
-  ChatHistoryModel({
-    required this.data,
-    required this.error,
-    required this.message,
-  });
-
-  factory ChatHistoryModel.fromJson(Map<String, dynamic> json) {
-    return ChatHistoryModel(
-      data: json["data"] == null
-          ? []
-          : List<ChatHistoryData>.from(
-              json["data"].map((x) => ChatHistoryData.fromJson(x)),
-            ),
-      error: json["error"] ?? false,
-      message: json["message"] ?? "",
-    );
-  }
-
-  Map<String, dynamic> toJson() {
-    return {
-      "data": List<dynamic>.from(data.map((x) => x.toJson())),
-      "error": error,
-      "message": message,
-    };
-  }
-}
-
-class ChatHistoryData {
   final int id;
   final String? message;
   final int user1;
@@ -59,7 +27,7 @@ class ChatHistoryData {
   final String senderProfilePictureUrl;
   final String receiverProfilePictureUrl;
 
-  ChatHistoryData({
+  ChatHistoryModel({
     required this.id,
     this.message,
     required this.user1,
@@ -85,19 +53,24 @@ class ChatHistoryData {
     required this.receiverProfilePictureUrl,
   });
 
-  factory ChatHistoryData.fromJson(Map<String, dynamic> json) {
-    return ChatHistoryData(
+  factory ChatHistoryModel.fromJson(Map<String, dynamic> json) {
+    return ChatHistoryModel(
       id: json["id"] ?? 0,
       message: json["message"],
+
       user1: json["user1"] ?? 0,
       user2: json["user2"] ?? 0,
+
       isSticker: json["is_sticker"] ?? 0,
       isPhoto: json["is_photo"] ?? 0,
       stickerId: json["sticker_id"] ?? 0,
+
       time: json["time"] ?? 0,
+
       isFirst: json["is_first"] ?? 0,
       isSeen1: json["is_seen_1"] ?? 0,
       isSeen2: json["is_seen_2"] ?? 0,
+
       isVideo: json["is_video"] ?? 0,
       isNew: json["is_new"] ?? 0,
       isSeen: json["is_seen"] ?? 0,
@@ -116,37 +89,5 @@ class ChatHistoryData {
 
       receiverProfilePictureUrl: json["receiver_profile_picture_url"] ?? "",
     );
-  }
-
-  Map<String, dynamic> toJson() {
-    return {
-      "id": id,
-      "message": message,
-      "user1": user1,
-      "user2": user2,
-      "is_sticker": isSticker,
-      "is_photo": isPhoto,
-      "sticker_id": stickerId,
-      "time": time,
-      "is_first": isFirst,
-      "is_seen_1": isSeen1,
-      "is_seen_2": isSeen2,
-      "is_video": isVideo,
-      "is_new": isNew,
-      "is_seen": isSeen,
-
-      "sender_name": senderName,
-      "sender_profile_picture": senderProfilePicture,
-      "sender_login_time": senderLoginTime,
-
-      "receiver_name": receiverName,
-      "receiver_profile_picture": receiverProfilePicture,
-      "receiver_login_time": receiverLoginTime,
-
-      "message_time": messageTime,
-
-      "sender_profile_picture_url": senderProfilePictureUrl,
-      "receiver_profile_picture_url": receiverProfilePictureUrl,
-    };
   }
 }
