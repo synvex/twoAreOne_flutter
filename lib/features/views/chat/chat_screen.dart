@@ -6,6 +6,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:two_are_one/core/constants/app_colors.dart';
 import 'package:two_are_one/core/constants/app_icons.dart';
+import 'package:two_are_one/data/models/chat_history_model.dart';
 import 'package:two_are_one/data/services/chat_service.dart';
 
 /// Simple model for a chat message.
@@ -25,17 +26,18 @@ class _ChatMessage {
     this.text,
   });
 
-  /// 🔧 Adjust these keys to match your real API's JSON field names
-  factory _ChatMessage.fromJson(
-    Map<String, dynamic> json, {
+  factory _ChatMessage.fromChatHistory(
+    ChatHistoryData data, {
     required int currentUserId,
   }) {
-    final senderId = json['sender_id'] ?? json['from_id'];
     return _ChatMessage(
-      type: json['type'] ?? 'text',
-      isMe: senderId != null && senderId.toString() == currentUserId.toString(),
-      text: json['message'] ?? json['text'] ?? '',
-      time: json['time'] ?? json['created_at'] ?? json['sent_at'] ?? '',
+      type: data.isVideo == 1 || data.isPhoto == 1 ? 'media' : 'text',
+
+      isMe: data.user1 == currentUserId,
+
+      text: data.message,
+
+      time: data.messageTime,
     );
   }
 }
@@ -44,10 +46,9 @@ class ChatScreen extends StatefulWidget {
   const ChatScreen({
     super.key,
     required this.receiverId,
-    this.name = 'Ronda',
-    this.avatarUrl =
-        'https://thumbs.dreamstime.com/b/profile-beautiful-smiling-girl-6243612.jpg',
-    this.statusText = 'Online 45 mins ago',
+    required this.name,
+    required this.avatarUrl,
+    required this.statusText,
   });
 
   final int receiverId;
@@ -77,72 +78,85 @@ class _ChatScreenState extends State<ChatScreen> {
   }
 
   Future<void> _init() async {
-    final prefs = await SharedPreferences.getInstance();
-    final token = prefs.getString('auth_token');
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final token = prefs.getString('auth_token');
 
-    // 🔧 `getInt` returns null if 'user_id' was ever stored as a String
-    // elsewhere in the app (e.g. prefs.setString('user_id', '123')).
-    // Fall back to reading it as a string and parsing it, so isMe
-    // comparisons don't silently break just because of a type mismatch.
-    _currentUserId =
-        prefs.getInt('user_id') ??
-        int.tryParse(prefs.getString('user_id') ?? '');
+      // Use the untyped getter so we don't crash if user_id was ever
+      // saved as a String instead of an int.
+      final rawUserId = prefs.get('user_id');
+      _currentUserId = rawUserId is int
+          ? rawUserId
+          : int.tryParse(rawUserId?.toString() ?? '');
 
-    debugPrint('🔑 token: ${token != null ? "present" : "MISSING"}');
-    debugPrint('🔑 currentUserId: $_currentUserId');
+      debugPrint('🔑 token: ${token != null ? "present" : "MISSING"}');
+      debugPrint('🔑 currentUserId: $_currentUserId');
 
-    if (token == null || token.isEmpty) {
-      // Calling authenticated endpoints without a token is a common reason
-      // "nothing loads" — surface this clearly instead of a generic error.
-      setState(() {
-        _isLoading = false;
-        _messages = [];
-        _errorMessage = 'Not logged in (no auth token found).';
-      });
-      return;
+      if (token == null || token.isEmpty) {
+        // Calling authenticated endpoints without a token is a common reason
+        // "nothing loads" — surface this clearly instead of a generic error.
+        if (mounted) {
+          setState(() {
+            _isLoading = false;
+            _messages = [];
+            _errorMessage = 'Not logged in (no auth token found).';
+          });
+        }
+        return;
+      }
+
+      _chatService = ChatService(token: token);
+      await _fetchHistory();
+    } catch (e, st) {
+      debugPrint('❌ _init error: $e\n$st');
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+          _errorMessage = 'Failed to initialize chat: $e';
+        });
+      }
     }
-
-    _chatService = ChatService(token: token);
-    await _fetchHistory();
   }
 
   Future<void> _fetchHistory() async {
     if (_chatService == null) return;
 
-    setState(() {
-      _isLoading = true;
-      _errorMessage = null;
-    });
+    if (mounted) {
+      setState(() {
+        _isLoading = true;
+        _errorMessage = null;
+      });
+    }
 
     try {
       final history = await _chatService!.fetchChatHistory(
         receiverId: widget.receiverId,
       );
 
-      debugPrint('📨 fetchChatHistory returned ${history.length} item(s)');
+      debugPrint("📨 Messages count: ${history.data.length}");
 
-      final parsed = history
-          .whereType<Map<String, dynamic>>()
-          .map(
-            (e) =>
-                _ChatMessage.fromJson(e, currentUserId: _currentUserId ?? -1),
-          )
-          .toList();
+      final parsed = history.data.map((e) {
+        return _ChatMessage.fromChatHistory(
+          e,
+          currentUserId: _currentUserId ?? -1,
+        );
+      }).toList();
 
-      setState(() {
-        _messages = parsed;
-        _isLoading = false;
-      });
+      if (mounted) {
+        setState(() {
+          _messages = parsed;
+          _isLoading = false;
+        });
+      }
     } catch (e) {
-      // Show the *real* error instead of a generic message — this is the
-      // single most useful thing for figuring out what's actually wrong
-      // (auth failure, wrong field names, network issue, etc). Check the
-      // console too: ChatService prints the raw JSON response above this.
-      debugPrint('❌ _fetchHistory error: $e');
-      setState(() {
-        _errorMessage = 'Failed to load chat: $e';
-        _isLoading = false;
-      });
+      debugPrint('❌ Chat history error: $e');
+
+      if (mounted) {
+        setState(() {
+          _errorMessage = "Failed to load chat";
+          _isLoading = false;
+        });
+      }
     }
   }
 
@@ -232,8 +246,13 @@ class _ChatScreenState extends State<ChatScreen> {
                           ),
                         ),
                         GestureDetector(
-                          onTap: () {
-                            _sendMessage();
+                          onTap: () async {
+                            final data = await _chatService?.fetchChatHistory(
+                              receiverId: widget.receiverId,
+                            );
+                            print(
+                              "💬 Chat history for receiver_id=6206: $data",
+                            );
                           },
                           child: SvgPicture.asset(
                             AppIcons.vert_more,
@@ -366,12 +385,10 @@ class _ChatScreenState extends State<ChatScreen> {
                               final msg = _messages[index];
                               return Padding(
                                 padding: EdgeInsets.only(bottom: 22.h),
-                                child: msg.type == 'voice'
-                                    ? _VoiceBubble(msg: msg)
-                                    : _TextBubble(
-                                        msg: msg,
-                                        avatarUrl: widget.avatarUrl,
-                                      ),
+                                child: _TextBubble(
+                                  msg: msg,
+                                  avatarUrl: widget.avatarUrl,
+                                ),
                               );
                             },
                           ),
@@ -473,89 +490,6 @@ class _TextBubble extends StatelessWidget {
   }
 }
 
-class _VoiceBubble extends StatelessWidget {
-  const _VoiceBubble({required this.msg});
-
-  final _ChatMessage msg;
-
-  @override
-  Widget build(BuildContext context) {
-    final heights = List.generate(24, (i) {
-      final values = [8, 16, 22, 12, 26, 10, 18, 24, 14, 20, 9, 17];
-      return values[i % values.length].toDouble();
-    });
-
-    return Align(
-      alignment: Alignment.centerRight,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.end,
-        children: [
-          Container(
-            constraints: BoxConstraints(maxWidth: 0.78.sw),
-            padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 10.h),
-            decoration: BoxDecoration(
-              color: const Color(0xFFEFEFEF),
-              borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(20.r),
-                topRight: Radius.circular(20.r),
-                bottomLeft: Radius.circular(20.r),
-                bottomRight: Radius.circular(20.r),
-              ),
-            ),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Container(
-                  height: 34.h,
-                  width: 34.w,
-                  decoration: const BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: Colors.black,
-                  ),
-                  child: Icon(
-                    Icons.play_arrow_rounded,
-                    color: Colors.white,
-                    size: 28.sp,
-                  ),
-                ),
-                SizedBox(width: 10.w),
-                Row(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: heights
-                      .map(
-                        (h) => Container(
-                          margin: EdgeInsets.symmetric(horizontal: 1.5.w),
-                          width: 2.5.w,
-                          height: h.h,
-                          decoration: BoxDecoration(
-                            color: Colors.black54,
-                            borderRadius: BorderRadius.circular(2.r),
-                          ),
-                        ),
-                      )
-                      .toList(),
-                ),
-              ],
-            ),
-          ),
-          Padding(
-            padding: EdgeInsets.only(top: 6.h),
-            child: Text(
-              msg.time,
-              style: GoogleFonts.inter(
-                fontSize: 11.sp,
-                fontWeight: FontWeight.w400,
-                color: Colors.grey,
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
 class _MessageInputBar extends StatelessWidget {
   const _MessageInputBar({required this.controller, required this.onSend});
 
@@ -574,14 +508,6 @@ class _MessageInputBar extends StatelessWidget {
         ),
         child: Row(
           children: [
-            SizedBox(width: 8.w),
-            SvgPicture.asset(
-              AppIcons.send_file,
-              colorFilter: ColorFilter.mode(
-                AppColors.grayColor,
-                BlendMode.srcIn,
-              ),
-            ),
             SizedBox(width: 8.w),
             Expanded(
               child: TextField(

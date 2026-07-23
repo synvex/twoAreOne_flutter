@@ -1,6 +1,9 @@
 import 'dart:convert';
 
 import 'package:dio/dio.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:two_are_one/data/models/chat_history_model.dart';
+import 'package:two_are_one/data/models/chat_member_model.dart';
 
 /// Service for all chat/messaging related endpoints under `/user/messages/*`
 /// as defined in the twoareone_love Postman collection:
@@ -57,7 +60,7 @@ class ChatService {
   // GET /user/messages/one-to-one-chat-histories.php?receiver_id=
   // ---------------------------------------------------------------------
   /// Fetch one-to-one chat history with a specific user.
-  Future<List<dynamic>> fetchChatHistory({required int receiverId}) async {
+  Future<ChatHistoryModel> fetchChatHistory({required int receiverId}) async {
     try {
       final response = await _dio.get(
         "/user/messages/one-to-one-chat-histories.php",
@@ -66,14 +69,13 @@ class ChatService {
 
       _printResponse(response);
 
-      return _extractList(response.data);
+      print("💬 Chat history for receiver_id=$receiverId: ${response.data}");
+
+      return ChatHistoryModel.fromJson(response.data);
     } on DioException catch (e) {
       _printError(e);
       rethrow;
     } catch (e) {
-      // Catches non-Dio errors too (e.g. a bad type cast if the backend's
-      // JSON shape doesn't match what we expect) so failures are visible
-      // instead of silently producing an empty result.
       print("❌ Unexpected error in ChatService: $e");
       rethrow;
     }
@@ -118,19 +120,48 @@ class ChatService {
   // ---------------------------------------------------------------------
   /// Fetch the list of chat members / conversation threads
   /// (i.e. everyone the current user has an active chat with).
-  Future<List<dynamic>> fetchChatMembers() async {
+  // Only the relevant method is shown — keep the rest of your ChatService
+  // class (constructor, _dio setup, _printResponse, _printError, other
+  // methods) exactly as it is. Replace just fetchChatMembers with this.
+
+  Future<List<ChatMemberModel>> fetchChatMembers() async {
     try {
       final response = await _dio.get("/user/messages/chat-members.php");
+
       _printResponse(response);
 
-      return _extractList(response.data);
+      print("💬 Chat members: ${response.data}");
+
+      // Handle the common shapes a PHP endpoint might return:
+      // 1) A raw JSON array:            [ {...}, {...} ]
+      // 2) Wrapped under "data":        { "data": [ {...}, {...} ] }
+      // 3) Wrapped under "chat_members": { "chat_members": [ {...}, {...} ] }
+      final dynamic raw = response.data;
+      late final List<dynamic> list;
+
+      if (raw is List) {
+        list = raw;
+      } else if (raw is Map<String, dynamic>) {
+        if (raw['data'] is List) {
+          list = raw['data'] as List<dynamic>;
+        } else if (raw['chat_members'] is List) {
+          list = raw['chat_members'] as List<dynamic>;
+        } else {
+          // Fallback: single object response, wrap it in a list of one.
+          list = [raw];
+        }
+      } else {
+        list = [];
+      }
+
+      return list
+          .whereType<Map<String, dynamic>>()
+          .map((e) => ChatMemberModel.fromJson(e))
+          .toList();
     } on DioException catch (e) {
       _printError(e);
       rethrow;
     } catch (e) {
-      // Catches non-Dio errors too (e.g. a bad type cast if the backend's
-      // JSON shape doesn't match what we expect) so failures are visible
-      // instead of silently producing an empty result.
       print("❌ Unexpected error in ChatService: $e");
       rethrow;
     }
@@ -209,34 +240,87 @@ class ChatService {
   // ---------------------------------------------------------------------
   // Debug helpers
   // ---------------------------------------------------------------------
+  // ---------------------------------------------------------------------
+  // Debug helpers
+  // ---------------------------------------------------------------------
+
   void _printResponse(Response response) {
-    print("┌───────────────────────────────────────────");
-    print("│ ✅ STATUS: ${response.statusCode}");
-    print("│ 🔗 URL: ${response.requestOptions.uri}");
-    print("│ 📦 RESPONSE:");
+    debugPrint("");
+    debugPrint(
+      "════════════════════════════════════════════════════════════════════",
+    );
+    debugPrint("✅ API RESPONSE");
+    debugPrint("STATUS CODE : ${response.statusCode}");
+    debugPrint("METHOD      : ${response.requestOptions.method}");
+    debugPrint("URL         : ${response.requestOptions.uri}");
+
+    if (response.requestOptions.queryParameters.isNotEmpty) {
+      debugPrint("QUERY PARAMETERS:");
+      _prettyPrintJson(response.requestOptions.queryParameters);
+    }
+
+    if (response.requestOptions.data != null) {
+      debugPrint("REQUEST BODY:");
+      _prettyPrintJson(response.requestOptions.data);
+    }
+
+    debugPrint("RESPONSE BODY:");
     _prettyPrintJson(response.data);
-    print("└───────────────────────────────────────────");
+
+    debugPrint(
+      "════════════════════════════════════════════════════════════════════",
+    );
+    debugPrint("");
   }
 
   void _printError(DioException e) {
-    print("┌───────────────────────────────────────────");
-    print("│ ❌ ERROR: ${e.type}");
-    print("│ 🔗 URL: ${e.requestOptions.uri}");
+    debugPrint("");
+    debugPrint(
+      "════════════════════════════════════════════════════════════════════",
+    );
+    debugPrint("❌ API ERROR");
+    debugPrint("TYPE        : ${e.type}");
+    debugPrint("METHOD      : ${e.requestOptions.method}");
+    debugPrint("URL         : ${e.requestOptions.uri}");
+
+    if (e.requestOptions.data != null) {
+      debugPrint("REQUEST BODY:");
+      _prettyPrintJson(e.requestOptions.data);
+    }
+
     if (e.response != null) {
-      print("│ STATUS: ${e.response?.statusCode}");
+      debugPrint("STATUS CODE : ${e.response?.statusCode}");
+      debugPrint("ERROR RESPONSE:");
       _prettyPrintJson(e.response?.data);
     } else {
-      print("│ MESSAGE: ${e.message}");
+      debugPrint("MESSAGE : ${e.message}");
     }
-    print("└───────────────────────────────────────────");
+
+    debugPrint(
+      "════════════════════════════════════════════════════════════════════",
+    );
+    debugPrint("");
   }
 
   void _prettyPrintJson(dynamic data) {
-    const encoder = JsonEncoder.withIndent('  ');
     try {
-      print(encoder.convert(data));
-    } catch (_) {
-      print(data);
+      final prettyJson = const JsonEncoder.withIndent('  ').convert(data);
+      _printLongString(prettyJson);
+    } catch (e) {
+      _printLongString(data.toString());
+    }
+  }
+
+  void _printLongString(String text) {
+    const chunkSize = 800;
+
+    for (int i = 0; i < text.length; i += chunkSize) {
+      debugPrint(
+        text.substring(
+          i,
+          i + chunkSize > text.length ? text.length : i + chunkSize,
+        ),
+      );
     }
   }
 }

@@ -1,4 +1,9 @@
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+
 class AppIcons {
+  static const IconData personIcon = Icons.person;
+
   static const String backIcon = 'assets/svg_images/back_icon.svg';
   static const String vert_more = 'assets/svg_images/vert_more.svg';
   static const String chat_serach = 'assets/svg_images/search.svg';

@@ -1,3 +1,5 @@
+import 'dart:ffi';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -6,6 +8,8 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:two_are_one/core/constants/app_colors.dart';
 import 'package:two_are_one/core/constants/app_icons.dart';
+import 'package:two_are_one/core/utils/date_time_formater.dart';
+import 'package:two_are_one/data/models/chat_member_model.dart';
 import 'package:two_are_one/data/services/chat_service.dart';
 import 'package:two_are_one/features/views/chat/chat_screen.dart';
 
@@ -19,7 +23,7 @@ class MessageScreen extends StatefulWidget {
 class _MessageScreenState extends State<MessageScreen> {
   ChatService? chatService;
 
-  List<dynamic> _messages = [];
+  List<ChatMemberModel> _messages = [];
   bool _isLoading = true;
   String? _errorMessage;
 
@@ -27,6 +31,7 @@ class _MessageScreenState extends State<MessageScreen> {
   void initState() {
     super.initState();
     _loadAuthToken();
+    _fetchMessages();
   }
 
   Future<void> _loadAuthToken() async {
@@ -51,21 +56,12 @@ class _MessageScreenState extends State<MessageScreen> {
     });
 
     try {
-      final response = await chatService!.fetchReceivedMessages();
-
-      // 🔧 Adjust this line based on your API's real JSON shape.
-      // Right now it tries a few common patterns automatically.
-      List<dynamic> list = [];
-      if (response["data"] is List) {
-        list = response["data"] as List<dynamic>;
-      } else if (response["messages"] is List) {
-        list = response["messages"] as List<dynamic>;
-      } else if (response["chats"] is List) {
-        list = response["chats"] as List<dynamic>;
-      }
+      // fetchChatMembers now returns List<ChatMemberModel> directly.
+      final List<ChatMemberModel> response = await chatService!
+          .fetchChatMembers();
 
       setState(() {
-        _messages = list;
+        _messages = response;
         _isLoading = false;
       });
     } catch (e) {
@@ -73,6 +69,8 @@ class _MessageScreenState extends State<MessageScreen> {
         _errorMessage = "Failed to load messages";
         _isLoading = false;
       });
+
+      print("❌ Error fetching chat members: $e");
     }
   }
 
@@ -113,7 +111,9 @@ class _MessageScreenState extends State<MessageScreen> {
                         Align(
                           alignment: Alignment.centerRight,
                           child: GestureDetector(
-                            onTap: () {},
+                            onTap: () async {
+                              await _fetchMessages();
+                            },
                             child: SvgPicture.asset(
                               AppIcons.vert_more,
                               colorFilter: ColorFilter.mode(
@@ -127,8 +127,14 @@ class _MessageScreenState extends State<MessageScreen> {
                     ),
                     SizedBox(height: 40.h),
                     TextFormField(
+                      style: GoogleFonts.poltawskiNowy(
+                        fontSize: 14,
+                        fontWeight: FontWeight(400),
+                        color: AppColors.background,
+                      ),
                       decoration: InputDecoration(
                         hintText: 'Search user by name',
+
                         hintStyle: GoogleFonts.poltawskiNowy(
                           fontSize: 14,
                           fontWeight: FontWeight(400),
@@ -178,6 +184,7 @@ class _MessageScreenState extends State<MessageScreen> {
             child: Container(
               width: double.maxFinite,
               height: 600.h,
+              padding: EdgeInsets.only(bottom: 90.h),
               decoration: BoxDecoration(
                 color: AppColors.background,
                 borderRadius: BorderRadius.only(
@@ -201,123 +208,140 @@ class _MessageScreenState extends State<MessageScreen> {
                         style: GoogleFonts.roboto(fontSize: 14),
                       ),
                     )
-                  : ListView.builder(
-                      itemCount: _messages.length,
-                      itemBuilder: (context, index) {
-                        final item = _messages[index] as Map<String, dynamic>;
+                  : SingleChildScrollView(
+                      child: Column(
+                        children: [
+                          ListView.builder(
+                            itemCount: _messages.length,
+                            shrinkWrap: true,
+                            physics: const NeverScrollableScrollPhysics(),
+                            itemBuilder: (context, index) {
+                              final item = _messages[index];
 
-                        // 🔧 Adjust these keys to match your real API fields
-                        final name =
-                            item['name'] ??
-                            item['sender_name'] ??
-                            item['username'] ??
-                            'Unknown';
-                        final lastMessage =
-                            item['last_message'] ??
-                            item['message'] ??
-                            item['preview'] ??
-                            '';
-                        final time =
-                            item['time'] ??
-                            item['created_at'] ??
-                            item['sent_at'] ??
-                            '';
-                        final avatarUrl =
-                            item['avatar'] ??
-                            item['profile_image'] ??
-                            item['image'];
-                        final isOnline =
-                            item['is_online'] == true || item['online'] == true;
-                        final receiverId = item['receiver_id'] ?? item['id'];
-
-                        return GestureDetector(
-                          onTap: () => Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => ChatScreen(
-                                receiverId:
-                                    int.tryParse(receiverId.toString()) ?? 0,
-                                name: name.toString(),
-                                avatarUrl:
-                                    (avatarUrl != null &&
-                                        avatarUrl.toString().isNotEmpty)
-                                    ? avatarUrl.toString()
-                                    : 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRDz5V_uTTpPqDGDazCOM2G3C8N8q30Cwoin05thNEcUknwnHfHN0RFs8xk&s=10',
-                              ),
-                            ),
-                          ),
-                          child: Container(
-                            height: 60.h,
-                            margin: EdgeInsets.only(
-                              left: 16.w,
-                              right: 16.w,
-                              top: 16.h,
-                            ),
-                            padding: EdgeInsets.symmetric(
-                              horizontal: 16.w,
-                              vertical: 8.h,
-                            ),
-                            decoration: BoxDecoration(
-                              color: AppColors.lightGray,
-                              borderRadius: BorderRadius.circular(50),
-                            ),
-                            child: Row(
-                              children: [
-                                CircleAvatar(
-                                  radius: 24.r,
-                                  backgroundImage:
-                                      (avatarUrl != null &&
-                                          avatarUrl.toString().isNotEmpty)
-                                      ? NetworkImage(avatarUrl.toString())
-                                      : const NetworkImage(
-                                          'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRDz5V_uTTpPqDGDazCOM2G3C8N8q30Cwoin05thNEcUknwnHfHN0RFs8xk&s=10',
+                              return GestureDetector(
+                                onTap: () => Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => ChatScreen(
+                                      receiverId: int.parse(
+                                        item.userId.toString(),
+                                      ),
+                                      name: item.fullName.toString(),
+                                      avatarUrl: item.profilePicture.toString(),
+                                      statusText: item.isOnline == true
+                                          ? "Online"
+                                          : "Offline",
+                                    ),
+                                  ),
+                                ),
+                                child: Container(
+                                  height: 60.h,
+                                  margin: EdgeInsets.only(
+                                    left: 16.w,
+                                    right: 16.w,
+                                    top: 16.h,
+                                  ),
+                                  padding: EdgeInsets.symmetric(
+                                    horizontal: 16.w,
+                                    vertical: 8.h,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: AppColors.lightGray,
+                                    borderRadius: BorderRadius.circular(50),
+                                  ),
+                                  child: Row(
+                                    children: [
+                                      ClipRRect(
+                                        borderRadius: BorderRadius.circular(
+                                          50.r,
                                         ),
+                                        child: Image(
+                                          image: NetworkImage(
+                                            item.profilePicture.toString(),
+                                          ),
+                                          width: 48.w,
+                                          height: 48.h,
+                                          fit: BoxFit.cover,
+                                          errorBuilder:
+                                              (context, error, stackTrace) {
+                                                return Icon(
+                                                  AppIcons.personIcon,
+                                                  size: 32.sp,
+                                                  color: AppColors.grayColor,
+                                                );
+                                              },
+                                        ),
+                                      ),
+                                      // CircleAvatar(
+                                      //   radius: 24.r,
+                                      //   backgroundImage: NetworkImage(
+                                      //     item.profilePicture.toString(),
+                                      //   ),
+                                      // (avatarUrl != null &&
+                                      //     avatarUrl.isNotEmpty)
+                                      // ? NetworkImage(avatarUrl)
+                                      // : const NetworkImage(
+                                      //     'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRDz5V_uTTpPqDGDazCOM2G3C8N8q30Cwoin05thNEcUknwnHfHN0RFs8xk&s=10',
+                                      //   ),
+                                      //),
+                                      SizedBox(width: 10.w),
+                                      Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.start,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            item.fullName.toString(),
+                                            style: GoogleFonts.roboto(
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.w500,
+                                            ),
+                                          ),
+                                          Spacer(),
+                                          SizedBox(
+                                            width: 150.w,
+                                            child: Text(
+                                              maxLines: 1,
+                                              item.lastMessage.toString(),
+                                              overflow: TextOverflow.ellipsis,
+                                              style: GoogleFonts.roboto(
+                                                fontSize: 12,
+                                                fontWeight: FontWeight.w500,
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      Spacer(),
+                                      Column(
+                                        children: [
+                                          if (item.isOnline == true)
+                                            CircleAvatar(
+                                              radius: 6.r,
+                                              backgroundColor: AppColors.green,
+                                            ),
+                                          const Spacer(),
+                                          Text(
+                                            DateTimeFormatter.chatTime(
+                                              item.lastMessageTime.toString(),
+                                            ),
+                                            style: GoogleFonts.inter(
+                                              fontSize: 10,
+                                              fontWeight: FontWeight.w400,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ],
+                                  ),
                                 ),
-                                SizedBox(width: 10.w),
-                                Column(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      name.toString(),
-                                      style: GoogleFonts.roboto(
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.w500,
-                                      ),
-                                    ),
-                                    Spacer(),
-                                    Text(
-                                      lastMessage.toString(),
-                                      style: GoogleFonts.roboto(
-                                        fontSize: 12,
-                                        fontWeight: FontWeight.w500,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                Spacer(),
-                                Column(
-                                  children: [
-                                    if (isOnline)
-                                      CircleAvatar(
-                                        radius: 6.r,
-                                        backgroundColor: AppColors.green,
-                                      ),
-                                    Spacer(),
-                                    Text(
-                                      time.toString(),
-                                      style: GoogleFonts.inter(
-                                        fontSize: 10,
-                                        fontWeight: FontWeight.w400,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ],
-                            ),
+                              );
+                            },
                           ),
-                        );
-                      },
+                          SizedBox(height: 50.h),
+                        ],
+                      ),
                     ),
             ),
           ),
