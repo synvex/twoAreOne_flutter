@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:two_are_one/core/constants/app_colors.dart';
 import 'package:two_are_one/core/constants/app_icons.dart';
@@ -66,6 +67,7 @@ class _ChatScreenState extends State<ChatScreen> {
     // Call API when screen opens
     Future.microtask(() async {
       await context.read<ChatViewModel>().fetchedChatHistory(widget.receiverId);
+      await _loadCurrentUser();
     });
   }
 
@@ -73,6 +75,18 @@ class _ChatScreenState extends State<ChatScreen> {
   void dispose() {
     _messageController.dispose();
     super.dispose();
+  }
+
+  Future<void> _loadCurrentUser() async {
+    final prefs = await SharedPreferences.getInstance();
+
+    final userId = prefs.get('user_id');
+
+    setState(() {
+      _currentUserId = userId is int
+          ? userId
+          : int.tryParse(userId.toString()) ?? 0;
+    });
   }
 
   void _handleSend(ChatViewModel chatViewModel) {
@@ -221,7 +235,13 @@ class _ChatScreenState extends State<ChatScreen> {
                               return Padding(
                                 padding: EdgeInsets.only(bottom: 20.h),
                                 child: _TextBubble(
-                                  msg: chatMsg,
+                                  msg: chatMsg.isMe
+                                      ? chatMsg
+                                      : _ChatMessage(
+                                          isMe: false,
+                                          text: chatMsg.text,
+                                          time: chatMsg.time,
+                                        ),
                                   avatarUrl: widget.avatarUrl,
                                 ),
                               );
@@ -306,13 +326,30 @@ class _MessageInputBar extends StatelessWidget {
               controller: controller,
               textInputAction: TextInputAction.send,
               onSubmitted: (_) => onSend(),
-              decoration: const InputDecoration(
+              decoration: InputDecoration(
                 hintText: "Type your message",
-                border: InputBorder.none,
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(50),
+                  borderSide: BorderSide.none,
+                ),
+                filled: true,
+                fillColor: AppColors.lightGray,
+                suffixIcon: Container(
+                  height: 46,
+                  width: 46,
+
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    gradient: LinearGradient(
+                      begin: Alignment.topCenter,
+                      colors: [AppColors.mehroon, AppColors.blue],
+                    ),
+                  ),
+                  child: Center(child: SvgPicture.asset(AppIcons.send_msg)),
+                ),
               ),
             ),
           ),
-          IconButton(onPressed: onSend, icon: const Icon(Icons.send)),
         ],
       ),
     );
