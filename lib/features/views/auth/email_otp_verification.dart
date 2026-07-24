@@ -1,6 +1,8 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:two_are_one/core/widgets/back_button.dart';
 import 'package:two_are_one/core/widgets/buttons.dart';
 import 'package:two_are_one/core/widgets/image.dart';
@@ -15,7 +17,11 @@ import 'new_password.dart';
 class EmailOtpVerification extends StatefulWidget {
   final String email;
   final bool isFromForget;
-  const EmailOtpVerification({super.key, required this.email, this.isFromForget= false});
+  const EmailOtpVerification({
+    super.key,
+    required this.email,
+    this.isFromForget = false,
+  });
 
   @override
   State<EmailOtpVerification> createState() => _EmailOtpVerificationState();
@@ -34,6 +40,7 @@ class _EmailOtpVerificationState extends State<EmailOtpVerification> {
     super.initState();
     _startTimer();
   }
+
   void _startTimer() {
     _secondsRemaining = 60;
     _isResendAvailable = false;
@@ -69,8 +76,7 @@ class _EmailOtpVerificationState extends State<EmailOtpVerification> {
       // Determine which API to call based on the flow
       if (widget.isFromForget) {
         // For Forgot Password, resending is usually just calling forgotPassword again
-        result = await _authService.forgotPassword(
-            email: widget.email);
+        result = await _authService.forgotPassword(email: widget.email);
       } else {
         // For Registration, call your resend API
         result = await _authService.resendEmailOtp(email: widget.email);
@@ -86,19 +92,20 @@ class _EmailOtpVerificationState extends State<EmailOtpVerification> {
         if (!mounted) return;
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-              content: Texts(
-                 text: result['error'] ?? "Failed to resend OTP")),
+            content: Texts(text: result['error'] ?? "Failed to resend OTP"),
+          ),
         );
       }
     } catch (e) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Texts(text: "Error: $e")),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Texts(text: "Error: $e")));
     } finally {
       if (mounted) setState(() => _isLoading = false);
     }
   }
+
   void _verifyOtp() async {
     String otp = _otpController.text.trim();
     if (otp.length != 6) {
@@ -118,9 +125,7 @@ class _EmailOtpVerificationState extends State<EmailOtpVerification> {
       if (result['success']) {
         if (!mounted) return;
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-              content: Text(
-                  "Account verified successfully!")),
+          const SnackBar(content: Text("Account verified successfully!")),
         );
         if (widget.isFromForget) {
           Navigator.pushReplacement(
@@ -133,21 +138,21 @@ class _EmailOtpVerificationState extends State<EmailOtpVerification> {
             MaterialPageRoute(builder: (context) => const MainScreen()),
           );
         }
-      }
-      else {
+      } else {
         if (!mounted) return;
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text(result['error'] ?? "Verification failed")),
         );
       }
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Error: $e")),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text("Error: $e")));
     } finally {
       if (mounted) setState(() => _isLoading = false);
     }
   }
+
   @override
   void dispose() {
     _timer?.cancel();
@@ -158,8 +163,9 @@ class _EmailOtpVerificationState extends State<EmailOtpVerification> {
   @override
   Widget build(BuildContext context) {
     final double screenHeight = MediaQuery.of(context).size.height;
-    final bool isLandscape = MediaQuery.of(context).orientation == Orientation.landscape;
-    
+    final bool isLandscape =
+        MediaQuery.of(context).orientation == Orientation.landscape;
+
     return Scaffold(
       resizeToAvoidBottomInset: false,
       body: SafeArea(
@@ -180,41 +186,93 @@ class _EmailOtpVerificationState extends State<EmailOtpVerification> {
                   wWidth: double.infinity,
                   child: Column(
                     children: [
-                      const SizedBox(height: 15),
+                      SizedBox(height: 15.h),
                       Containers(
-                          wHeight: 70, wWidth: 70, hexValue: 0xFF77153C, opacityValue: .3, radius: BorderRadius.circular(50),
-                          child: Center(
-                              child: Images(imageStr: 'assets/images/mobile.svg', height: 40, width: 21))
+                        wHeight: 70.h,
+                        wWidth: 70.w,
+                        hexValue: 0xFF77153C,
+                        opacityValue: .3,
+                        radius: BorderRadius.circular(50.sp),
+                        child: Center(
+                          child: Images(
+                            imageStr: 'assets/images/mobile.svg',
+                            height: 40.h,
+                            width: 21.w,
+                          ),
+                        ),
                       ),
-                      const SizedBox(height: 15),
-                      const Texts(text: "OTP VERIFICATION", size: 26, fontWeight: FontWeight.w600, colorHexValue: 0xFF000000),
-                      const SizedBox(height: 10),
+                      SizedBox(height: 15.h),
+                      Text(
+                        "OTP VERIFICATION",
+                        style: GoogleFonts.poppins(
+                          fontSize: 26.sp,
+                          fontWeight: FontWeight.w600,
+                          color: Color(0xFF000000),
+                        ),
+                      ),
+
+                      SizedBox(height: 10.h),
                       RichText(
-                          textAlign: TextAlign.center,
-                          text: TextSpan(
-                              text: "We’ve sent a 6-digit code to your\n",
-                              style: const TextStyle(color: Color(0xFF727272), fontSize: 13, fontWeight: FontWeight.w500),
-                              children: [
-                                TextSpan(text: "${widget.email}\n", style: const TextStyle(color: Colors.black, fontSize: 13, fontWeight: FontWeight.bold)),
-                                const TextSpan(text: 'Enter the code below to confirm it’s really you', style: TextStyle(color: Color(0xFF727272), fontSize: 13, fontWeight: FontWeight.w500))
-                              ]
-                          )),
-                      const SizedBox(height: 50),
+                        textAlign: TextAlign.center,
+                        text: TextSpan(
+                          text: "We’ve sent a 6-digit code to your\n",
+                          style: GoogleFonts.inter(
+                            color: Color(0xFF727272),
+                            fontSize: 13.sp,
+                            fontWeight: FontWeight.w500,
+                          ),
+                          children: [
+                            TextSpan(
+                              text: "${widget.email}\n",
+                              style: const TextStyle(
+                                color: Colors.black,
+                                fontSize: 13,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            const TextSpan(
+                              text:
+                                  'Enter the code below to confirm it’s really you',
+                              style: TextStyle(
+                                color: Color(0xFF727272),
+                                fontSize: 13,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      SizedBox(height: 50.h),
                       CircleField(controller: _otpController),
-                      const SizedBox(height: 15),
-                       Texts(text: _formattedTime, size: 12, fontWeight: FontWeight.w400,
-                           colorHexValue: _isResendAvailable ? 0xFF727272 : 0xFF77153C),
-                      const SizedBox(height: 15),
+                      SizedBox(height: 15.h),
+                      Texts(
+                        text: _formattedTime,
+                        size: 12,
+                        fontWeight: FontWeight.w400,
+                        colorHexValue: _isResendAvailable
+                            ? 0xFF727272
+                            : 0xFF77153C,
+                      ),
+                      SizedBox(height: 15.h),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          const Texts(text: "Didn't receive OTP ?", colorHexValue: 0xFF727272, size: 13),
+                          const Texts(
+                            text: "Didn't receive OTP ?",
+                            colorHexValue: 0xFF727272,
+                            size: 13,
+                          ),
                           InkWell(
                             onTap: _isResendAvailable ? _resendOtp : null,
-                            child:  Texts(
-                                text: " Send OTP", fontWeight: FontWeight.w500,
-                                colorHexValue: _isResendAvailable ? 0xFF77153C : 0xFFB0B0B0, size: 13),
-                          )
+                            child: Texts(
+                              text: " Send OTP",
+                              fontWeight: FontWeight.w500,
+                              colorHexValue: _isResendAvailable
+                                  ? 0xFF77153C
+                                  : 0xFFB0B0B0,
+                              size: 13,
+                            ),
+                          ),
                         ],
                       ),
                     ],
@@ -225,21 +283,36 @@ class _EmailOtpVerificationState extends State<EmailOtpVerification> {
                   child: Buttons(
                     isLoading: _isLoading,
                     text: "Verify",
-                        hexValue: 0xFFFFFFFF,
-                        onTap: _verifyOtp,
-                        gradient: const LinearGradient(colors: [Color(0xFF77153C), Color(0xFFDD276F)]),
-                      ),
+                    hexValue: 0xFFFFFFFF,
+                    onTap: _verifyOtp,
+                    gradient: const LinearGradient(
+                      colors: [Color(0xFF77153C), Color(0xFFDD276F)],
+                    ),
+                  ),
                 ),
-                const SizedBox(height: 30),
+                SizedBox(height: 30.h),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const Texts(text: "Already have an account?", colorHexValue: 0xFF77153C, size: 15),
+                    const Texts(
+                      text: "Already have an account?",
+                      colorHexValue: 0xFF77153C,
+                      size: 15,
+                    ),
                     InkWell(
                       onTap: () => Navigator.pushReplacement(
-                          context, MaterialPageRoute(builder: (context) => const LoginPage())),
-                      child: const Texts(text: " Login", fontWeight: FontWeight.w500, colorHexValue: 0xFF000000, size: 14),
-                    )
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const LoginPage(),
+                        ),
+                      ),
+                      child: const Texts(
+                        text: " Login",
+                        fontWeight: FontWeight.w500,
+                        colorHexValue: 0xFF000000,
+                        size: 14,
+                      ),
+                    ),
                   ],
                 ),
                 SizedBox(height: isLandscape ? 20 : 0),

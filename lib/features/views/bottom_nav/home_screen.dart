@@ -41,14 +41,16 @@ class _HomeScreenState extends State<HomeScreen> {
   void initState() {
     super.initState();
     _scrollController.addListener(_onScroll);
-    _loadUserInfo();           // ✅ load real name/email/counts
+    _loadUserInfo(); // ✅ load real name/email/counts
     _fetchProfiles(refresh: true);
   }
+
   @override
   void dispose() {
     _scrollController.dispose();
     super.dispose();
   }
+
   // lib/features/home/home_screen.dart -> _loadUserInfo method
   Future<void> _loadUserInfo() async {
     final res = await _homeService.getUserInfo();
@@ -70,12 +72,16 @@ class _HomeScreenState extends State<HomeScreen> {
               : 'https://www.twoareone.love/uploads/$rawImage';
         }
 
-        _favCount = int.tryParse(data['total_favorites']?.toString() ?? '0') ?? 0;
-        _interestedCount = int.tryParse(data['total_interested']?.toString() ?? '0') ?? 0;
-        _blockCount = int.tryParse(data['total_blocks']?.toString() ?? '0') ?? 0;
+        _favCount =
+            int.tryParse(data['total_favorites']?.toString() ?? '0') ?? 0;
+        _interestedCount =
+            int.tryParse(data['total_interested']?.toString() ?? '0') ?? 0;
+        _blockCount =
+            int.tryParse(data['total_blocks']?.toString() ?? '0') ?? 0;
       });
     }
   }
+
   void _onScroll() {
     if (_scrollController.position.pixels >=
         _scrollController.position.maxScrollExtent - 200) {
@@ -84,6 +90,7 @@ class _HomeScreenState extends State<HomeScreen> {
       }
     }
   }
+
   Future<void> _fetchProfiles({bool refresh = false}) async {
     if (refresh) {
       setState(() {
@@ -91,8 +98,7 @@ class _HomeScreenState extends State<HomeScreen> {
         _isLoading = true;
         _users = []; // Clear list on refresh
       });
-    } else
-    {
+    } else {
       if (_isFetchingMore || !_hasMore) return;
       setState(() => _isFetchingMore = true);
     }
@@ -133,12 +139,15 @@ class _HomeScreenState extends State<HomeScreen> {
           _isFetchingMore = false;
         });
       }
-    }
-    else {
+    } else {
       debugPrint("API Error: ${res['error']}");
-      setState(() { _isLoading = false; _isFetchingMore = false; });
+      setState(() {
+        _isLoading = false;
+        _isFetchingMore = false;
+      });
     }
   }
+
   void _handleFavorite(FilterMatchModel user) async {
     setState(() => _loadingStars.add(user.id));
     final success = await _homeService.toggleFavorite(user.id, user.isFavorite);
@@ -146,7 +155,6 @@ class _HomeScreenState extends State<HomeScreen> {
       setState(() {
         final index = _users.indexWhere((u) => u.id == user.id);
         if (index != -1) {
-
           final wasTrue = _users[index].isFavorite;
           _users[index] = _users[index].copyWith(isFavorite: !wasTrue);
           _favCount += wasTrue ? -1 : 1;
@@ -155,9 +163,13 @@ class _HomeScreenState extends State<HomeScreen> {
     }
     setState(() => _loadingStars.remove(user.id));
   }
+
   void _handleInterest(FilterMatchModel user) async {
     setState(() => _loadingHearts.add(user.id));
-    final success = await _homeService.toggleInterest(user.id, user.isInterested);
+    final success = await _homeService.toggleInterest(
+      user.id,
+      user.isInterested,
+    );
     if (success && mounted) {
       setState(() {
         final index = _users.indexWhere((u) => u.id == user.id);
@@ -170,6 +182,7 @@ class _HomeScreenState extends State<HomeScreen> {
     }
     setState(() => _loadingHearts.remove(user.id));
   }
+
   void _handleBlock(FilterMatchModel user) async {
     setState(() => _loadingBlocks.add(user.id));
     final success = await _homeService.blockUser(user.id);
@@ -181,19 +194,18 @@ class _HomeScreenState extends State<HomeScreen> {
         if (user.isInterested) _interestedCount--;
         _users.removeWhere((u) => u.id == user.id);
       });
+      TopToast.show(context, title: "User blocked", type: ToastType.success);
+    } else if (mounted) {
       TopToast.show(
-          context, title: "User blocked",
-          type: ToastType.success);
-    }
-    else if(mounted){
-      TopToast.show(
-          context,
-          title: "Couldn't block user",
-          message: "Please check your connection and try again.",
-          type: ToastType.error,);
+        context,
+        title: "Couldn't block user",
+        message: "Please check your connection and try again.",
+        type: ToastType.error,
+      );
     }
     setState(() => _loadingBlocks.remove(user.id));
   }
+
   final Map<String, DateTime> _chatCooldowns = {};
   void _handleSilentChat(FilterMatchModel user) {
     final userId = user.id.toString();
@@ -201,14 +213,23 @@ class _HomeScreenState extends State<HomeScreen> {
     if (_chatCooldowns.containsKey(userId) &&
         now.difference(_chatCooldowns[userId]!).inSeconds < 60) {
       final left = 60 - now.difference(_chatCooldowns[userId]!).inSeconds;
-      TopToast.show(context, title: "Please wait", message: "You can send another invite in ${left}s", type: ToastType.info);
+      TopToast.show(
+        context,
+        title: "Please wait",
+        message: "You can send another invite in ${left}s",
+        type: ToastType.info,
+      );
       return;
     }
     _chatCooldowns[userId] = now;
     // TODO: wire actual socket sendMessage() call here (RN: useChatSocket)
-    TopToast.show(context, title: "Invite sent!", message: "Your message has been delivered.", type: ToastType.success);
+    TopToast.show(
+      context,
+      title: "Invite sent!",
+      message: "Your message has been delivered.",
+      type: ToastType.success,
+    );
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -226,52 +247,56 @@ class _HomeScreenState extends State<HomeScreen> {
                 child: _isLoading
                     ? _buildSkeletonGrid()
                     : ListView(
-                  controller: _scrollController,
-                  padding: const EdgeInsets.symmetric(horizontal: 20),
-                  children: [
-                    _buildActionBanner(),
-                    const SizedBox(height: 20),
-                    _buildSectionDivider("YOUR MATCHES"),
-                    const SizedBox(height: 15),
-                    GridView.builder(
-                      shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(),
-                      gridDelegate:
-                      const SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 2,
-                        crossAxisSpacing: 15,
-                        mainAxisSpacing: 15,
-                        childAspectRatio: 0.7,
-                      ),
-                      itemCount: _users.length,
-                      itemBuilder: (context, index) {
-                        final user = _users[index];
-                        return ProfileCard(
-                          user: user,
-                          isStarLoading: _loadingStars.contains(user.id),
-                          isHeartLoading: _loadingHearts.contains(user.id),
-                          isBlockLoading: _loadingBlocks.contains(user.id),
-                          onStar: () => _handleFavorite(user),
-                          onHeart: () => _handleInterest(user),
-                          onDislike: () => _handleBlock(user),
-                          // onChat: () => _handleSilentChat(user),
-                          onRequestSend: ()=> _handleSilentChat(user),
-                          onPress: () => Navigator.pushNamed(
-                            context,
-                            '/profile_detail',
-                            arguments: user,
+                        controller: _scrollController,
+                        padding: const EdgeInsets.symmetric(horizontal: 20),
+                        children: [
+                          _buildActionBanner(),
+                          const SizedBox(height: 20),
+                          _buildSectionDivider("YOUR MATCHES"),
+                          const SizedBox(height: 15),
+                          GridView.builder(
+                            shrinkWrap: true,
+                            physics: const NeverScrollableScrollPhysics(),
+                            gridDelegate:
+                                const SliverGridDelegateWithFixedCrossAxisCount(
+                                  crossAxisCount: 2,
+                                  crossAxisSpacing: 15,
+                                  mainAxisSpacing: 15,
+                                  childAspectRatio: 0.7,
+                                ),
+                            itemCount: _users.length,
+                            itemBuilder: (context, index) {
+                              final user = _users[index];
+                              return ProfileCard(
+                                user: user,
+                                isStarLoading: _loadingStars.contains(user.id),
+                                isHeartLoading: _loadingHearts.contains(
+                                  user.id,
+                                ),
+                                isBlockLoading: _loadingBlocks.contains(
+                                  user.id,
+                                ),
+                                onStar: () => _handleFavorite(user),
+                                onHeart: () => _handleInterest(user),
+                                onDislike: () => _handleBlock(user),
+                                // onChat: () => _handleSilentChat(user),
+                                onRequestSend: () => _handleSilentChat(user),
+                                onPress: () => Navigator.pushNamed(
+                                  context,
+                                  '/profile_detail',
+                                  arguments: user,
+                                ),
+                              );
+                            },
                           ),
-                        );
-                      },
-                    ),
-                    if (_isFetchingMore)
-                      const Padding(
-                        padding: EdgeInsets.all(20),
-                        child: Center(child: CircularProgressIndicator()),
+                          if (_isFetchingMore)
+                            const Padding(
+                              padding: EdgeInsets.all(20),
+                              child: Center(child: CircularProgressIndicator()),
+                            ),
+                          const SizedBox(height: 100),
+                        ],
                       ),
-                    const SizedBox(height: 100),
-                  ],
-                ),
               ),
             ),
           ],
@@ -287,15 +312,20 @@ class _HomeScreenState extends State<HomeScreen> {
         children: [
           GestureDetector(
             onTap: () => _scaffoldKey.currentState?.openDrawer(),
-            behavior: HitTestBehavior.opaque, // Ensures the entire slop area catches taps
+            behavior: HitTestBehavior
+                .opaque, // Ensures the entire slop area catches taps
             child: Padding(
-              padding: const EdgeInsets.all(10.0), // Replicates hitSlop (top, bottom, left, right)
+              padding: const EdgeInsets.all(
+                10.0,
+              ), // Replicates hitSlop (top, bottom, left, right)
               child: SizedBox(
                 width: 36,
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.start, // Mimics React Native's left alignment
-                  mainAxisSize: MainAxisSize.min, // Wraps content tightly like a View
+                  crossAxisAlignment: CrossAxisAlignment
+                      .start, // Mimics React Native's left alignment
+                  mainAxisSize:
+                      MainAxisSize.min, // Wraps content tightly like a View
                   children: [
                     Container(
                       width: 22,
@@ -333,38 +363,55 @@ class _HomeScreenState extends State<HomeScreen> {
           //   child: const Icon(Icons.menu, size: 30),
           // ),
           const Spacer(),
-          Images(
-              imageStr: "assets/images/two_are_one.png", height: 35),
+          Images(imageStr: "assets/images/two_are_one.png", height: 35),
           const Spacer(),
           GestureDetector(
-              onTap: (){
-                Navigator.push(
-                    context, MaterialPageRoute(builder: (context) => HomeFilterScreen(),));
-              },
-              child: Containers(
-                hexValue: 0xFFFFFFFF,
-                shape: BoxShape.circle,
-                padding: const EdgeInsets.only(left: 12, right: 10, top: 10, bottom: 10),
-                border: Border.all(color: Colors.black45),
-                child: Images(
-                  imageStr: "assets/svg_images/search.svg", height: 20,),
-              )
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => HomeFilterScreen()),
+              );
+            },
+            child: Containers(
+              hexValue: 0xFFFFFFFF,
+              shape: BoxShape.circle,
+              padding: const EdgeInsets.only(
+                left: 12,
+                right: 10,
+                top: 10,
+                bottom: 10,
+              ),
+              border: Border.all(color: Colors.black45),
+              child: Images(
+                imageStr: "assets/svg_images/search.svg",
+                height: 20,
+              ),
+            ),
           ),
           const SizedBox(width: 10),
           GestureDetector(
-              onTap: (){},
-              child: Containers(
-                hexValue: 0xFFFFFFFF,
-                shape: BoxShape.circle,
-                padding: const EdgeInsets.only(left: 10, right: 10, top: 10, bottom: 10),
-                border: Border.all(color: Colors.black45),
-                child: Images(
-                  imageStr: "assets/svg_images/notification.svg", height: 20,),
-              )
-          ),        ],
+            onTap: () {},
+            child: Containers(
+              hexValue: 0xFFFFFFFF,
+              shape: BoxShape.circle,
+              padding: const EdgeInsets.only(
+                left: 10,
+                right: 10,
+                top: 10,
+                bottom: 10,
+              ),
+              border: Border.all(color: Colors.black45),
+              child: Images(
+                imageStr: "assets/svg_images/notification.svg",
+                height: 20,
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
+
   Widget _buildActionBanner() {
     return Container(
       decoration: BoxDecoration(
@@ -386,9 +433,9 @@ class _HomeScreenState extends State<HomeScreen> {
               child: Containers(
                 wHeight: 118,
                 wWidth: 118,
-                  shape: BoxShape.circle,
-                  opacityValue: .1,
-                  hexValue: 0x0FFFFFFF, // rgba(255,255,255,0.06)
+                shape: BoxShape.circle,
+                opacityValue: .1,
+                hexValue: 0x0FFFFFFF, // rgba(255,255,255,0.06)
               ),
             ),
             Positioned(
@@ -397,9 +444,9 @@ class _HomeScreenState extends State<HomeScreen> {
               child: Containers(
                 wHeight: 80,
                 wWidth: 80,
-                  shape: BoxShape.circle,
-                  opacityValue: .1,
-                  hexValue: 0x0DFFFFFF, // rgba(255,255,255,0.05)
+                shape: BoxShape.circle,
+                opacityValue: .1,
+                hexValue: 0x0DFFFFFF, // rgba(255,255,255,0.05)
               ),
             ),
             // ── Main content ───────────────────────────────────────────────────
@@ -416,45 +463,42 @@ class _HomeScreenState extends State<HomeScreen> {
                         clipBehavior: Clip.none,
                         children: [
                           // Profile picture or initials
-                          _profileImageUrl != null && _profileImageUrl!.isNotEmpty
+                          _profileImageUrl != null &&
+                                  _profileImageUrl!.isNotEmpty
                               ? Container(
-                            width: 58,
-                            height: 58,
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              border: Border.all(
-                                // RN: borderColor: rgba(255,255,255,0.65)
-                                color: const Color(0xA6FFFFFF),
-                                width: 2,
-                              ),
-                              image: DecorationImage(
-                                image: NetworkImage(_profileImageUrl!),
-                                fit: BoxFit.cover,
-                              ),
-                            ),
-                          )
-                              : SizedBox(
-                            width: 58,
-                            height: 58,
-                          ),
+                                  width: 58,
+                                  height: 58,
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    border: Border.all(
+                                      // RN: borderColor: rgba(255,255,255,0.65)
+                                      color: const Color(0xA6FFFFFF),
+                                      width: 2,
+                                    ),
+                                    image: DecorationImage(
+                                      image: NetworkImage(_profileImageUrl!),
+                                      fit: BoxFit.cover,
+                                    ),
+                                  ),
+                                )
+                              : SizedBox(width: 58, height: 58),
                           Positioned(
                             bottom: 3,
                             right: 2,
                             child: Containers(
                               wWidth: 13,
                               wHeight: 13,
-                                shape: BoxShape.circle,
-                                hexValue: 0xFF4CD964,
-                                border: Border.all(
-                                  color: const Color(0xFF8B4DAB),
-                                  width: 2.5,
-                                ),
+                              shape: BoxShape.circle,
+                              hexValue: 0xFF4CD964,
+                              border: Border.all(
+                                color: const Color(0xFF8B4DAB),
+                                width: 2.5,
+                              ),
                             ),
                           ),
                         ],
                       ),
                       const SizedBox(width: 14), // RN: gap:14
-
                       // ── Name, email, online pill ─────────────────────────────
                       Expanded(
                         child: Column(
@@ -483,7 +527,9 @@ class _HomeScreenState extends State<HomeScreen> {
                               overflow: TextOverflow.ellipsis,
                               style: const TextStyle(
                                 fontSize: 11,
-                                color: Color(0xA6FFFFFF), // rgba(255,255,255,0.65)
+                                color: Color(
+                                  0xA6FFFFFF,
+                                ), // rgba(255,255,255,0.65)
                               ),
                             ),
 
@@ -494,14 +540,18 @@ class _HomeScreenState extends State<HomeScreen> {
                             // border rgba(255,255,255,0.28), borderRadius:20
                             Containers(
                               padding: const EdgeInsets.symmetric(
-                                  horizontal: 10, vertical: 3),
-                                hexValue: 0x2EFFFFFF,   // rgba(255,255,255,0.18)
-                                radius: BorderRadius.circular(20),
-                                opacityValue: .1,
-                                border: Border.all(
-                                  color: const Color(0x47FFFFFF), // rgba(255,255,255,0.28)
-                                  width: 1,
-                                ),
+                                horizontal: 10,
+                                vertical: 3,
+                              ),
+                              hexValue: 0x2EFFFFFF, // rgba(255,255,255,0.18)
+                              radius: BorderRadius.circular(20),
+                              opacityValue: .1,
+                              border: Border.all(
+                                color: const Color(
+                                  0x47FFFFFF,
+                                ), // rgba(255,255,255,0.28)
+                                width: 1,
+                              ),
                               child: Row(
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
@@ -509,18 +559,18 @@ class _HomeScreenState extends State<HomeScreen> {
                                   Containers(
                                     wWidth: 6,
                                     wHeight: 6,
-                                      shape: BoxShape.circle,
-                                      hexValue: 0xFF4CD964,
+                                    shape: BoxShape.circle,
+                                    hexValue: 0xFF4CD964,
                                   ),
 
                                   const SizedBox(width: 5),
                                   const Texts(
                                     text: 'Online now',
-                                      size: 10,
-                                      colorHexValue: 0xFFFFFFFF,
-                                      // color: Colors.white,
-                                      fontWeight: FontWeight.w500,
-                                      // letterSpacing: 0.3,
+                                    size: 10,
+                                    colorHexValue: 0xFFFFFFFF,
+                                    // color: Colors.white,
+                                    fontWeight: FontWeight.w500,
+                                    // letterSpacing: 0.3,
                                   ),
                                 ],
                               ),
@@ -532,15 +582,15 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
 
                   const SizedBox(height: 14),
-                  Divider(
-                    color: Colors.white24,height: 10,thickness: 1,
-                  ),
+                  Divider(color: Colors.white24, height: 10, thickness: 1),
                   // ── Stats row ────────────────────────────────────────────────
                   IntrinsicHeight(
                     child: Row(
                       children: [
                         // FAVOURITES
-                        Expanded(child: _buildStat(_favCount.toString(), "FAVOURITES")),
+                        Expanded(
+                          child: _buildStat(_favCount.toString(), "FAVOURITES"),
+                        ),
                         // RN: width:1, height:32, rgba(255,255,255,0.2)
                         // Containers(
                         //   wWidth: 1,
@@ -549,7 +599,12 @@ class _HomeScreenState extends State<HomeScreen> {
                         // ),
                         CustomDivider(),
                         // INTERESTED
-                        Expanded(child: _buildStat(_interestedCount.toString(), "INTERESTED")),
+                        Expanded(
+                          child: _buildStat(
+                            _interestedCount.toString(),
+                            "INTERESTED",
+                          ),
+                        ),
                         // Containers(
                         //   wWidth: 1,
                         //   wHeight: 32,
@@ -557,7 +612,9 @@ class _HomeScreenState extends State<HomeScreen> {
                         // ),
                         CustomDivider(),
                         // BLOCKS
-                        Expanded(child: _buildStat(_blockCount.toString(), "BLOCKS")),
+                        Expanded(
+                          child: _buildStat(_blockCount.toString(), "BLOCKS"),
+                        ),
                       ],
                     ),
                   ),
@@ -569,18 +626,21 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
     );
   }
+
   Widget _buildStat(String count, String label) {
     return Column(
       children: [
         Texts(
-            text: count,
-            size: 22,
-            fontWeight: FontWeight.bold,
-            colorHexValue: 0xFFFFFFFF),
+          text: count,
+          size: 22,
+          fontWeight: FontWeight.bold,
+          colorHexValue: 0xFFFFFFFF,
+        ),
         Texts(text: label, size: 10, colorHexValue: 0xFFB0B0B0),
       ],
     );
   }
+
   Widget _buildDrawer() {
     return Drawer(
       backgroundColor: Colors.white,
@@ -590,16 +650,20 @@ class _HomeScreenState extends State<HomeScreen> {
           Container(
             height: 120,
             decoration: const BoxDecoration(
-            gradient: LinearGradient(
-              colors: [Color(0xFF477CB6), Color(0xFFDD276F)],
+              gradient: LinearGradient(
+                colors: [Color(0xFF477CB6), Color(0xFFDD276F)],
+              ),
             ),
-          ),
-            child:Padding(
+            child: Padding(
               padding: const EdgeInsets.only(left: 15),
               child: Row(
                 children: [
-                  Images(imageStr: "assets/images/two_are_one.png", height: 35,width: 180,),
-                  Spacer()
+                  Images(
+                    imageStr: "assets/images/two_are_one.png",
+                    height: 35,
+                    width: 180,
+                  ),
+                  Spacer(),
                 ],
               ),
             ),
@@ -623,9 +687,12 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
     );
   }
+
   Widget _drawerItem(String title, {bool isSelected = false}) {
     return ListTile(
-      tileColor: isSelected ? const Color(0xFFDD276F).withOpacity(0.1) : Colors.white,
+      tileColor: isSelected
+          ? const Color(0xFFDD276F).withValues(alpha: 0.1)
+          : Colors.white,
       title: Text(
         title,
         style: TextStyle(
@@ -636,18 +703,25 @@ class _HomeScreenState extends State<HomeScreen> {
       onTap: () => Navigator.pop(context),
     );
   }
+
   Widget _buildSectionDivider(String title) {
-    return Row(children: [
-      const Expanded(child: Divider()),
-      Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 10),
-        child: Texts(text: title,
+    return Row(
+      children: [
+        const Expanded(child: Divider()),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 10),
+          child: Texts(
+            text: title,
             colorHexValue: 0xFF808080,
-            size: 12, fontWeight: FontWeight.bold,),
-      ),
-      const Expanded(child: Divider()),
-    ]);
+            size: 12,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        const Expanded(child: Divider()),
+      ],
+    );
   }
+
   // Placeholder for a single card
   Widget _buildShimmerCard() {
     return Shimmer.fromColors(
@@ -669,10 +743,12 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
     );
   }
+
   Widget _buildSkeletonGrid() {
     return ListView(
       padding: const EdgeInsets.symmetric(horizontal: 20),
-      physics: const NeverScrollableScrollPhysics(), // Loading ke waqt scroll na ho
+      physics:
+          const NeverScrollableScrollPhysics(), // Loading ke waqt scroll na ho
       children: [
         const SizedBox(height: 10),
         const SizedBox(height: 30),
@@ -686,7 +762,7 @@ class _HomeScreenState extends State<HomeScreen> {
             mainAxisSpacing: 15,
             childAspectRatio: 0.7,
           ),
-          itemBuilder: (_, __) => _buildShimmerCard(),
+          itemBuilder: (_, _) => _buildShimmerCard(),
         ),
       ],
     );

@@ -17,8 +17,7 @@ class FavouriteUserScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider<FavouriteViewModel>(
-      create: (_) => FavouriteViewModel(
-          services: FavouriteServices())..init(),
+      create: (_) => FavouriteViewModel(services: FavouriteServices())..init(),
       child: const _FavouriteUserView(),
     );
   }
@@ -75,8 +74,9 @@ class _FavouriteUserViewState extends State<_FavouriteUserView> {
           onViewProfile: () {
             Navigator.of(ctx).pop();
             vm.closeBottomSheet();
-            Navigator.of(context).pushNamed(
-                AppRoutes.profileDetail, arguments: item);
+            Navigator.of(
+              context,
+            ).pushNamed(AppRoutes.profileDetail, arguments: item);
           },
         ),
       ),
@@ -139,23 +139,24 @@ class _FavouriteUserViewState extends State<_FavouriteUserView> {
       child: vm.showEmptyState
           ? _buildEmptyState(vm)
           : ListView.builder(
-        controller: _scrollController,
-        padding: const EdgeInsets.only(top: 20),
-        physics: const AlwaysScrollableScrollPhysics(),
-        itemCount: vm.currentItems.length + (vm.showSkeletonFooter ? 1 : 0),
-        itemBuilder: (context, index) {
-          if (index >= vm.currentItems.length) {
-            return const SkeletonFooterList();
-          }
-          final item = vm.currentItems[index];
-          return FavUserListTile(
-            resolvedImageUrl: vm.resolveImageUrl(item.profilePicture),
-            initials: vm.initialsFor(item.fullName),
-            displayName: vm.capitalize(item.fullName),
-            onMenuPressed: () => _openActionSheet(context, item),
-          );
-        },
-      ),
+              controller: _scrollController,
+              padding: const EdgeInsets.only(top: 20),
+              physics: const AlwaysScrollableScrollPhysics(),
+              itemCount:
+                  vm.currentItems.length + (vm.showSkeletonFooter ? 1 : 0),
+              itemBuilder: (context, index) {
+                if (index >= vm.currentItems.length) {
+                  return const SkeletonFooterList();
+                }
+                final item = vm.currentItems[index];
+                return FavUserListTile(
+                  resolvedImageUrl: vm.resolveImageUrl(item.profilePicture),
+                  initials: vm.initialsFor(item.fullName),
+                  displayName: vm.capitalize(item.fullName),
+                  onMenuPressed: () => _openActionSheet(context, item),
+                );
+              },
+            ),
     );
   }
 
@@ -182,15 +183,15 @@ class AppBottomSheet {
   AppBottomSheet._();
 
   static Future<T?> show<T>(
-      BuildContext context, {
-        required WidgetBuilder builder,
-        double sheetHeight = 420,
-      }) {
+    BuildContext context, {
+    required WidgetBuilder builder,
+    double sheetHeight = 420,
+  }) {
     return showModalBottomSheet<T>(
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
-      barrierColor: Colors.black.withOpacity(0.4),
+      barrierColor: Colors.black.withValues(alpha: 0.4),
       builder: (context) {
         final width = MediaQuery.of(context).size.width;
         return SizedBox(
@@ -237,7 +238,7 @@ class CurveBackgroundPainter extends CustomPainter {
       ..style = PaintingStyle.fill;
 
     final shadowPaint = Paint()
-      ..color = Colors.black.withOpacity(0.05)
+      ..color = Colors.black.withValues(alpha: 0.05)
       ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 10);
 
     final path = Path();

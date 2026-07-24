@@ -19,17 +19,20 @@ class AppHeader extends StatelessWidget implements PreferredSizeWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.only(left: 16,top: 25,bottom: 18),
-      margin: const EdgeInsets.symmetric(vertical: 16,),//
+      padding: const EdgeInsets.only(left: 16, top: 25, bottom: 18),
+      margin: const EdgeInsets.symmetric(vertical: 16), //
       decoration: BoxDecoration(
         color: AppColors.headerBackground,
         border: Border(
-          bottom: BorderSide(color: Color(0xFF000000).withOpacity(0.8), width: 2),
+          bottom: BorderSide(
+            color: Color(0xFF000000).withValues(alpha: 0.8),
+            width: 2,
+          ),
         ),
       ),
       child: Row(
         children: [
-         Back_Button(onTap: onBackPressed),
+          Back_Button(onTap: onBackPressed),
           Expanded(
             child: Text(
               title,
@@ -42,10 +45,7 @@ class AppHeader extends StatelessWidget implements PreferredSizeWidget {
               overflow: TextOverflow.ellipsis,
             ),
           ),
-          SizedBox(
-            width: 40,
-            child: trailing,
-          ),
+          SizedBox(width: 40, child: trailing),
         ],
       ),
     );

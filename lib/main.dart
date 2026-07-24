@@ -27,19 +27,21 @@ void main() async {
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   runApp(const MyApp());
 }
+
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
     return ScreenUtilInit(
-      designSize: Size(390,1000),
+      designSize: Size(390, 844),
       minTextAdapt: true,
       splitScreenMode: true,
       child: MaterialApp(
         title: 'Two Are One',
         debugShowCheckedModeBanner: false,
-        navigatorKey: navigatorKey, // Global key so ApiManager can show dialogs/navigate
+        navigatorKey:
+            navigatorKey, // Global key so ApiManager can show dialogs/navigate
         theme: ThemeData(
           colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
           useMaterial3: true,
@@ -52,14 +54,18 @@ class MyApp extends StatelessWidget {
           '/edit_profile': (context) => const EditProfileScreen(),
           '/blocked_screen': (context) => const BlockedUserScreen(),
           'visited_screen': (context) => const VisitedUserScreen(),
-          SettingsRoutes.privacyPolicy: (context) => const PrivacyPolicyScreen(),
-          SettingsRoutes.termsOfUse: (context) => const TermsAndConditionsScreen(),
+          SettingsRoutes.privacyPolicy: (context) =>
+              const PrivacyPolicyScreen(),
+          SettingsRoutes.termsOfUse: (context) =>
+              const TermsAndConditionsScreen(),
         },
         home: FutureBuilder<Widget>(
           future: getInitialScreen(),
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
-              return const Scaffold(body: Center(child: CircularProgressIndicator()));
+              return const Scaffold(
+                body: Center(child: CircularProgressIndicator()),
+              );
             }
             return snapshot.data ?? const OnboardingScreen();
           },
@@ -91,7 +97,10 @@ Widget _screenFromCache(Map<String, String?> cached) {
       return const MainScreen();
   }
 }
-Future<Map<String, String?>> _readCachedUserInfo(SharedPreferences prefs) async {
+
+Future<Map<String, String?>> _readCachedUserInfo(
+  SharedPreferences prefs,
+) async {
   return {
     'complete_question': prefs.getString('cached_complete_question'),
     'screen_type': prefs.getString('cached_screen_type'),
@@ -99,17 +108,26 @@ Future<Map<String, String?>> _readCachedUserInfo(SharedPreferences prefs) async 
     'sexuality': prefs.getString('cached_sexuality'),
   };
 }
+
 Future<void> _writeCachedUserInfo(
-    SharedPreferences prefs, Map<String, dynamic> data) async
-{
+  SharedPreferences prefs,
+  Map<String, dynamic> data,
+) async {
   await prefs.setString(
-      'cached_complete_question', data['complete_question']?.toString() ?? "");
+    'cached_complete_question',
+    data['complete_question']?.toString() ?? "",
+  );
   await prefs.setString(
-      'cached_screen_type', data['screen_type']?.toString() ?? "0");
+    'cached_screen_type',
+    data['screen_type']?.toString() ?? "0",
+  );
   await prefs.setString('cached_gender', data['gender']?.toString() ?? "");
   await prefs.setString(
-      'cached_sexuality', data['sexuality']?.toString() ?? "");
+    'cached_sexuality',
+    data['sexuality']?.toString() ?? "",
+  );
 }
+
 Future<Widget> getInitialScreen() async {
   final prefs = await SharedPreferences.getInstance();
   final token = prefs.getString('auth_token');
@@ -140,4 +158,3 @@ Future<Widget> getInitialScreen() async {
   // No cache and no successful response yet — safest fallback.
   return const LoginPage();
 }
-

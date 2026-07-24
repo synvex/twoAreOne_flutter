@@ -43,14 +43,17 @@ class _CategoryQuestionsScreenState extends State<CategoryQuestionsScreen> {
     super.initState();
     _getData();
   }
+
   Future<void> _getData() async {
     setState(() => _loading = true);
-    debugPrint('CategoryQuestionsScreen loading category=${widget.categoryId} user=${widget.userId}');
+    debugPrint(
+      'CategoryQuestionsScreen loading category=${widget.categoryId} user=${widget.userId}',
+    );
     final res = await _service.getUserQuestionsByCategory(
       categoryId: widget.categoryId,
       userId: widget.userId,
     );
-    debugPrint('CategoryQuestionsScreen _getData() response: ${res}');
+    debugPrint('CategoryQuestionsScreen _getData() response: $res');
     if (!mounted) return;
 
     if (res['success'] == true && res['data'] is List) {
@@ -65,18 +68,17 @@ class _CategoryQuestionsScreenState extends State<CategoryQuestionsScreen> {
       setState(() => _loading = false);
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-            content:
-            Text('Failed to fetch questions. Please try again later.')),
+          content: Text('Failed to fetch questions. Please try again later.'),
+        ),
       );
     }
   }
+
   Future<void> _onChangePress(Map<String, dynamic> item) async {
     final changed = await Navigator.of(context).push<bool>(
       MaterialPageRoute(
-        builder: (_) => EditSingleQuestionScreen(
-          item: item,
-          categoryId: widget.categoryId,
-        ),
+        builder: (_) =>
+            EditSingleQuestionScreen(item: item, categoryId: widget.categoryId),
       ),
     );
     // Mirrors RN's redux `refresh` trigger — re-fetch the list after a
@@ -84,9 +86,9 @@ class _CategoryQuestionsScreenState extends State<CategoryQuestionsScreen> {
     debugPrint('EditSingleQuestionScreen returned: $changed');
     if (changed == true) _getData();
   }
+
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
@@ -98,14 +100,14 @@ class _CategoryQuestionsScreenState extends State<CategoryQuestionsScreen> {
               Row(
                 children: [
                   Back_Button(onTap: () => Navigator.of(context).maybePop()),
-                  const SizedBox(width: 82,height: 100,),
+                  const SizedBox(width: 82, height: 100),
                   Expanded(
                     child: Texts(
                       text: widget.categoryName,
-                        maxLines: 1,
-                        size: 20,
-                        fontWeight: FontWeight.w600,
-                        colorHexValue: 0xFF000000,
+                      maxLines: 1,
+                      size: 20,
+                      fontWeight: FontWeight.w600,
+                      colorHexValue: 0xFF000000,
                       // overflow: TextOverflow.ellipsis,
                     ),
                   ),
@@ -114,25 +116,27 @@ class _CategoryQuestionsScreenState extends State<CategoryQuestionsScreen> {
               Expanded(
                 child: _loading
                     ? const Center(
-                    child: CircularProgressIndicator(color: Colors.black))
+                        child: CircularProgressIndicator(color: Colors.black),
+                      )
                     : ListView.builder(
-                  physics: const ClampingScrollPhysics(),
-                  padding: const EdgeInsets.only(top: 8, bottom: 48),
-                  itemCount: _questions.length,
-                  itemBuilder: (context, index) {
-                    final item = _questions[index];
-                    final answerText =
-                        item['user_answer_text']?.toString() ?? '';
-                    debugPrint('Rendering item $index answer=$answerText');
-                    return _QuestionCard(
-                      question: item['question']?.toString() ?? '',
-                      answer:
-                      answerText.isNotEmpty ? answerText : 'N/A',
-                      editable: widget.editable,
-                      onChange: () => _onChangePress(item),
-                    );
-                  },
-                ),
+                        physics: const ClampingScrollPhysics(),
+                        padding: const EdgeInsets.only(top: 8, bottom: 48),
+                        itemCount: _questions.length,
+                        itemBuilder: (context, index) {
+                          final item = _questions[index];
+                          final answerText =
+                              item['user_answer_text']?.toString() ?? '';
+                          debugPrint(
+                            'Rendering item $index answer=$answerText',
+                          );
+                          return _QuestionCard(
+                            question: item['question']?.toString() ?? '',
+                            answer: answerText.isNotEmpty ? answerText : 'N/A',
+                            editable: widget.editable,
+                            onChange: () => _onChangePress(item),
+                          );
+                        },
+                      ),
               ),
             ],
           ),
@@ -177,7 +181,9 @@ class _QuestionCard extends StatelessWidget {
                   child: Text(
                     question,
                     style: const TextStyle(
-                        color: Colors.white, fontWeight: FontWeight.w500),
+                      color: Colors.white,
+                      fontWeight: FontWeight.w500,
+                    ),
                   ),
                 ),
                 if (editable) ...[
@@ -185,8 +191,10 @@ class _QuestionCard extends StatelessWidget {
                   GestureDetector(
                     onTap: onChange,
                     child: Container(
-                      padding:
-                      const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 10,
+                        vertical: 4,
+                      ),
                       decoration: BoxDecoration(
                         color: Colors.white,
                         borderRadius: BorderRadius.circular(20),

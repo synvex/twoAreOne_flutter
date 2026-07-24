@@ -27,12 +27,12 @@ class UserTile extends StatelessWidget {
           ClipOval(
             child: user.hasImage
                 ? Image.network(
-              "$imageBaseUrl${user.profilePicture}",
-              width: 50,
-              height: 50,
-              fit: BoxFit.cover,
-              errorBuilder: (_, __, ___) => _InitialsAvatar(user: user),
-            )
+                    "$imageBaseUrl${user.profilePicture}",
+                    width: 50,
+                    height: 50,
+                    fit: BoxFit.cover,
+                    errorBuilder: (_, _, _) => _InitialsAvatar(user: user),
+                  )
                 : _InitialsAvatar(user: user),
           ),
           const SizedBox(width: 12),

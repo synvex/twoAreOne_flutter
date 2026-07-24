@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class Texts extends StatelessWidget {
   final String text;
@@ -15,7 +16,12 @@ class Texts extends StatelessWidget {
     required this.text,
     this.size,
     this.fontWeight,
-    this.colorHexValue, this.underLineColor, this.textAlign, this.edgeInsets, this.maxLines, this.letterSpacing,
+    this.colorHexValue,
+    this.underLineColor,
+    this.textAlign,
+    this.edgeInsets,
+    this.maxLines,
+    this.letterSpacing,
   });
 
   @override
@@ -27,23 +33,23 @@ class Texts extends StatelessWidget {
         textAlign: textAlign,
         maxLines: maxLines,
         // overflow: TextOverflow.ellipsis,
-        style: TextStyle(
+        style: GoogleFonts.poppins(
           letterSpacing: letterSpacing,
 
           fontWeight: fontWeight,
           // Provided a default color if colorHexValue is null to avoid the crash
-          color: colorHexValue != null ? Color(
-              colorHexValue!) : Colors.black,
+          color: colorHexValue != null ? Color(colorHexValue!) : Colors.black,
           fontSize: size,
         ),
       ),
     );
   }
 }
+
 class RichTexts extends StatelessWidget {
   final String? text;
   final int? colorHexValue;
-  const RichTexts({super.key,  this.text, this.colorHexValue});
+  const RichTexts({super.key, this.text, this.colorHexValue});
 
   @override
   Widget build(BuildContext context) {
@@ -54,8 +60,7 @@ class RichTexts extends StatelessWidget {
         color: Color(colorHexValue ?? 0xFF727272),
         fontSize: 13,
         fontWeight: FontWeight.w500,
-            ),
-
-        );
+      ),
+    );
   }
 }

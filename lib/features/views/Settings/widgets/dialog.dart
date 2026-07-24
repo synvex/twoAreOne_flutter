@@ -35,7 +35,7 @@ class ChangeConfirmationDialog extends StatelessWidget {
         // Blurred, semi-transparent backdrop (RN: BlurView + rgba(0,0,0,0.5)).
         BackdropFilter(
           filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
-          child: Container(color: Colors.black.withOpacity(0.5)),
+          child: Container(color: Colors.black.withValues(alpha: 0.5)),
         ),
         Center(
           child: Container(
@@ -56,8 +56,11 @@ class ChangeConfirmationDialog extends StatelessWidget {
                     shape: BoxShape.circle,
                   ),
                   alignment: Alignment.center,
-                  child: const Icon(Icons.help_outline,
-                      color: Color(0xFF77153C), size: 30),
+                  child: const Icon(
+                    Icons.help_outline,
+                    color: Color(0xFF77153C),
+                    size: 30,
+                  ),
                 ),
                 const SizedBox(height: 18),
                 Text(
@@ -82,8 +85,10 @@ class ChangeConfirmationDialog extends StatelessWidget {
                             borderRadius: BorderRadius.circular(30),
                           ),
                         ),
-                        child: const Text('Cancel',
-                            style: TextStyle(color: Colors.black)),
+                        child: const Text(
+                          'Cancel',
+                          style: TextStyle(color: Colors.black),
+                        ),
                       ),
                     ),
                     const SizedBox(width: 14),
@@ -99,17 +104,17 @@ class ChangeConfirmationDialog extends StatelessWidget {
                         ),
                         child: loading
                             ? const SizedBox(
-                          width: 18,
-                          height: 18,
-                          child: CircularProgressIndicator(
-                            strokeWidth: 2,
-                            color: Color(0xFFDAFFED),
-                          ),
-                        )
+                                width: 18,
+                                height: 18,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                  color: Color(0xFFDAFFED),
+                                ),
+                              )
                             : const Text(
-                          'Continue',
-                          style: TextStyle(color: Color(0xFFDAFFED)),
-                        ),
+                                'Continue',
+                                style: TextStyle(color: Color(0xFFDAFFED)),
+                              ),
                       ),
                     ),
                   ],

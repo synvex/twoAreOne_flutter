@@ -35,7 +35,8 @@ class ProfileDetailCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final bool isValidUrl = imageUrl.trim().isNotEmpty &&
+    final bool isValidUrl =
+        imageUrl.trim().isNotEmpty &&
         imageUrl.startsWith('http') &&
         !imageUrl.endsWith('/uploads/');
 
@@ -51,17 +52,21 @@ class ProfileDetailCard extends StatelessWidget {
             children: [
               isValidUrl
                   ? Image.network(
-                imageUrl,
-                fit: BoxFit.cover,
-                errorBuilder: (context, error, stackTrace) =>
-                const PlaceholderImage(height: 180, width: 140, size: 22),
-                loadingBuilder: (context, child, loadingProgress) {
-                  if (loadingProgress == null) return child;
-                  return const Center(
-                    child: CircularProgressIndicator(strokeWidth: 2),
-                  );
-                },
-              )
+                      imageUrl,
+                      fit: BoxFit.cover,
+                      errorBuilder: (context, error, stackTrace) =>
+                          const PlaceholderImage(
+                            height: 180,
+                            width: 140,
+                            size: 22,
+                          ),
+                      loadingBuilder: (context, child, loadingProgress) {
+                        if (loadingProgress == null) return child;
+                        return const Center(
+                          child: CircularProgressIndicator(strokeWidth: 2),
+                        );
+                      },
+                    )
                   : const PlaceholderImage(height: 180, width: 140, size: 22),
 
               // Bottom frosted-glass action bar — hidden entirely when the
@@ -76,13 +81,13 @@ class ProfileDetailCard extends StatelessWidget {
                     child: BackdropFilter(
                       filter: ImageFilter.blur(sigmaX: 15, sigmaY: 15),
                       child: Container(
-                        color: Colors.white.withOpacity(0.18),
+                        color: Colors.white.withValues(alpha: 0.18),
                         alignment: Alignment.center,
                         padding: const EdgeInsets.symmetric(horizontal: 10),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: [
-                            SizedBox(width: 50,),
+                            SizedBox(width: 50),
                             // 1. Heart (Interested) — same asset pair as ProfileCard
                             _ActionBumpIcon(
                               loading: heartLoading,
@@ -114,7 +119,9 @@ class ProfileDetailCard extends StatelessWidget {
                             _ActionBumpIcon(
                               loading: blockLoading,
                               onTap: onDislike,
-                              delayBeforeCallback: const Duration(milliseconds: 300),
+                              delayBeforeCallback: const Duration(
+                                milliseconds: 300,
+                              ),
                               child: const Images(
                                 imageStr: "assets/svg_images/block.svg",
                                 height: 30,
@@ -131,7 +138,7 @@ class ProfileDetailCard extends StatelessWidget {
                                 width: 30,
                               ),
                             ),
-                            SizedBox(width: 50,),
+                            SizedBox(width: 50),
                           ],
                         ),
                       ),
@@ -194,28 +201,23 @@ class _ActionBumpIconState extends State<_ActionBumpIcon> {
         child: Center(
           child: widget.loading
               ? const SizedBox(
-            width: 18,
-            height: 18,
-            child: CircularProgressIndicator(
-              strokeWidth: 2,
-              valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-            ),
-          )
+                  width: 18,
+                  height: 18,
+                  child: CircularProgressIndicator(
+                    strokeWidth: 2,
+                    valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                  ),
+                )
               : AnimatedScale(
-            scale: _scale,
-            duration: const Duration(milliseconds: 120),
-            child: widget.child,
-          ),
+                  scale: _scale,
+                  duration: const Duration(milliseconds: 120),
+                  child: widget.child,
+                ),
         ),
       ),
     );
   }
 }
-
-
-
-
-
 
 // import 'dart:features';
 // import 'package:flutter/material.dart';

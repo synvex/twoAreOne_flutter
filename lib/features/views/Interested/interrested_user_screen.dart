@@ -11,13 +11,15 @@ import '../../../core/widgets/profile_bottom_sheet.dart';
 import '../../../core/routes/routes.dart';
 import '../../../data/models/interested_model.dart';
 import '../../../data/viewmodels/interested_view_model.dart';
+
 class InterestedUserScreen extends StatelessWidget {
   const InterestedUserScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider<InterestedViewModel>(
-      create: (_) => InterestedViewModel(repository: InterestedServices())..init(),
+      create: (_) =>
+          InterestedViewModel(repository: InterestedServices())..init(),
       child: const _InterestedUserView(),
     );
   }
@@ -44,11 +46,13 @@ class _InterestedUserViewState extends State<_InterestedUserView> {
       }
     });
   }
+
   @override
   void dispose() {
     _scrollController.dispose();
     super.dispose();
   }
+
   void _showErrorIfAny(BuildContext context, InterestedViewModel vm) {
     if (vm.errorMessage != null) {
       final message = vm.errorMessage!;
@@ -73,12 +77,16 @@ class _InterestedUserViewState extends State<_InterestedUserView> {
           onViewProfile: () {
             Navigator.of(ctx).pop();
             vm.closeBottomSheet();
-            Navigator.of(context).pushNamed(AppRoutes.profileDetail, arguments: item);
+            Navigator.of(
+              context,
+            ).pushNamed(AppRoutes.profileDetail, arguments: item);
           },
         ),
       ),
     ).whenComplete(() => vm.closeBottomSheet());
-  }  @override
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Consumer<InterestedViewModel>(
       builder: (context, vm, _) {
@@ -87,18 +95,28 @@ class _InterestedUserViewState extends State<_InterestedUserView> {
           backgroundColor: AppColors.white,
           body: SafeArea(
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20,vertical: 40),
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 40),
               child: Column(
                 children: [
-                  Row(children: [ 
-                    Back_Button(onTap: (){
-                    Navigator.pop(context);
-                  }),
-                    const SizedBox(width: 64,),
-                    Text('Interested', style: TextStyle(fontSize: 24,
-                        fontFamily: 'Poltawski Nowy',fontWeight: FontWeight.w500),)
-                  ],),
-                  const SizedBox(height: 30,),
+                  Row(
+                    children: [
+                      Back_Button(
+                        onTap: () {
+                          Navigator.pop(context);
+                        },
+                      ),
+                      const SizedBox(width: 64),
+                      Text(
+                        'Interested',
+                        style: TextStyle(
+                          fontSize: 24,
+                          fontFamily: 'Poltawski Nowy',
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 30),
                   InterestedTabBar(
                     activeTab: vm.activeTab,
                     onTabSelected: (tab) => vm.switchTab(tab),
@@ -129,24 +147,25 @@ class _InterestedUserViewState extends State<_InterestedUserView> {
       child: vm.showEmptyState
           ? _buildEmptyState(vm)
           : ListView.builder(
-        controller: _scrollController,
-        padding: const EdgeInsets.only(top: 20),
-        physics: const AlwaysScrollableScrollPhysics(),
-        itemCount: vm.currentItems.length + (vm.showSkeletonFooter ? 1 : 0),
-        itemBuilder: (context, index) {
-          if (index >= vm.currentItems.length) {
-            return const SkeletonFooterList();
-          }
-          final item = vm.currentItems[index];
-          return UserListTile(
-            user: item,
-            resolvedImageUrl: vm.resolveImageUrl(item.profilePicture),
-            initials: vm.initialsFor(item.fullName),
-            displayName: vm.capitalize(item.fullName),
-            onMenuPressed: () => _openActionSheet(context, item),
-          );
-        },
-      ),
+              controller: _scrollController,
+              padding: const EdgeInsets.only(top: 20),
+              physics: const AlwaysScrollableScrollPhysics(),
+              itemCount:
+                  vm.currentItems.length + (vm.showSkeletonFooter ? 1 : 0),
+              itemBuilder: (context, index) {
+                if (index >= vm.currentItems.length) {
+                  return const SkeletonFooterList();
+                }
+                final item = vm.currentItems[index];
+                return UserListTile(
+                  user: item,
+                  resolvedImageUrl: vm.resolveImageUrl(item.profilePicture),
+                  initials: vm.initialsFor(item.fullName),
+                  displayName: vm.capitalize(item.fullName),
+                  onMenuPressed: () => _openActionSheet(context, item),
+                );
+              },
+            ),
     );
   }
 
@@ -175,15 +194,15 @@ class AppBottomSheet {
   AppBottomSheet._();
 
   static Future<T?> show<T>(
-      BuildContext context, {
-        required WidgetBuilder builder,
-        double sheetHeight = 420,
-      }) {
+    BuildContext context, {
+    required WidgetBuilder builder,
+    double sheetHeight = 420,
+  }) {
     return showModalBottomSheet<T>(
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
-      barrierColor: Colors.black.withOpacity(0.4),
+      barrierColor: Colors.black.withValues(alpha: 0.4),
       builder: (context) {
         final width = MediaQuery.of(context).size.width;
         return SizedBox(
@@ -209,8 +228,8 @@ class AppBottomSheet {
                   ),
                 ),
               ),
+
               // Content.
-              
               Positioned(
                 top: 48,
                 left: 0,
@@ -234,7 +253,7 @@ class CurveBackgroundPainter extends CustomPainter {
       ..style = PaintingStyle.fill;
 
     final shadowPaint = Paint()
-      ..color = Colors.black.withOpacity(0.05)
+      ..color = Colors.black.withValues(alpha: 0.05)
       ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 10);
 
     final path = Path();

@@ -101,6 +101,7 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
     _visitedUser();
     _getUserDetails();
   }
+
   // void didChangeDependencies() {
   //   super.didChangeDependencies();
   //   if (_didInit) return;
@@ -126,6 +127,7 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
     // Fire-and-forget, mirrors RN's ApiManager.fetch with empty callbacks.
     _homeService.addVisitedUser(id);
   }
+
   Future<void> _getUserDetails() async {
     final id = _cardUser?.id;
     if (id == null) {
@@ -140,26 +142,31 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
     if (res['success'] == true && res['data'] is Map) {
       setState(() {
         _details = ProfileDetailModel.fromJson(
-            (res['data'] as Map).cast<String, dynamic>());
+          (res['data'] as Map).cast<String, dynamic>(),
+        );
         _loading = false;
       });
     } else {
       setState(() => _loading = false);
     }
   }
+
   // ── utils ────────────────────────────────────────────────────────────
   String _capitalize(String? text) {
     if (text == null || text.isEmpty) return '';
     return text[0].toUpperCase() + text.substring(1);
   }
+
   String _fullUrl(String? path) {
     if (path == null || path.isEmpty) return '';
     return path.startsWith('http') ? path : '$kProfileUploadImagesBase$path';
   }
+
   String get _truncatedBio {
     final bio = _details?.bio ?? '';
     return bio.length > 200 ? bio.substring(0, 200) : bio;
   }
+
   // ── actions ──────────────────────────────────────────────────────────
   void _handleSilentChat() {
     if (_chatLoading) return;
@@ -192,6 +199,7 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
       );
     });
   }
+
   Future<void> _onBlockPress() async {
     final id = _userId;
     if (id == null) return;
@@ -218,6 +226,7 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
       );
     }
   }
+
   Future<void> _onLikePress() async {
     final id = _userId;
     if (id == null || _details == null) return;
@@ -228,10 +237,13 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
     if (!mounted) return;
 
     if (success) {
-      setState(() => _details = _details!.copyWith(isInterested: !wasInterested));
+      setState(
+        () => _details = _details!.copyWith(isInterested: !wasInterested),
+      );
     }
     setState(() => _heartLoading = false);
   }
+
   Future<void> _onStarPress() async {
     final id = _userId;
     if (id == null || _details == null) return;
@@ -246,14 +258,13 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
     }
     setState(() => _starLoading = false);
   }
+
   @override
   Widget build(BuildContext context) {
     if (_loading && _details == null) {
       return const Scaffold(
         backgroundColor: Colors.white,
-        body: Center(
-          child: CircularProgressIndicator(color: kMehroon),
-        ),
+        body: Center(child: CircularProgressIndicator(color: kMehroon)),
       );
     }
 
@@ -264,6 +275,7 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
       ],
     );
   }
+
   Widget _buildScreen(BuildContext context) {
     final details = _details;
     final screenWidth = MediaQuery.of(context).size.width;
@@ -276,8 +288,9 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
             _buildHeader(),
             Expanded(
               child: SingleChildScrollView(
-                padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.04)
-                    .copyWith(bottom: 50),
+                padding: EdgeInsets.symmetric(
+                  horizontal: screenWidth * 0.04,
+                ).copyWith(bottom: 50),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -315,7 +328,11 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
                     const SizedBox(height: 2),
                     Row(
                       children: [
-                        const Images(imageStr: "assets/location_detail_screen.svg",height: 15,width: 15,),
+                        const Images(
+                          imageStr: "assets/location_detail_screen.svg",
+                          height: 15,
+                          width: 15,
+                        ),
                         const SizedBox(width: 2),
                         Text(
                           "${details?.city.isNotEmpty == true ? details!.city : 'N/A'} , ${details?.country ?? ''}",
@@ -377,7 +394,10 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
                       const SizedBox(height: 16),
                       const Text(
                         "Uploaded Images",
-                        style: TextStyle(fontSize: 16, color: Color(0xD9000000)),
+                        style: TextStyle(
+                          fontSize: 16,
+                          color: Color(0xD9000000),
+                        ),
                       ),
                       const SizedBox(height: 8),
                       SizedBox(
@@ -385,7 +405,7 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
                         child: ListView.separated(
                           scrollDirection: Axis.horizontal,
                           itemCount: details!.images.length,
-                          separatorBuilder: (_, __) => const SizedBox(width: 10),
+                          separatorBuilder: (_, _) => const SizedBox(width: 10),
                           itemBuilder: (context, index) {
                             final url = _fullUrl(details.images[index]);
                             return GestureDetector(
@@ -415,12 +435,13 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
                       const SizedBox(height: 16),
                       const Text(
                         "Uploaded Video",
-                        style: TextStyle(fontSize: 16, color: Color(0xD9000000)),
+                        style: TextStyle(
+                          fontSize: 16,
+                          color: Color(0xD9000000),
+                        ),
                       ),
                       const SizedBox(height: 8),
-                      InlineVideoPlayer(
-                        url: _fullUrl(details!.video),
-                      ),
+                      InlineVideoPlayer(url: _fullUrl(details!.video)),
                     ],
                     // ── Matches breakdown ─────────────────────────────
                     const SizedBox(height: 20),
@@ -450,7 +471,7 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
                     const SizedBox(height: 6),
 
                     ...?details?.categories.map(
-                          (category) => Padding(
+                      (category) => Padding(
                         padding: const EdgeInsets.only(top: 4),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.center,
@@ -472,10 +493,12 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
                                   Navigator.of(context).push(
                                     MaterialPageRoute(
                                       builder: (_) => CategoryQuestionsScreen(
-                                        categoryId: category.categoryId, // 👈 confirm field name — neeche note dekhein
+                                        categoryId: category
+                                            .categoryId, // 👈 confirm field name — neeche note dekhein
                                         categoryName: category.categoryName,
                                         userId: _userId ?? 0,
-                                        editable: false, // doosre user ka profile view ho raha hai — read-only
+                                        editable:
+                                            false, // doosre user ka profile view ho raha hai — read-only
                                       ),
                                     ),
                                   );
@@ -509,6 +532,7 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
       ),
     );
   }
+
   Widget _buildFullScreenImageViewer() {
     return GestureDetector(
       onTap: () => setState(() => _selectedImage = null),
@@ -532,7 +556,11 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
                     );
                   },
                   errorBuilder: (context, error, stack) => const Center(
-                    child: Icon(Icons.broken_image, color: Colors.white, size: 48),
+                    child: Icon(
+                      Icons.broken_image,
+                      color: Colors.white,
+                      size: 48,
+                    ),
                   ),
                 ),
               ),
@@ -557,6 +585,7 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
       ),
     );
   }
+
   Widget _buildHeader() {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -567,8 +596,11 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
           GestureDetector(
             onTap: () {
               // RN navigates to NotificationScreen here.
-              TopToast.show(context,
-                  title: "Notifications", type: ToastType.info);
+              TopToast.show(
+                context,
+                title: "Notifications",
+                type: ToastType.info,
+              );
             },
             child: Containers(
               wWidth: 45,
@@ -577,13 +609,16 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
               hexValue: 0xFFFFFFFF,
               border: Border.all(color: Colors.black12),
               alignment: Alignment.center,
-              child: const Images(imageStr: "assets/svg_images/notification.svg"),
+              child: const Images(
+                imageStr: "assets/svg_images/notification.svg",
+              ),
             ),
           ),
         ],
       ),
     );
   }
+
   Widget _buildGetToKnowButton(ProfileDetailModel? details) {
     return GestureDetector(
       onTap: _chatLoading ? null : _handleSilentChat,
@@ -603,34 +638,34 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
           alignment: Alignment.center,
           child: _chatLoading
               ? const SizedBox(
-            width: 20,
-            height: 20,
-            child: CircularProgressIndicator(
-              strokeWidth: 2,
-              valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-            ),
-          )
+                  width: 20,
+                  height: 20,
+                  child: CircularProgressIndicator(
+                    strokeWidth: 2,
+                    valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                  ),
+                )
               : Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(
-                "Get to know ${_capitalize(details?.fullName)}",
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 18,
-                  fontWeight: FontWeight.w600,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      "Get to know ${_capitalize(details?.fullName)}",
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 18,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    Text(
+                      "${details?.percentMatch ?? '0'} % MATCH OVERALL",
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 13,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ],
                 ),
-              ),
-              Text(
-                "${details?.percentMatch ?? '0'} % MATCH OVERALL",
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 13,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-            ],
-          ),
         ),
       ),
     );
@@ -654,14 +689,11 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
     return SizedBox(
       width: (MediaQuery.of(context).size.width * 0.92) / 2,
       child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 6,horizontal: 6),
+        padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 6),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Texts(
-              text:  label,
-              size: 15, colorHexValue: 0xFF4D4D4D,
-            ),
+            Texts(text: label, size: 15, colorHexValue: 0xFF4D4D4D),
             Container(
               height: 30,
               constraints: const BoxConstraints(minWidth: 80),
@@ -672,8 +704,10 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
                 borderRadius: BorderRadius.circular(100),
               ),
               child: Texts(
-                  text: (value?.isNotEmpty == true) ? value! : 'N/A',
-                  size: 10, colorHexValue: 0xFF77153C),
+                text: (value?.isNotEmpty == true) ? value! : 'N/A',
+                size: 10,
+                colorHexValue: 0xFF77153C,
+              ),
             ),
           ],
         ),
@@ -681,5 +715,3 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
     );
   }
 }
-
-

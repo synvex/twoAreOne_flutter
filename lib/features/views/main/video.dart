@@ -64,7 +64,6 @@ class _VideoPreviewCardState extends State<VideoPreviewCard> {
 
       // Show first frame as thumbnail
       await controller.seekTo(const Duration(milliseconds: 50));
-
     } catch (e) {
       debugPrint("Video init failed: $e");
       if (mounted) {
@@ -121,7 +120,6 @@ class _VideoPreviewCardState extends State<VideoPreviewCard> {
           child: Stack(
             alignment: Alignment.center,
             children: [
-
               // ── Video frame ──────────────────────────────────────────────
               if (_initialized && _controller != null)
                 SizedBox.expand(
@@ -134,14 +132,16 @@ class _VideoPreviewCardState extends State<VideoPreviewCard> {
                     ),
                   ),
                 )
-
               // ── Error state ───────────────────────────────────────────────
               else if (_hasError)
                 Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const Icon(Icons.error_outline,
-                        color: Colors.white54, size: 40),
+                    const Icon(
+                      Icons.error_outline,
+                      color: Colors.white54,
+                      size: 40,
+                    ),
                     const SizedBox(height: 8),
                     const Text(
                       "Cannot play video",
@@ -149,7 +149,6 @@ class _VideoPreviewCardState extends State<VideoPreviewCard> {
                     ),
                   ],
                 )
-
               // ── Loading spinner ───────────────────────────────────────────
               else
                 const CircularProgressIndicator(
@@ -165,7 +164,7 @@ class _VideoPreviewCardState extends State<VideoPreviewCard> {
                     width: 56,
                     height: 56,
                     decoration: BoxDecoration(
-                      color: Colors.black.withOpacity(0.55),
+                      color: Colors.black.withValues(alpha: 0.55),
                       shape: BoxShape.circle,
                     ),
                     child: const Icon(
@@ -179,7 +178,9 @@ class _VideoPreviewCardState extends State<VideoPreviewCard> {
               // ── Progress bar ─────────────────────────────────────────────
               if (_initialized && _controller != null)
                 Positioned(
-                  bottom: 0, left: 0, right: 0,
+                  bottom: 0,
+                  left: 0,
+                  right: 0,
                   child: VideoProgressIndicator(
                     _controller!,
                     allowScrubbing: true,

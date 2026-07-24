@@ -38,13 +38,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
   // ── Navigation helpers ────────────────────────────────────────────────
 
   Future<void> _navigateOrComingSoon(
-      String routeName, {
-        Object? arguments,
-      }) async
-  {
+    String routeName, {
+    Object? arguments,
+  }) async {
     try {
-      await Navigator.of(context).pushNamed(
-          routeName, arguments: arguments);
+      await Navigator.of(context).pushNamed(routeName, arguments: arguments);
     } catch (_) {
       if (mounted) {
         TopToast.show(context, title: "Coming soon", type: ToastType.info);
@@ -111,11 +109,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
         if (!mounted) return;
         _navigateOrComingSoon(
           SettingsRoutes.changeEmailOtp,
-          arguments: {
-            'email': email,
-            'isCurrent': true,
-            'endTime': endTime,
-          },
+          arguments: {'email': email, 'isCurrent': true, 'endTime': endTime},
         );
       },
       onError: (message) {
@@ -136,8 +130,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
             children: [
               SafeArea(
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(
-                      horizontal: 16),
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -219,14 +212,17 @@ class _SettingsScreenState extends State<SettingsScreen> {
         //     child: const Icon(Icons.arrow_back, color: Colors.black, size: 22),
         //   ),
         // ),
-        Back_Button(onTap: ()=>Navigator.push(context,
-            MaterialPageRoute(
-              builder: (context) => ProfileScreen(),))),
-        const Texts(text:
-          'Settings',
+        Back_Button(
+          onTap: () => Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => ProfileScreen()),
+          ),
+        ),
+        const Texts(
+          text: 'Settings',
           size: 24,
-            fontWeight: FontWeight.w500,
-            colorHexValue: 0xFF000000,
+          fontWeight: FontWeight.w500,
+          colorHexValue: 0xFF000000,
         ),
         const SizedBox(width: 50), // balances the back button (RN: empty View)
       ],
@@ -252,8 +248,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
               ),
               SettingsItem(
                 icon: const Images(
-                    imageStr: 'assets/Settings/termUse.svg',
-                  height: 20,width: 20,color: Colors.black,),
+                  imageStr: 'assets/Settings/termUse.svg',
+                  height: 20,
+                  width: 20,
+                  color: Colors.black,
+                ),
                 label: 'Terms of Use',
                 isLast: true,
                 onPressed: () =>
@@ -272,8 +271,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        _sectionHeader('assets/Settings/notificationSetting.svg',
-            'Notification Setting'),
+        _sectionHeader(
+          'assets/Settings/notificationSetting.svg',
+          'Notification Setting',
+        ),
         const SizedBox(height: 10),
         _card(
           padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 4),
@@ -284,19 +285,21 @@ class _SettingsScreenState extends State<SettingsScreen> {
               const Texts(
                 text: 'App Notification',
                 size: 14,
-                  fontWeight: FontWeight.w400,
-                  colorHexValue: 0xFF000000,
+                fontWeight: FontWeight.w400,
+                colorHexValue: 0xFF000000,
               ),
               Transform.scale(
                 scale: 0.85,
                 child: Switch(
                   value: _vm.notificationsOn,
                   onChanged: _vm.setNotificationsOn,
-                  activeColor: Colors.white,
+                  activeThumbColor: Colors.white,
                   activeTrackColor: const Color(0xFF477CB6),
                   inactiveThumbColor: Colors.white,
                   inactiveTrackColor: Colors.red,
-                   trackOutlineColor: WidgetStateProperty.all(Colors.transparent),
+                  trackOutlineColor: WidgetStateProperty.all(
+                    Colors.transparent,
+                  ),
                 ),
               ),
             ],
@@ -311,45 +314,48 @@ class _SettingsScreenState extends State<SettingsScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        _sectionHeader("assets/Settings/secuirtyIcon.svg", 'Account Security & Information'),
+        _sectionHeader(
+          "assets/Settings/secuirtyIcon.svg",
+          'Account Security & Information',
+        ),
         const SizedBox(height: 10),
         _card(
           child: _vm.isLoadingUser
               ? const Padding(
-            padding: EdgeInsets.symmetric(vertical: 16),
-            child: Center(
-              child: SizedBox(
-                width: 20,
-                height: 20,
-                child: CircularProgressIndicator(strokeWidth: 2),
-              ),
-            ),
-          )
+                  padding: EdgeInsets.symmetric(vertical: 16),
+                  child: Center(
+                    child: SizedBox(
+                      width: 20,
+                      height: 20,
+                      child: CircularProgressIndicator(strokeWidth: 2),
+                    ),
+                  ),
+                )
               : Column(
-            children: [
-              EditableItem(
-                icon: const Icon(Icons.email_outlined, size: 20),
-                value: 'Change Email',
-                subValue: _vm.user.email,
-                onPressed: _vm.openEmailConfirm,
-              ),
-              EditableItem(
-                icon: const Icon(Icons.lock_open, size: 20),
-                value: 'Change Password',
-                subValue: '*************',
-                secure: true,
-                onPressed: () =>
-                    _navigateOrComingSoon(SettingsRoutes.resetPassword),
-              ),
-              EditableItem(
-                icon: const Icon(CupertinoIcons.phone, size: 20),
-                value: 'Change Number',
-                subValue: _vm.user.phoneNo,
-                isLast: true,
-                onPressed: _vm.openPhoneConfirm,
-              ),
-            ],
-          ),
+                  children: [
+                    EditableItem(
+                      icon: const Icon(Icons.email_outlined, size: 20),
+                      value: 'Change Email',
+                      subValue: _vm.user.email,
+                      onPressed: _vm.openEmailConfirm,
+                    ),
+                    EditableItem(
+                      icon: const Icon(Icons.lock_open, size: 20),
+                      value: 'Change Password',
+                      subValue: '*************',
+                      secure: true,
+                      onPressed: () =>
+                          _navigateOrComingSoon(SettingsRoutes.resetPassword),
+                    ),
+                    EditableItem(
+                      icon: const Icon(CupertinoIcons.phone, size: 20),
+                      value: 'Change Number',
+                      subValue: _vm.user.phoneNo,
+                      isLast: true,
+                      onPressed: _vm.openPhoneConfirm,
+                    ),
+                  ],
+                ),
         ),
       ],
     );
@@ -427,9 +433,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
           Texts(
             text: title,
             size: 14,
-              fontWeight: FontWeight.w500,
-              colorHexValue: 0xFF000000,
-            ),
+            fontWeight: FontWeight.w500,
+            colorHexValue: 0xFF000000,
+          ),
         ],
       ),
     );
@@ -442,8 +448,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
   }) {
     return Container(
       width: double.infinity,
-      padding: padding ??
-          const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+      padding:
+          padding ?? const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
       decoration: BoxDecoration(
         color: const Color(0x03000000),
         borderRadius: BorderRadius.circular(radius),
