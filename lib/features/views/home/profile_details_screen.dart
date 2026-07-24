@@ -6,6 +6,7 @@ import 'package:two_are_one/core/widgets/containers.dart';
 import 'package:two_are_one/core/widgets/top_toast.dart';
 import 'package:two_are_one/data/models/details_screen_model.dart';
 import 'package:two_are_one/data/models/user_match_model.dart';
+import 'package:two_are_one/data/models/visited_blocked_model.dart';
 import 'package:two_are_one/data/services/home_service.dart';
 import '../../../data/models/favourite_model.dart';
 import 'package:two_are_one/data/models/interested_model.dart';
@@ -26,7 +27,6 @@ class ProfileDetailsScreen extends StatefulWidget {
 
 class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
   final HomeService _homeService = HomeService();
-
   bool _didInit = false;
   FilterMatchModel? _cardUser;
   bool _blocked = false;
@@ -40,17 +40,19 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
   bool _chatLoading = false;
   final Map<String, DateTime> _chatCooldowns = {};
   @override
-  @override
   void didChangeDependencies() {
     super.didChangeDependencies();
     if (_didInit) return;
     _didInit = true;
 
     final args = ModalRoute.of(context)?.settings.arguments;
+    print("DEBUG: ProfileDetails arguments type: ${args.runtimeType}");
+    print("DEBUG: ProfileDetails arguments value: $args");
 
     if (args is FilterMatchModel) {
       _cardUser = args;
-    } else if (args is FavouriteUserModel) {
+    }
+    else if (args is FavouriteUserModel) {
       _cardUser = FilterMatchModel(
         id: args.id,
         name: args.fullName,
@@ -60,7 +62,8 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
         city: '',
         matchPercent: '0%',
       );
-    } else if (args is InterestedUserModel) {
+    }
+    else if (args is InterestedUserModel) {
       _cardUser = FilterMatchModel(
         id: args.id,
         name: args.fullName,
@@ -70,21 +73,27 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
         city: '',
         matchPercent: '0%',
       );
-    } else if (args is Map) {
-      final u = args['user'];
-      if (u is FilterMatchModel) {
-        _cardUser = u;
-      } else if (u is FavouriteUserModel) {
-        _cardUser = FilterMatchModel(
-          id: u.id,
-          name: u.fullName,
-          imagePath: u.profilePicture ?? '',
+    }
+    else if (args is VisitedBlockedUserModel) {
+      _cardUser = FilterMatchModel(
+          id: args.profileId,
+          name: args.fullName,
+          imagePath: args.profilePicture ?? '',
           age: 0,
           location: '',
           city: '',
-          matchPercent: '0%',
-        );
-      } else if (u is InterestedUserModel) {
+          matchPercent: '0%'
+      );
+      _blocked = true;
+    }
+    else if (args is Map) {
+      final u = args['user'];
+      _blocked = args['blocked'] == true;
+
+      if (u is FilterMatchModel) {
+        _cardUser = u;
+      }
+      else if (u is FavouriteUserModel) {
         _cardUser = FilterMatchModel(
           id: u.id,
           name: u.fullName,
@@ -95,36 +104,45 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
           matchPercent: '0%',
         );
       }
-      _blocked = args['blocked'] == true;
+      else if (u is InterestedUserModel) {
+        _cardUser = FilterMatchModel(
+          id: u.id,
+          name: u.fullName,
+          imagePath: u.profilePicture ?? '',
+          age: 0,
+          location: '',
+          city: '',
+          matchPercent: '0%',
+        );
+      }
+      else if (u is VisitedBlockedUserModel) { // Move this inside the Map block
+        _cardUser = FilterMatchModel(
+          id: u.profileId, // Use profileId
+          name: u.fullName,
+          imagePath: u.profilePicture ?? '',
+          age: 0,
+          location: '',
+          city: '',
+          matchPercent: '0%',
+        );
+      }
     }
 
     _visitedUser();
     _getUserDetails();
   }
-  // void didChangeDependencies() {
-  //   super.didChangeDependencies();
-  //   if (_didInit) return;
-  //   _didInit = true;
-  //
-  //   final args = ModalRoute.of(context)?.settings.arguments;
-  //   if (args is FilterMatchModel) {
-  //     _cardUser = args;
-  //   } else if (args is Map) {
-  //     final u = args['user'];
-  //     if (u is FilterMatchModel) _cardUser = u;
-  //     _blocked = args['blocked'] == true;
-  //   }
-  //
-  //   _visitedUser();
-  //   _getUserDetails();
-  // }
   int? get _userId => _details?.userId ?? _cardUser?.id;
   // ── API ──────────────────────────────────────────────────────────────
   Future<void> _visitedUser() async {
     final id = _cardUser?.id;
-    if (id == null) return;
-    // Fire-and-forget, mirrors RN's ApiManager.fetch with empty callbacks.
-    _homeService.addVisitedUser(id);
+    debugPrint("VISITED: cardUser id = $id, blocked = $_blocked");
+    if (id == null) {
+      debugPrint("VISITED: skipped, no id");
+      return;
+    }
+    final res = await _homeService.addVisitedUser(id);
+    debugPrint("visited/add.php -> $res");
+
   }
   Future<void> _getUserDetails() async {
     final id = _cardUser?.id;
@@ -160,7 +178,6 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
     final bio = _details?.bio ?? '';
     return bio.length > 200 ? bio.substring(0, 200) : bio;
   }
-  // ── actions ──────────────────────────────────────────────────────────
   void _handleSilentChat() {
     if (_chatLoading) return;
     final id = (_userId ?? 0).toString();
@@ -411,11 +428,12 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
                       ),
                     ],
                     // ── Video ─────────────────────────────────────────
-                    if (details?.video != null) ...[
+                    if(details?.video?.isNotEmpty ?? false) ...[
                       const SizedBox(height: 16),
                       const Text(
                         "Uploaded Video",
-                        style: TextStyle(fontSize: 16, color: Color(0xD9000000)),
+                        style: TextStyle(fontSize: 16, color: Color(
+                            0xD9000000)),
                       ),
                       const SizedBox(height: 8),
                       InlineVideoPlayer(
@@ -635,7 +653,6 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
       ),
     );
   }
-
   Widget _sectionTitle(String text) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 6),
@@ -649,7 +666,6 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
       ),
     );
   }
-
   Widget _infoBadge(String label, String? value) {
     return SizedBox(
       width: (MediaQuery.of(context).size.width * 0.92) / 2,

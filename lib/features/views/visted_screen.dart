@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:two_are_one/core/widgets/back_button.dart';
 import 'package:two_are_one/core/widgets/image.dart';
 import 'package:two_are_one/data/models/visited_blocked_model.dart';
 import '../../data/viewmodels/visited_view_model.dart';
 import 'Blocked/bottom_sheet.dart';
 import 'Blocked/list_tiles.dart';
+import 'home/profile_details_screen.dart';
 
 const String kUploadImagesBaseUrl = "https://www.twoareone.love/uploads/";
 
@@ -29,7 +32,6 @@ class _VisitedUserScreenState extends State<VisitedUserScreen> {
   void _onModelChanged() {
     if (mounted) setState(() {});
   }
-
   void _onScroll() {
     final pos = _scrollController.position;
     if (pos.pixels >= pos.maxScrollExtent - 150 &&
@@ -38,7 +40,6 @@ class _VisitedUserScreenState extends State<VisitedUserScreen> {
       _viewModel.fetchUsers();
     }
   }
-
   @override
   void dispose() {
     _viewModel.removeListener(_onModelChanged);
@@ -46,7 +47,6 @@ class _VisitedUserScreenState extends State<VisitedUserScreen> {
     _viewModel.dispose();
     super.dispose();
   }
-
   void _openMenu(VisitedBlockedUserModel user) {
     UserActionBottomSheet.show(
       context,
@@ -57,7 +57,14 @@ class _VisitedUserScreenState extends State<VisitedUserScreen> {
           label: "View Profile",
           onTap: () {
             Navigator.of(context).pop();
-            // TODO: Navigator.pushNamed(context, Routes.profileDetail, arguments: {"item": user});
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const ProfileDetailsScreen(),
+                // settings: RouteSettings(arguments: user), // Pass the VisitedBlockedUserModel
+                settings: RouteSettings(arguments: {'user': user, 'blocked': false}),
+              ),
+            );
           },
         ),
         SheetMenuItem(
@@ -88,51 +95,76 @@ class _VisitedUserScreenState extends State<VisitedUserScreen> {
     final showInitialLoader = vm.isLoading && vm.users.isEmpty;
     final showEmpty = !vm.isLoading && vm.users.isEmpty;
 
-    return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: AppBar(
+    return SafeArea(
+      child: Scaffold(
         backgroundColor: Colors.white,
-        elevation: 0,
-        iconTheme: const IconThemeData(color: Colors.black),
-        title: const Text("Visited Users", style: TextStyle(color: Colors.black)),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16),
-        child: showInitialLoader
-            ? const Center(child: CircularProgressIndicator())
-            : RefreshIndicator(
-          onRefresh: () => vm.fetchUsers(refresh: true),
-          child: showEmpty
-              ? ListView(
-            physics: const AlwaysScrollableScrollPhysics(),
-            children: const [
-              SizedBox(height: 220),
-              Center(
-                child: Text(
-                  "No visited users found.",
-                  style: TextStyle(color: Colors.grey),
+        body: Padding(
+          padding: const EdgeInsets.all(18.0),
+          child: Column(
+            children: [
+              Row(children: [
+                Back_Button(onTap: ()=> Navigator.pop(context)),
+                const SizedBox(width: 64),
+      
+                Text('Visited Users', style: GoogleFonts.poltawskiNowy(
+                    fontSize: 24,
+                    fontWeight: FontWeight.w500,
+                    color: Colors.black
+                ),)
+              ],),
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: showInitialLoader
+                      ? const Center(child: CircularProgressIndicator())
+                      : RefreshIndicator(
+                    onRefresh: () => vm.fetchUsers(refresh: true),
+                    child: showEmpty
+                        ? ListView(
+                      physics: const AlwaysScrollableScrollPhysics(),
+                      children:  [
+                        SizedBox(height: 220),
+                        Center(
+                          child: Text(vm.error ??
+                              "No visited users found.",
+                            style: const TextStyle(color: Colors.grey),
+                          ),
+                        ),
+                        if (vm.error != null) ...[
+                          const SizedBox(height: 12),
+                          Center(
+                            child: TextButton(
+                              onPressed: () => vm.fetchUsers(refresh: true),
+                              child: const Text("Retry"),
+                            ),
+                          ),
+                        ],
+                      ],
+                    )
+                        : ListView.builder(
+                      shrinkWrap: true,
+                      controller: _scrollController,
+                      padding: const EdgeInsets.only(top: 20, bottom: 100),
+                      itemCount: vm.users.length + (vm.isLoading ? 1 : 0),
+                      itemBuilder: (context, index) {
+                        if (index >= vm.users.length) {
+                          return const Padding(
+                            padding: EdgeInsets.symmetric(vertical: 12),
+                            child: Center(child: CircularProgressIndicator()),
+                          );
+                        }
+                        final user = vm.users[index];
+                        return UserTile(
+                          user: user,
+                          imageBaseUrl: kUploadImagesBaseUrl,
+                          onMenuTap: () => _openMenu(user),
+                        );
+                      },
+                    ),
+                  ),
                 ),
               ),
             ],
-          )
-              : ListView.builder(
-            controller: _scrollController,
-            padding: const EdgeInsets.only(top: 20, bottom: 100),
-            itemCount: vm.users.length + (vm.isLoading ? 1 : 0),
-            itemBuilder: (context, index) {
-              if (index >= vm.users.length) {
-                return const Padding(
-                  padding: EdgeInsets.symmetric(vertical: 12),
-                  child: Center(child: CircularProgressIndicator()),
-                );
-              }
-              final user = vm.users[index];
-              return UserTile(
-                user: user,
-                imageBaseUrl: kUploadImagesBaseUrl,
-                onMenuTap: () => _openMenu(user),
-              );
-            },
           ),
         ),
       ),

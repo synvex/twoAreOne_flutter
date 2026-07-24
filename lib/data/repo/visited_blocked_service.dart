@@ -1,8 +1,7 @@
 import '../end_points.dart';
-import '../services/Api_Helper/api_manager.dart'; // merge ApiEndpoints from end_points_blocked_visited.dart here
+import '../services/Api_Helper/api_manager.dart';
+// merge ApiEndpoints from end_points_blocked_visited.dart here
 
-/// Handles all API calls for the Blocked Users and Visited Users screens.
-/// Thin wrapper around the existing [ApiManager] (Dio based) — no extra logic.
 class UserRelationsService {
   final ApiManager _api = ApiManager();
 

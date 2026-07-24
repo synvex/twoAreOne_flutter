@@ -21,7 +21,6 @@ class _QuestionnaireScreenState extends State<QuestionnaireScreen>
     with TickerProviderStateMixin {
   final QuestionService _service = QuestionService();
   late AnimationController _lottieController;
-
   bool _loading = false; // Initial loading
   bool _hasError = false;
   bool _btnLoader = false; // "Next" button loading
@@ -29,23 +28,19 @@ class _QuestionnaireScreenState extends State<QuestionnaireScreen>
   int _currentIndex = 0;
   int? _selectedAnswerId;
   String? _answerError;
-
   double _serverPercent = 0;
   int _orderNo = 0;
-
   @override
   void initState() {
     super.initState();
     _lottieController = AnimationController(vsync: this);
     _fetchPage();
   }
-
   @override
   void dispose() {
     _lottieController.dispose();
     super.dispose();
   }
-
   // Logic to calculate Lottie frame based on order_no (Matching RN useMemo)
   double get _progressValue {
     if (_orderNo == 0) return 0;
@@ -54,7 +49,6 @@ class _QuestionnaireScreenState extends State<QuestionnaireScreen>
     int frame = (step == 0) ? totalFrames - 1 : step - 1;
     return (frame / totalFrames).clamp(0.0, 1.0);
   }
-
   Future<void> _fetchPage() async {
     setState(() {
       _loading = true;
@@ -136,9 +130,6 @@ class _QuestionnaireScreenState extends State<QuestionnaireScreen>
 
     // 2. Check the 'success' key inside that map
     if (result['success'] == true) {
-      // In RN, success triggers a reloadKey change which calls getData(1)
-      // We clear the list and fetch the new current question
-      // _questions.clear();
       await _fetchPage();
     } else
     {
@@ -183,9 +174,7 @@ class _QuestionnaireScreenState extends State<QuestionnaireScreen>
     // Equivalent to dispatch(setScreen("3"))
     Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => const MainBarScreen()));
   }
-
   String _capitalize(String val) => val.isEmpty ? "" : val[0].toUpperCase() + val.substring(1);
-
   @override
   Widget build(BuildContext context) {
     if (_loading && _questions.isEmpty) {

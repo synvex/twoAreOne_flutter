@@ -186,11 +186,10 @@ class _NoOtpVerificationState extends State<NoOtpVerification> {
                 ),
                 Padding(
                   padding: EdgeInsets.only(top: screenHeight * .14),
-                  child: _isLoading
-                      ? const CircularProgressIndicator(color: Color(0xFF77153C))
-                      : Buttons(
+                  child: Buttons(
                           text: "Verify",
                           onTap: _verifyOtp,
+                          isLoading: _isLoading,
                           gradient: const LinearGradient(colors: [Color(0xFF77153C), Color(0xFFDD276F)]),
                         ),
                 ),

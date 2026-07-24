@@ -5,6 +5,7 @@ import 'package:two_are_one/core/widgets/my_icons.dart';
 import 'package:two_are_one/core/widgets/texts.dart';
 import 'package:two_are_one/data/models/user_match_model.dart';
 import 'package:two_are_one/data/services/fav_services.dart';
+import 'package:two_are_one/features/views/home/profile_details_screen.dart';
 import 'customs/bottom_bar.dart';
 
 class FavouriteScreen extends StatefulWidget {
@@ -136,7 +137,12 @@ class _FavouriteScreenState extends State<FavouriteScreen> {
   }
   void _onMenuPress(FilterMatchModel item) {
     setState(() => _selectedItem = item);
-    showCustomBottomSheet(context);
+    showCustomBottomSheet(context,
+        onViewProfile: () {Navigator.push(context, MaterialPageRoute(builder: (context) =>
+          ProfileDetailsScreen()));  },
+        onBlockProfile: () {
+      // _blockUser()
+    });
   }
   void _showBottomSheet() {
     showModalBottomSheet(

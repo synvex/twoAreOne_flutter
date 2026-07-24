@@ -4,7 +4,6 @@ import 'Api_Helper/api_manager.dart';
 
 class HomeService {
   final ApiManager _api = ApiManager();
-  // Call this on app startup to restore token from storage
   static Future<void> restoreTokenOnBoot() async {
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('auth_token');
@@ -54,7 +53,6 @@ class HomeService {
     );
     return res['success'] == true;
   }
-  // ✅ FIX: Fetch real user info (for banner counts and name/email)
   Future<Map<String, dynamic>> getUserInfo() async {
     return await _api.fetch(
       Api(url: "user/user-info.php", method: "POST"),

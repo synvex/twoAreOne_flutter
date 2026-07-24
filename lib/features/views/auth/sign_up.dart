@@ -69,8 +69,6 @@ class _SignUpPageState extends State<SignUpPage> {
   final password = _passwordController.text.trim();
   final ageStr = _ageController.text.trim();
 
-  // 2. Validation Logic (storing messages instead of returning immediately)
-
   // Email Validation
   final emailRegex = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
   if (email.isEmpty) {

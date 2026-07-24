@@ -1,13 +1,22 @@
 import 'package:flutter/material.dart';
 
 class AppColors {
+  static const Color textFieldBg = Color(0xFFFFFFFF);
+  static const Color secondaryColor = Color(0xFF992F59);
+  static const Color primary = Color(0xFF7041EA);
   static const Color background = Colors.white;
   static const Color headerBackground = Colors.white;
+  static const Color textBackground = Color(0xFFF0EFEF);
   static const Color divider = Color(0xFFE0E0E0);
   static const Color primaryText = Color(0xFF333333);
   static const Color mehroon = Color(0xFF77153C);
   static const Color link = Color(0xFF007BFF);
   static const Color menuGray = Color(0xFF808080); // approximate RN 'gray'
+  static const Color borders = Color(0xFF979595);
+  static const Color border1 = Color(0xFF8C8888);
+  static const Color darkGrey = Color(0xFF616161);
+  static const Color placeholderGray = Color(0xFF4D5E76);
+  static const Color placeholderText = Color(0xFF9E9E9E);
 
   AppColors._();
 

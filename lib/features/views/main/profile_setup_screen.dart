@@ -130,7 +130,7 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
       );
 
       // 4. Move to Questions
-      Navigator.push(
+      Navigator.pushReplacement(
         context,
         MaterialPageRoute(
           builder: (_) => QuestionnaireScreen(profileModel: updatedModel),

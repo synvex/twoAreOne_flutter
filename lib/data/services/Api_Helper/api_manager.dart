@@ -43,11 +43,9 @@ class ApiManager {
     _dio.options.headers.remove("Authorization");
     _dio.options.headers.remove("x-api-key");
   }
-  /// Normalizes a path so it never produces a double slash when combined
-  /// with [baseUrl] (which already ends in "/"). Fixes endpoints that were
-  /// written with a leading "/" (e.g. "/user/user-add-block-profile.php").
   static String _normalize(String url) =>
       url.startsWith('/') ? url.substring(1) : url;
+
   Future<Map<String, dynamic>> fetch(Api api, dynamic parameters) async {
     try {
       final Response response = await _dio.request(
@@ -87,9 +85,54 @@ class ApiManager {
       return _handleDioError(e, api, formData);
     }
   }
+
+  // Map<String, dynamic> _parseSuccessResponse(dynamic res) {
+  //   if (res is! Map) {
+  //     // Defensive: some endpoints could return a bare list/string.
+  //     final pagination = res['pagination'] is Map ? res['pagination'] as Map : {};
+  //     return {
+  //       "success": res != null,
+  //       "data": res,
+  //       // "total_count": 0,
+  //       // "per_page": 20,
+  //       "total_count": pagination['total_count'] ?? res['total_count'] ?? 0,
+  //       "per_page": pagination['per_page'] ?? res['per_page'] ?? 20,
+  //       "message": "",
+  //       "error": null,
+  //     };
+  //   }
+  //
+  //   bool success;
+  //   if (res.containsKey('success')) {
+  //     success = res['success'] == true;
+  //   } else if (res.containsKey('error')) {
+  //     success = res['error'] == false;
+  //   } else {
+  //     success = res['data'] != null;
+  //   }
+  //
+  //   dynamic processedData = res['data'];
+  //   if (processedData is Map && processedData.containsKey('data')) {
+  //     processedData = processedData['data'];
+  //   }
+  //
+  //   return {
+  //     "success": success,
+  //     "data": processedData,
+  //     "total_count": res['total_count'] ?? 0,
+  //     "per_page": res['per_page'] ?? 20,
+  //     "message": res['message'] ?? "",
+  //     "error": res['message'],
+  //   };
+  // }
   Map<String, dynamic> _parseSuccessResponse(dynamic res) {
     if (res is! Map) {
-      // Defensive: some endpoints could return a bare list/string.
+      // Defensive: some endpoints could return a bare list/string as the
+      // WHOLE body (no {success, data} wrapper). `res` is NOT a Map here,
+      // so it must never be indexed with a String key (e.g. res['pagination'])
+      // — Lists/Strings don't support that and it throws, which used to get
+      // silently swallowed by the caller's try/catch as a generic
+      // "Connection error", leaving the list empty forever.
       return {
         "success": res != null,
         "data": res,
@@ -101,10 +144,16 @@ class ApiManager {
     }
 
     bool success;
-    if (res.containsKey('error')) {
-      success = res['error'] == false;
-    } else if (res.containsKey('success')) {
+    if (res.containsKey('success')) {
       success = res['success'] == true;
+    } else if (res.containsKey('error')) {
+      // Some PHP endpoints use an "error" field where success is represented
+      // as `false`, but others simply omit it or send `null`/""/0 when there
+      // is no error. Treating only a strict `== false` as success meant any
+      // endpoint returning `"error": null` on success was always read as a
+      // failure, even though the data was right there in `res['data']`.
+      final err = res['error'];
+      success = err == false || err == null || err == 0 || err == '';
     } else {
       success = res['data'] != null;
     }
