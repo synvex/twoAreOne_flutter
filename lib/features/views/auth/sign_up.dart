@@ -78,16 +78,6 @@ class _SignUpPageState extends State<SignUpPage> {
   } else if (!emailRegex.hasMatch(email)) {
    _emailError = "Email is invalid";
   }
-    // 2. Validation Logic (storing messages instead of returning immediately)
-
-    // Email Validation
-    final emailRegex = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
-    if (email.isEmpty) {
-      _emailError = "Email is required";
-    } else if (!emailRegex.hasMatch(email)) {
-      _emailError = "Email is invalid";
-    }
-
     // Password Validation
     final passwordRegex = RegExp(
       r'^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z\d])[A-Za-z\d\S]{8,}$',

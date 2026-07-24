@@ -50,14 +50,6 @@ class VisitedUserViewModel extends ChangeNotifier {
 
       if (res['success'] == true) {
         final list = _extractList(res['data']);
-    if (res['success'] == true) {
-      final List raw = (res['data'] is List) ? res['data'] : [];
-      final fetched = raw
-          .map(
-            (e) =>
-                VisitedBlockedUserModel.fromJson(Map<String, dynamic>.from(e)),
-          )
-          .toList();
 
         final fetched = <VisitedBlockedUserModel>[];
         for (final item in list) {
@@ -282,4 +274,3 @@ class VisitedUserViewModel extends ChangeNotifier {
 //     return false;
 //   }
 // }
-

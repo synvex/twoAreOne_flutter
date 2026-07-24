@@ -206,8 +206,8 @@ class _QuestionnaireScreenState extends State<QuestionnaireScreen>
   }
   String _capitalize(String val) => val.isEmpty ? "" : val[0].toUpperCase() + val.substring(1);
 
-  String _capitalize(String val) =>
-      val.isEmpty ? "" : val[0].toUpperCase() + val.substring(1);
+  // String _capitalize(String val) =>
+  //     val.isEmpty ? "" : val[0].toUpperCase() + val.substring(1);
 
   @override
   Widget build(BuildContext context) {

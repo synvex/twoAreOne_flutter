@@ -175,7 +175,8 @@ class _ChangeOtpScreenState extends State<ChangeOtpScreen> {
                         );
                       }),
                     ),
-                    if (_error != null) Padding(padding: const EdgeInsets.only(top: 8), child: Text(_error!, style: const TextStyle(color: AppColors.red, fontSize: 12))),
+                    if (_error != null) Padding(padding: const EdgeInsets.only(top: 8), child: Text(_error!, style: const TextStyle(
+                        color: AppColors.red,  fontSize: 12))),
                     const SizedBox(height: 16),
                     Text(_timerLabel, style: GoogleFonts.poppins(fontSize: 14, color: AppColors.grey2), ),
                     if (_remaining == 0)

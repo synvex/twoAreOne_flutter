@@ -472,10 +472,6 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
                         "Uploaded Video",
                         style: TextStyle(fontSize: 16, color: Color(
                             0xD9000000)),
-                        style: TextStyle(
-                          fontSize: 16,
-                          color: Color(0xD9000000),
-                        ),
                       ),
                       const SizedBox(height: 8),
                       InlineVideoPlayer(url: _fullUrl(details!.video)),
