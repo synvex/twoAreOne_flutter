@@ -66,8 +66,8 @@ class _ChatScreenState extends State<ChatScreen> {
 
     // Call API when screen opens
     Future.microtask(() async {
-      await context.read<ChatViewModel>().fetchedChatHistory(widget.receiverId);
       await _loadCurrentUser();
+      await context.read<ChatViewModel>().fetchedChatHistory(widget.receiverId);
     });
   }
 
@@ -87,6 +87,22 @@ class _ChatScreenState extends State<ChatScreen> {
           ? userId
           : int.tryParse(userId.toString()) ?? 0;
     });
+  }
+
+  void _handleSend(ChatViewModel chatViewModel) {
+    final text = _messageController.text.trim();
+    if (text.isEmpty) return;
+
+    // Clear field immediately — the message appears in the list right
+    // away via the viewmodel's optimistic add, no waiting on the API.
+    _messageController.clear();
+    FocusScope.of(context).unfocus();
+
+    chatViewModel.sendMessage(
+      receiverId: widget.receiverId,
+      currentUserId: _currentUserId,
+      message: text,
+    );
   }
 
   @override
@@ -227,62 +243,19 @@ class _ChatScreenState extends State<ChatScreen> {
                               return Padding(
                                 padding: EdgeInsets.only(bottom: 20.h),
                                 child: _TextBubble(
-                                  msg: chatMsg.isMe
-                                      ? chatMsg
-                                      : _ChatMessage(
-                                          isMe: false,
-                                          text: chatMsg.text,
-                                          time: chatMsg.time,
-                                        ),
+                                  isSending: chatViewModel.sendingMessageIds
+                                      .contains(raw.id),
+                                  msg: chatMsg,
                                   avatarUrl: widget.avatarUrl,
                                 ),
                               );
                             },
                           ),
                   ),
-                  Consumer(
-                    builder: (context, value, child) {
-                      return _MessageInputBar(
-                        controller: _messageController,
-                        onSend: () => chatViewModel
-                            .sendMessage(
-                              receiverId: widget.receiverId,
-                              message: _messageController.text.trim(),
-                            )
-                            .then((_) {
-                              _messageController.clear();
-                              FocusScope.of(context).unfocus();
-                              chatViewModel.chatHistory.add(
-                                ChatHistoryModel(
-                                  id: widget.receiverId,
-                                  user1: _currentUserId,
-                                  user2: widget.receiverId,
-                                  message: _messageController.text.trim(),
-                                  isSticker: 0,
-                                  isPhoto: 0,
-                                  stickerId: 0,
-                                  time: 0,
-                                  isFirst: 0,
-                                  isSeen1: 0,
-                                  isSeen2: 0,
-                                  isVideo: 0,
-                                  isNew: 0,
-                                  isSeen: 0,
-                                  senderName: '',
-                                  senderProfilePicture: '',
-                                  receiverName: '',
-
-                                  receiverProfilePicture: '',
-                                  messageTime: 'Just now',
-                                  senderProfilePictureUrl: '',
-                                  receiverProfilePictureUrl: '',
-                                ),
-                              );
-                            }),
-                      );
-                    },
+                  _MessageInputBar(
+                    controller: _messageController,
+                    onSend: () => _handleSend(chatViewModel),
                   ),
-
                   SizedBox(height: 16.h),
                 ],
               ),
@@ -295,27 +268,52 @@ class _ChatScreenState extends State<ChatScreen> {
 }
 
 class _TextBubble extends StatelessWidget {
-  const _TextBubble({required this.msg, required this.avatarUrl});
+  const _TextBubble({
+    required this.msg,
+    required this.avatarUrl,
+    required this.isSending,
+  });
 
   final _ChatMessage msg;
   final String avatarUrl;
+  final bool isSending;
 
   @override
   Widget build(BuildContext context) {
-    final bubble = Container(
-      constraints: BoxConstraints(maxWidth: 0.68.sw),
-      padding: EdgeInsets.symmetric(horizontal: 18.w, vertical: 14.h),
-      decoration: BoxDecoration(
-        color: msg.isMe ? Colors.grey.shade200 : AppColors.mehroon,
-        borderRadius: BorderRadius.circular(20.r),
-      ),
-      child: Text(
-        msg.text,
-        style: GoogleFonts.inriaSerif(
-          fontSize: 14.sp,
-          color: msg.isMe ? Colors.black : Colors.white,
+    final bubble = Column(
+      crossAxisAlignment: msg.isMe
+          ? CrossAxisAlignment.end
+          : CrossAxisAlignment.start,
+      children: [
+        Container(
+          constraints: BoxConstraints(maxWidth: 0.68.sw),
+          padding: EdgeInsets.symmetric(horizontal: 18.w, vertical: 14.h),
+          decoration: BoxDecoration(
+            color: msg.isMe ? Colors.grey.shade200 : AppColors.mehroon,
+            borderRadius: BorderRadius.circular(20.r),
+          ),
+          child: Text(
+            msg.text,
+            style: GoogleFonts.inriaSerif(
+              fontSize: 14.sp,
+              color: msg.isMe ? Colors.black : Colors.white,
+            ),
+          ),
         ),
-      ),
+        Visibility(
+          visible: isSending,
+          child: Padding(
+            padding: EdgeInsets.only(top: 4.h),
+            child: Text(
+              'sending...',
+              style: GoogleFonts.inriaSerif(
+                fontSize: 10.sp,
+                color: Colors.grey,
+              ),
+            ),
+          ),
+        ),
+      ],
     );
 
     if (msg.isMe) {
@@ -323,6 +321,7 @@ class _TextBubble extends StatelessWidget {
     }
 
     return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         ClipOval(
           child: Image.network(
@@ -368,12 +367,10 @@ class _MessageInputBar extends StatelessWidget {
                 suffixIcon: Container(
                   height: 46,
                   width: 46,
-
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
                     gradient: LinearGradient(
                       begin: Alignment.topCenter,
-
                       colors: [AppColors.mehroon, AppColors.blue],
                     ),
                   ),
