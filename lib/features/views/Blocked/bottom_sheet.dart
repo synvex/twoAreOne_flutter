@@ -11,19 +11,16 @@ class UserActionBottomSheet extends StatelessWidget {
   });
 
   static Future<void> show(
-      BuildContext context, {
-        required List<Widget> children,
-        double sheetHeight = 300,
-      })
-  {
+    BuildContext context, {
+    required List<Widget> children,
+    double sheetHeight = 300,
+  }) {
     return showModalBottomSheet(
       context: context,
       backgroundColor: Colors.transparent,
       isScrollControlled: true,
-      builder: (_) => UserActionBottomSheet(
-        children: children,
-        sheetHeight: sheetHeight,
-      ),
+      builder: (_) =>
+          UserActionBottomSheet(sheetHeight: sheetHeight, children: children),
     );
   }
 

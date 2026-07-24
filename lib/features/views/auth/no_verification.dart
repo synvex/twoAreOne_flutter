@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:two_are_one/core/widgets/back_button.dart';
 import 'package:two_are_one/core/widgets/image.dart';
 import 'package:two_are_one/data/services/auth_service.dart';
@@ -26,10 +27,12 @@ class _NoVerificationState extends State<NoVerification> {
   String? _errorMessage;
 
   void _verifyPhoneNo() async {
-
     // 1. Sanitize Input
     String inputDigits = _phoneController.text.replaceAll(RegExp(r'\D'), '');
-    String selectedCodeDigits = _selectedCountryCode.replaceAll(RegExp(r'\D'), '');
+    String selectedCodeDigits = _selectedCountryCode.replaceAll(
+      RegExp(r'\D'),
+      '',
+    );
     String localNumber = inputDigits;
 
     // Handle double-prefixing
@@ -58,7 +61,8 @@ class _NoVerificationState extends State<NoVerification> {
     try {
       // Step A: Check database (Matches RN's ApiManager.fetch)
       final result = await _authService.checkPhoneExists(
-          phoneNo: phoneNoWithCode);
+        phoneNo: phoneNoWithCode,
+      );
 
       if (!mounted) return;
 
@@ -69,24 +73,27 @@ class _NoVerificationState extends State<NoVerification> {
         // Phone exists or other error (Matches RN's onApiError)
         setState(() => _isLoading = false);
         String errorMsg = result['error']?.toString() ?? "";
-        if (errorMsg.toLowerCase().contains(
-            "already exists") || errorMsg.contains("linked")) {
+        if (errorMsg.toLowerCase().contains("already exists") ||
+            errorMsg.contains("linked")) {
           _showResultPopup(phoneNoWithCode);
-        }else if (errorMsg =="no_internet") {
-          _showError("No internet connection. Please check your network and try again.");
-        } else if (errorMsg =="timeout") {
+        } else if (errorMsg == "no_internet") {
+          _showError(
+            "No internet connection. Please check your network and try again.",
+          );
+        } else if (errorMsg == "timeout") {
           _showError("Server is taking too long. Please try again.");
-        } else if (errorMsg =="something_went_wrong") {
+        } else if (errorMsg == "something_went_wrong") {
           _showError("Something went wrong. Please try again.");
         } else {
-          _showError(
-              errorMsg.isEmpty ? "Verification check failed" : errorMsg);
+          _showError(errorMsg.isEmpty ? "Verification check failed" : errorMsg);
         }
       }
     } on SocketException {
       if (!mounted) return;
       setState(() => _isLoading = false);
-      _showError("No internet connection. Please check your network and try again.");
+      _showError(
+        "No internet connection. Please check your network and try again.",
+      );
     } on TimeoutException {
       if (!mounted) return;
       setState(() => _isLoading = false);
@@ -125,62 +132,82 @@ class _NoVerificationState extends State<NoVerification> {
   @override
   Widget build(BuildContext context) {
     final double screenHeight = MediaQuery.of(context).size.height;
-    final bool isLandscape = MediaQuery.of(context).orientation == Orientation.landscape;
+    final bool isLandscape =
+        MediaQuery.of(context).orientation == Orientation.landscape;
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+          padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 20.h),
           child: SingleChildScrollView(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Back_Button(onTap: () => Navigator.of(context).pop()),
-                const SizedBox(height: 40),
+                SizedBox(height: 40.h),
                 const Texts(
-                    text: "Can we get your number?",
-                    size: 24, fontWeight: FontWeight.w600),
-                const SizedBox(height: 30),
+                  text: "Can we get your number?",
+                  size: 24,
+                  fontWeight: FontWeight.w600,
+                ),
+                SizedBox(height: 30.h),
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
                     GestureDetector(
                       onTap: _showCountryPicker,
                       child: Container(
-                        width: 90,
+                        width: 90.w,
                         padding: const EdgeInsets.only(bottom: 1),
                         decoration: const BoxDecoration(
-                          border: Border(bottom: BorderSide(color: Colors.black, width: 1.5)),
+                          border: Border(
+                            bottom: BorderSide(color: Colors.black, width: 1.5),
+                          ),
                         ),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Texts(text: "$_selectedCountryName $_selectedCountryCode", size: 14, fontWeight: FontWeight.w600),
-                            const Icon(CupertinoIcons.arrowtriangle_down_fill, size: 12),
+                            Texts(
+                              text:
+                                  "$_selectedCountryName $_selectedCountryCode",
+                              size: 14,
+                              fontWeight: FontWeight.w600,
+                            ),
+                            const Icon(
+                              CupertinoIcons.arrowtriangle_down_fill,
+                              size: 12,
+                            ),
                           ],
                         ),
                       ),
                     ),
-                    const SizedBox(width: 15),
+                    SizedBox(width: 15.w),
                     Expanded(child: TxtField(controller: _phoneController)),
                   ],
                 ),
-                const SizedBox(height: 13),
+                SizedBox(height: 13.h),
                 if (_errorMessage != null)
-                  Texts(text: _errorMessage!, colorHexValue: 0xFFD32F2F, size: 13,
-                      fontWeight: FontWeight.w400),
+                  Texts(
+                    text: _errorMessage!,
+                    colorHexValue: 0xFFD32F2F,
+                    size: 13,
+                    fontWeight: FontWeight.w400,
+                  ),
                 const SizedBox(height: 13),
                 const Texts(
-                  text: "Enter your phone number. We’ll text you a code\nto verify it's really you and keep your journey safe.",
-                  colorHexValue: 0xFF000000, size: 13,
+                  text:
+                      "Enter your phone number. We’ll text you a code\nto verify it's really you and keep your journey safe.",
+                  colorHexValue: 0xFF000000,
+                  size: 13,
                 ),
-                SizedBox(height: isLandscape ? 20 :
-                screenHeight * 0.52),
-                 Buttons(
+                SizedBox(height: isLandscape ? 20 : screenHeight * 0.52),
+                Buttons(
                   text: "Next",
                   onTap: _verifyPhoneNo,
                   isLoading: _isLoading,
-                  gradient: const LinearGradient(colors: [Color(0xFF77153C), Color(0xFFDD276F)]),
+                  gradient: const LinearGradient(
+                    colors: [Color(0xFF77153C), Color(0xFFDD276F)],
+                  ),
                 ),
               ],
             ),
@@ -195,31 +222,42 @@ class _NoVerificationState extends State<NoVerification> {
       context: context,
       barrierDismissible: false,
       builder: (context) {
-        bool isLandscape = MediaQuery.of(context).orientation == Orientation.landscape;
+        bool isLandscape =
+            MediaQuery.of(context).orientation == Orientation.landscape;
         return AlertDialog(
           backgroundColor: Colors.white,
           surfaceTintColor: Colors.white,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(24),
+          ),
           content: SingleChildScrollView(
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
                 const Images(imageStr: "assets/svg_images/error.svg"),
                 const SizedBox(height: 10),
-                const Texts(text: "Oops, Failed!",  colorHexValue: 0xFFdf605f,
-                    size: 22, fontWeight: FontWeight.bold),
+                const Texts(
+                  text: "Oops, Failed!",
+                  colorHexValue: 0xFFdf605f,
+                  size: 22,
+                  fontWeight: FontWeight.bold,
+                ),
                 const SizedBox(height: 15),
                 const Texts(
                   textAlign: TextAlign.center,
-                  text: "This Number is already linked to another account. Please use a different phone number",
-                  size: 14, colorHexValue: 0xFF4D4D4D,
+                  text:
+                      "This Number is already linked to another account. Please use a different phone number",
+                  size: 14,
+                  colorHexValue: 0xFF4D4D4D,
                 ),
                 const SizedBox(height: 25),
                 Buttons(
                   height: 50,
                   text: "Close",
                   onTap: () => Navigator.pop(context),
-                  gradient: const LinearGradient(colors: [Color(0xFF77153C), Color(0xFFDD276F)]),
+                  gradient: const LinearGradient(
+                    colors: [Color(0xFF77153C), Color(0xFFDD276F)],
+                  ),
                 ),
               ],
             ),
@@ -228,19 +266,28 @@ class _NoVerificationState extends State<NoVerification> {
       },
     );
   }
+
   void _showCountryPicker() {
     showModalBottomSheet(
       context: context,
-      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
       builder: (context) => Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          const Padding(padding: EdgeInsets.all(16.0), child: Texts(text: "Select Country")),
+          const Padding(
+            padding: EdgeInsets.all(16.0),
+            child: Texts(text: "Select Country"),
+          ),
           ListTile(
             leading: const Text("🇺🇸", style: TextStyle(fontSize: 24)),
             title: const Text("United States (+1)"),
             onTap: () {
-              setState(() { _selectedCountryCode = "+1"; _selectedCountryName = "US"; });
+              setState(() {
+                _selectedCountryCode = "+1";
+                _selectedCountryName = "US";
+              });
               Navigator.pop(context);
             },
           ),
@@ -248,7 +295,10 @@ class _NoVerificationState extends State<NoVerification> {
             leading: const Text("🇵🇰", style: TextStyle(fontSize: 24)),
             title: const Text("Pakistan (+92)"),
             onTap: () {
-              setState(() { _selectedCountryCode = "+92"; _selectedCountryName = "PK"; });
+              setState(() {
+                _selectedCountryCode = "+92";
+                _selectedCountryName = "PK";
+              });
               Navigator.pop(context);
             },
           ),
@@ -257,6 +307,7 @@ class _NoVerificationState extends State<NoVerification> {
       ),
     );
   }
+
   void _showError(String msg) {
     setState(() => _errorMessage = msg);
   }

@@ -6,12 +6,14 @@ import 'package:two_are_one/core/widgets/buttons.dart';
 import 'package:two_are_one/core/widgets/containers.dart';
 import 'package:two_are_one/core/widgets/textfield.dart';
 import 'package:two_are_one/core/widgets/texts.dart';
+
 const String kGoogleApiKey = "AIzaSyCqZ38paEOdX0SnqU0u6wBlEasNIwKRNe0";
 
 class FilterBottomSheet extends StatefulWidget {
   final void Function(Map<String, dynamic> filters) onApply;
   final VoidCallback? onReset;
-  final Map<String, dynamic>? initialFilters; // RN ki tarah initial state pass karne ke liye
+  final Map<String, dynamic>?
+  initialFilters; // RN ki tarah initial state pass karne ke liye
 
   const FilterBottomSheet({
     super.key,
@@ -42,7 +44,9 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
     super.initState();
     final f = widget.initialFilters;
     if (f != null) {
-      selectedGender = (f["gender"] ?? "men").toString() == "women" ? "Women" : "Men";
+      selectedGender = (f["gender"] ?? "men").toString() == "women"
+          ? "Women"
+          : "Men";
 
       final ageStr = (f["age_range"] ?? "").toString();
       if (ageStr.contains(",")) {
@@ -87,17 +91,19 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
       try {
         final url = Uri.parse(
           "https://maps.googleapis.com/maps/api/place/autocomplete/json"
-              "?input=${Uri.encodeComponent(query)}&language=en&key=$kGoogleApiKey",
+          "?input=${Uri.encodeComponent(query)}&language=en&key=$kGoogleApiKey",
         );
         final res = await http.get(url);
         final data = jsonDecode(res.body);
         final predictions = (data["predictions"] as List?) ?? [];
         setState(() {
           _placeSuggestions = predictions
-              .map((p) => {
-            "description": p["description"],
-            "place_id": p["place_id"],
-          })
+              .map(
+                (p) => {
+                  "description": p["description"],
+                  "place_id": p["place_id"],
+                },
+              )
               .cast<Map<String, dynamic>>()
               .toList();
         });
@@ -119,7 +125,7 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
     try {
       final url = Uri.parse(
         "https://maps.googleapis.com/maps/api/place/details/json"
-            "?place_id=$placeId&fields=address_component&key=$kGoogleApiKey",
+        "?place_id=$placeId&fields=address_component&key=$kGoogleApiKey",
       );
       final res = await http.get(url);
       final data = jsonDecode(res.body);
@@ -178,9 +184,7 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Center(
-                    child: Texts(text: "Filter", size: 24, ),
-                  ),
+                  const Center(child: Texts(text: "Filter", size: 24)),
                   const SizedBox(height: 30),
 
                   // GENDER TOGGLE
@@ -191,24 +195,41 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
                     hexValue: 0xFFF8F8F8,
                     child: Row(
                       children: [
-                        _buildToggleItem("Men", () => setState(() => selectedGender = 'Men')),
-                        _buildToggleItem("Women", () => setState(() => selectedGender = 'Women')),
+                        _buildToggleItem(
+                          "Men",
+                          () => setState(() => selectedGender = 'Men'),
+                        ),
+                        _buildToggleItem(
+                          "Women",
+                          () => setState(() => selectedGender = 'Women'),
+                        ),
                       ],
                     ),
                   ),
 
                   const SizedBox(height: 25),
-                  const Texts(text: "Locations", size: 14, fontWeight: FontWeight.w600),
+                  const Texts(
+                    text: "Locations",
+                    size: 14,
+                    fontWeight: FontWeight.w600,
+                  ),
                   const SizedBox(height: 10),
 
                   // ✅ LOCATION FIELD - ab real search karta hai (RN jaisa)
                   Containers(
-                    padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 4),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 15,
+                      vertical: 4,
+                    ),
                     hexValue: 0xFFF3F3F3,
                     radius: BorderRadius.circular(30),
                     child: Row(
                       children: [
-                        const Icon(Icons.location_on, color: Colors.grey, size: 20),
+                        const Icon(
+                          Icons.location_on,
+                          color: Colors.grey,
+                          size: 20,
+                        ),
                         const SizedBox(width: 10),
                         Expanded(
                           child: TextField(
@@ -217,7 +238,10 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
                             style: const TextStyle(fontSize: 12),
                             decoration: const InputDecoration(
                               hintText: "Search location",
-                              hintStyle: TextStyle(color: Colors.grey, fontSize: 12),
+                              hintStyle: TextStyle(
+                                color: Colors.grey,
+                                fontSize: 12,
+                              ),
                               border: InputBorder.none,
                             ),
                           ),
@@ -241,26 +265,39 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
                         color: Colors.white,
                         borderRadius: BorderRadius.circular(8),
                         boxShadow: [
-                          BoxShadow(color: Colors.black.withOpacity(0.08), blurRadius: 6),
+                          BoxShadow(
+                            color: Colors.black.withValues(alpha: 0.08),
+                            blurRadius: 6,
+                          ),
                         ],
                       ),
                       child: ListView.separated(
                         shrinkWrap: true,
                         itemCount: _placeSuggestions.length,
-                        separatorBuilder: (_, __) => Divider(height: 0.5, color: Colors.grey.shade300),
+                        separatorBuilder: (_, _) =>
+                            Divider(height: 0.5, color: Colors.grey.shade300),
                         itemBuilder: (context, index) {
                           final item = _placeSuggestions[index];
                           return ListTile(
                             dense: true,
-                            title: Text(item["description"], style: const TextStyle(fontSize: 13)),
-                            onTap: () => _onSelectPlace(item["place_id"], item["description"]),
+                            title: Text(
+                              item["description"],
+                              style: const TextStyle(fontSize: 13),
+                            ),
+                            onTap: () => _onSelectPlace(
+                              item["place_id"],
+                              item["description"],
+                            ),
                           );
                         },
                       ),
                     ),
 
                   const SizedBox(height: 25),
-                  _sliderHeader("Distance", "${_distanceRange.start.toInt()} - ${_distanceRange.end.toInt()} Miles"),
+                  _sliderHeader(
+                    "Distance",
+                    "${_distanceRange.start.toInt()} - ${_distanceRange.end.toInt()} Miles",
+                  ),
                   RangeSlider(
                     values: _distanceRange,
                     min: 0,
@@ -273,7 +310,10 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
 
                   const SizedBox(height: 20),
                   // ✅ Age ab RANGE hai, single value nahi (RN jaisa)
-                  _sliderHeader("Age", "${_ageRange.start.toInt()} - ${_ageRange.end.toInt()} Years"),
+                  _sliderHeader(
+                    "Age",
+                    "${_ageRange.start.toInt()} - ${_ageRange.end.toInt()} Years",
+                  ),
                   RangeSlider(
                     values: _ageRange,
                     min: 15,
@@ -318,8 +358,10 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
                             // ✅ RN jaisa exact same shape / "min,max" string format
                             final filters = {
                               "gender": selectedGender.toLowerCase(),
-                              "age_range": "${_ageRange.start.toInt()},${_ageRange.end.toInt()}",
-                              "distance_range": "${_distanceRange.start.toInt()},${_distanceRange.end.toInt()}",
+                              "age_range":
+                                  "${_ageRange.start.toInt()},${_ageRange.end.toInt()}",
+                              "distance_range":
+                                  "${_distanceRange.start.toInt()},${_distanceRange.end.toInt()}",
                               "country": _country,
                               "city": _city,
                               "isCalled": true,
@@ -354,7 +396,9 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
         hexValue: isSelected ? 0xFFFFFFFF : 0xFF8E8E8E,
         fontWeight: isSelected ? FontWeight.bold : FontWeight.w600,
         gradient: isSelected
-            ? const LinearGradient(colors: [Color(0xFF477CB6), Color(0xFFDD276F)])
+            ? const LinearGradient(
+                colors: [Color(0xFF477CB6), Color(0xFFDD276F)],
+              )
             : null,
       ),
     );
@@ -379,7 +423,7 @@ class FilterBackgroundPainter extends CustomPainter {
       ..style = PaintingStyle.fill;
 
     final shadowPaint = Paint()
-      ..color = Colors.black.withOpacity(0.05)
+      ..color = Colors.black.withValues(alpha: 0.05)
       ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 10);
 
     final path = Path();

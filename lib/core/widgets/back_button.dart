@@ -4,7 +4,7 @@ import 'package:two_are_one/core/widgets/image.dart';
 
 class Back_Button extends StatelessWidget {
   final VoidCallback onTap;
-  const Back_Button( {super.key, required this.onTap});
+  const Back_Button({super.key, required this.onTap});
 
   @override
   Widget build(BuildContext context) {
@@ -17,7 +17,7 @@ class Back_Button extends StatelessWidget {
         shape: BoxShape.circle,
         hexValue: 0xFFFFFFFF,
         border: Border.all(
-          color: const Color(0xFF786C65).withOpacity(0.6),
+          color: const Color(0xFF786C65).withValues(alpha: 0.6),
           width: 1,
         ),
         child: const Images(

@@ -23,7 +23,8 @@ class CustomDropdownField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column( // WRAP in Column
+    return Column(
+      // WRAP in Column
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Containers(
@@ -33,8 +34,11 @@ class CustomDropdownField extends StatelessWidget {
           hexValue: 0xFFF0EFEF,
           child: DropdownButtonHideUnderline(
             child: DropdownButtonFormField<String>(
-              value: value,
-              hint: Text(label, style: const TextStyle(color: Colors.black, fontSize: 16)),
+              initialValue: value,
+              hint: Text(
+                label,
+                style: const TextStyle(color: Colors.black, fontSize: 16),
+              ),
               isExpanded: true,
               dropdownColor: Colors.white,
               borderRadius: BorderRadius.circular(15),
@@ -54,7 +58,10 @@ class CustomDropdownField extends StatelessWidget {
                   padding: const EdgeInsets.all(8),
                   child: SvgPicture.asset(
                     imageStr,
-                    colorFilter: const ColorFilter.mode(Colors.white, BlendMode.srcIn),
+                    colorFilter: const ColorFilter.mode(
+                      Colors.white,
+                      BlendMode.srcIn,
+                    ),
                   ),
                 ),
               ),
@@ -147,4 +154,3 @@ class CustomDropdownField extends StatelessWidget {
 //     );
 //   }
 // }
-

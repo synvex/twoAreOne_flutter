@@ -30,35 +30,39 @@ class ProfileCard extends StatelessWidget {
   });
 
   // Helper to apply the ShaderMask Gradient
-  Widget _buildGradientIcon(String imgStr, bool isActive, {Color fallbackColor = Colors.white}) {
+  Widget _buildGradientIcon(
+    String imgStr,
+    bool isActive, {
+    Color fallbackColor = Colors.white,
+  }) {
     if (!isActive) {
       return Images(
-          imageStr: imgStr,height: 16, width:  16,
-          color: fallbackColor );
+        imageStr: imgStr,
+        height: 16,
+        width: 16,
+        color: fallbackColor,
+      );
     }
 
     return ShaderMask(
       shaderCallback: (bounds) => const LinearGradient(
-        colors: [
-          Color(0xFF477CB6),
-          Color(0xFF8B4DAB),
-          Color(0xFFDD276F),
-        ],
+        colors: [Color(0xFF477CB6), Color(0xFF8B4DAB), Color(0xFFDD276F)],
         begin: Alignment.topLeft,
         end: Alignment.bottomRight,
       ).createShader(bounds),
       child: SizedBox(
-          height: 16,width: 16,
-          child: Images(
-              imageStr: imgStr,
-              color: Colors.white)), // Must be white for ShaderMask
+        height: 16,
+        width: 16,
+        child: Images(imageStr: imgStr, color: Colors.white),
+      ), // Must be white for ShaderMask
     );
   }
 
   @override
   Widget build(BuildContext context) {
     final String imageUrl = user.imagePath.trim();
-    final bool isValidUrl = imageUrl.isNotEmpty &&
+    final bool isValidUrl =
+        imageUrl.isNotEmpty &&
         imageUrl.startsWith('http') &&
         imageUrl != "https://www.twoareone.love/uploads/";
 
@@ -72,14 +76,17 @@ class ProfileCard extends StatelessWidget {
             Positioned.fill(
               child: isValidUrl
                   ? Image.network(
-                imageUrl,
-                fit: BoxFit.cover,
-                errorBuilder: (context, error, stackTrace) => _buildPlaceholder(),
-                loadingBuilder: (context, child, loadingProgress) {
-                  if (loadingProgress == null) return child;
-                  return const Center(child: CircularProgressIndicator(strokeWidth: 2));
-                },
-              )
+                      imageUrl,
+                      fit: BoxFit.cover,
+                      errorBuilder: (context, error, stackTrace) =>
+                          _buildPlaceholder(),
+                      loadingBuilder: (context, child, loadingProgress) {
+                        if (loadingProgress == null) return child;
+                        return const Center(
+                          child: CircularProgressIndicator(strokeWidth: 2),
+                        );
+                      },
+                    )
                   : _buildPlaceholder(),
             ),
             // Online Indicator
@@ -88,20 +95,25 @@ class ProfileCard extends StatelessWidget {
               right: 15,
               child: user.isOnline
                   ? Containers(
-                wWidth: 12, wHeight: 12,
-                hexValue: 0xFF2E7D32,
-                shape: BoxShape.circle,
-                border: Border.all(color: Colors.white, width: 2),
-              )
+                      wWidth: 12,
+                      wHeight: 12,
+                      hexValue: 0xFF2E7D32,
+                      shape: BoxShape.circle,
+                      border: Border.all(color: Colors.white, width: 2),
+                    )
                   : const SizedBox.shrink(),
             ),
             // Bottom Info & Icons
             Positioned(
-              bottom: 0, left: 0, right: 0,
+              bottom: 0,
+              left: 0,
+              right: 0,
               child: ClipRRect(
                 child: Container(
                   padding: const EdgeInsets.all(12),
-                  color: Colors.black.withOpacity(0.3), // Increased opacity for readability
+                  color: Colors.black.withValues(
+                    alpha: 0.3,
+                  ), // Increased opacity for readability
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -110,24 +122,39 @@ class ProfileCard extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Flexible(
-                              child: Text(
-                                 user.name,
-                                  style: TextStyle(
-                                      fontSize: 15,
-                                      overflow: TextOverflow.ellipsis,
-                                      color:Color(0xFFFFFFFF),
-                                      fontWeight: FontWeight.bold
-                                  ),
-                                 )),
-                          Texts(text: "Age ${user.age}", size: 11, colorHexValue: 0xFFFFFFFF),
+                            child: Text(
+                              user.name,
+                              style: TextStyle(
+                                fontSize: 15,
+                                overflow: TextOverflow.ellipsis,
+                                color: Color(0xFFFFFFFF),
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                          Texts(
+                            text: "Age ${user.age}",
+                            size: 11,
+                            colorHexValue: 0xFFFFFFFF,
+                          ),
                         ],
                       ),
                       // Location and Match Row
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Flexible(child: Texts(text: user.location, size: 9, colorHexValue: 0xFFFFFFFF)),
-                          Texts(text: user.matchPercent, size: 9, colorHexValue: 0xFFFFFFFF),
+                          Flexible(
+                            child: Texts(
+                              text: user.location,
+                              size: 9,
+                              colorHexValue: 0xFFFFFFFF,
+                            ),
+                          ),
+                          Texts(
+                            text: user.matchPercent,
+                            size: 9,
+                            colorHexValue: 0xFFFFFFFF,
+                          ),
                         ],
                       ),
                       const SizedBox(height: 10),
@@ -139,52 +166,74 @@ class ProfileCard extends StatelessWidget {
                           _smallIcon(
                             onHeart,
                             Images(
-                              imageStr:user.isInterested ? "assets/svg_images/fiiled_like.svg":
-                                "assets/svg_images/heart_unfill.svg",),
+                              imageStr: user.isInterested
+                                  ? "assets/svg_images/fiiled_like.svg"
+                                  : "assets/svg_images/heart_unfill.svg",
+                            ),
                             _buildGradientIcon(
-                                user.isInterested ?
-                                "assets/svg_images/fiiled_like.svg":
-                                "assets/svg_images/heart_unfill.svg",
-                                user.isInterested
+                              user.isInterested
+                                  ? "assets/svg_images/fiiled_like.svg"
+                                  : "assets/svg_images/heart_unfill.svg",
+                              user.isInterested,
                             ),
                           ),
                           // 2. Star (Favorite) - Toggle between filled and border
-                _smallIcon(
-                onStar,
-                Images(imageStr:user.isFavorite ? "assets/svg_images/filled_star.svg" :
-                    "assets/svg_images/unfill_star.svg",
-                    width: 16, height: 16),
+                          _smallIcon(
+                            onStar,
+                            Images(
+                              imageStr: user.isFavorite
+                                  ? "assets/svg_images/filled_star.svg"
+                                  : "assets/svg_images/unfill_star.svg",
+                              width: 16,
+                              height: 16,
+                            ),
                             _buildGradientIcon(
-                                user.isFavorite ? "assets/svg_images/filled_star.svg" :
-                                "assets/svg_images/unfill_star.svg",
-                                user.isFavorite
+                              user.isFavorite
+                                  ? "assets/svg_images/filled_star.svg"
+                                  : "assets/svg_images/unfill_star.svg",
+                              user.isFavorite,
                             ),
                           ),
                           // 3.  Block
-                    _smallIcon(
-                    onDislike,
-                    Images(
-                        imageStr: user.isDislike ? "assets/svg_images/block.svg" :
-                        "assets/svg_images/block.svg", width: 16, height: 16),
-                    _buildGradientIcon(user.isDislike ? "assets/svg_images/block.svg" :
-    "assets/svg_images/block.svg",
-    false, fallbackColor: Colors.redAccent),
-                    ),
+                          _smallIcon(
+                            onDislike,
+                            Images(
+                              imageStr: user.isDislike
+                                  ? "assets/svg_images/block.svg"
+                                  : "assets/svg_images/block.svg",
+                              width: 16,
+                              height: 16,
+                            ),
+                            _buildGradientIcon(
+                              user.isDislike
+                                  ? "assets/svg_images/block.svg"
+                                  : "assets/svg_images/block.svg",
+                              false,
+                              fallbackColor: Colors.redAccent,
+                            ),
+                          ),
                           //Friend request send
-                    _smallIcon(onRequestSend,
-                        Images(imageStr: "assets/svg_images/interested.svg",),
-                    _buildGradientIcon(user.isInterested ?
-                    "assets/svg_images/interested": "assets/svg_images/interested.svg",
-                        false,fallbackColor: Colors.redAccent )
-                    // _buildGradientIcon(Icons.chat_bubble_outline, false)
-                    ),
+                          _smallIcon(
+                            onRequestSend,
+                            Images(
+                              imageStr: "assets/svg_images/interested.svg",
+                            ),
+                            _buildGradientIcon(
+                              user.isInterested
+                                  ? "assets/svg_images/interested"
+                                  : "assets/svg_images/interested.svg",
+                              false,
+                              fallbackColor: Colors.redAccent,
+                            ),
+                            // _buildGradientIcon(Icons.chat_bubble_outline, false)
+                          ),
                         ],
-                      )
+                      ),
                     ],
                   ),
                 ),
               ),
-            )
+            ),
           ],
         ),
       ),
@@ -192,23 +241,23 @@ class ProfileCard extends StatelessWidget {
   }
 
   Widget _buildPlaceholder() {
-    return PlaceholderImage(
-       height: 180,
-       width: 140,
-      size: 22,
-    );
+    return PlaceholderImage(height: 180, width: 140, size: 22);
     // return Images(imageStr: 'assets/images/failed.png');
   }
 
   // Simplified _smallIcon without the CircularProgressIndicator
-  Widget _smallIcon(VoidCallback? onTap, Images iconWidget, Widget buildGradientIcon) {
+  Widget _smallIcon(
+    VoidCallback? onTap,
+    Images iconWidget,
+    Widget buildGradientIcon,
+  ) {
     return GestureDetector(
       onTap: onTap,
       child: Containers(
         padding: const EdgeInsets.all(4),
         hexValue: 0x33FFFFFF, // Semi-transparent white background
         radius: BorderRadius.circular(30),
-        child: SizedBox(height: 20,width: 20, child: iconWidget),
+        child: SizedBox(height: 20, width: 20, child: iconWidget),
       ),
     );
   }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:two_are_one/core/widgets/back_button.dart';
 import 'package:two_are_one/core/widgets/my_icons.dart';
 import 'package:two_are_one/core/widgets/textfield.dart';
@@ -47,19 +48,17 @@ class _ForgetPasswordState extends State<ForgetPassword> {
     try {
       // 2. API Call (Matches RN ApiManager.fetch)
       final existenceCheck = await _authService.checkEmailExists(email: email);
-      if(existenceCheck['success']== false){
+      if (existenceCheck['success'] == false) {
         _showUserNotFoundDialog();
-      } else{
+      } else {
         final result = await _authService.forgotPassword(email: email);
         if (result['success']) {
           if (!mounted) return;
           Navigator.pushReplacement(
             context,
             MaterialPageRoute(
-              builder: (context) => EmailOtpVerification(
-                email: email,
-                isFromForget: true,
-              ),
+              builder: (context) =>
+                  EmailOtpVerification(email: email, isFromForget: true),
             ),
           );
         } else {
@@ -72,6 +71,7 @@ class _ForgetPasswordState extends State<ForgetPassword> {
       if (mounted) setState(() => _isLoading = false);
     }
   }
+
   void _showUserNotFoundDialog() {
     showDialog(
       context: context,
@@ -79,35 +79,47 @@ class _ForgetPasswordState extends State<ForgetPassword> {
         return AlertDialog(
           backgroundColor: Colors.white,
           surfaceTintColor: Colors.white,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(24),
+          ),
           content: SingleChildScrollView(
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
                 const FailedWidget(),
-                const SizedBox(height: 10),
-                const Text("Oops, Failed!", style: TextStyle(color: Color(0xFFdf605f), fontSize: 22, fontWeight: FontWeight.bold)),
-                const SizedBox(height: 15),
+                SizedBox(height: 10.h),
+                const Text(
+                  "Oops, Failed!",
+                  style: TextStyle(
+                    color: Color(0xFFdf605f),
+                    fontSize: 22,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                SizedBox(height: 15.h),
                 const Texts(
                   textAlign: TextAlign.center,
                   text: "Email not found",
-                  size: 14, colorHexValue: 0xFF4D4D4D,
+                  size: 14,
+                  colorHexValue: 0xFF4D4D4D,
                 ),
                 const SizedBox(height: 25),
                 Buttons(
                   height: 50,
                   text: "Close",
                   onTap: () => Navigator.pop(context),
-                  gradient: const LinearGradient(colors: [Color(0xFF77153C), Color(0xFFDD276F)]),
+                  gradient: const LinearGradient(
+                    colors: [Color(0xFF77153C), Color(0xFFDD276F)],
+                  ),
                 ),
               ],
             ),
           ),
         );
-
       },
     );
   }
+
   void _showErrorDialog(String message, {String title = "Oops, Failed!"}) {
     showDialog(
       context: context,
@@ -121,15 +133,27 @@ class _ForgetPasswordState extends State<ForgetPassword> {
             children: [
               const FailedWidget(),
               const SizedBox(height: 15),
-              Texts(text: title, colorHexValue: 0xFFdf605f, size: 22, fontWeight: FontWeight.bold),
+              Texts(
+                text: title,
+                colorHexValue: 0xFFdf605f,
+                size: 22,
+                fontWeight: FontWeight.bold,
+              ),
               const SizedBox(height: 15),
-              Texts(textAlign: TextAlign.center, text: message, size: 14, colorHexValue: 0xFF4D4D4D),
+              Texts(
+                textAlign: TextAlign.center,
+                text: message,
+                size: 14,
+                colorHexValue: 0xFF4D4D4D,
+              ),
               const SizedBox(height: 25),
               Buttons(
                 height: 50,
                 text: "Close",
                 onTap: () => Navigator.pop(context),
-                gradient: const LinearGradient(colors: [Color(0xFF77153C), Color(0xFFDD276F)]),
+                gradient: const LinearGradient(
+                  colors: [Color(0xFF77153C), Color(0xFFDD276F)],
+                ),
               ),
             ],
           ),
@@ -137,18 +161,18 @@ class _ForgetPasswordState extends State<ForgetPassword> {
       ),
     );
   }
+
   @override
   Widget build(BuildContext context) {
     final double screenHeight = MediaQuery.of(context).size.height;
-    final bool isLandscape = MediaQuery.of(context).orientation == Orientation.landscape;
+    final bool isLandscape =
+        MediaQuery.of(context).orientation == Orientation.landscape;
     return Scaffold(
       backgroundColor: Colors.white,
       resizeToAvoidBottomInset: false,
       body: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.only(
-              right: 25,
-              left: 25.0,top: 60),
+          padding: const EdgeInsets.only(right: 25, left: 25.0, top: 60),
           child: SingleChildScrollView(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -156,7 +180,8 @@ class _ForgetPasswordState extends State<ForgetPassword> {
                 Back_Button(
                   onTap: () {
                     Navigator.pop(context);
-                  },),
+                  },
+                ),
                 Containers(
                   margin: EdgeInsets.only(top: 20),
                   hexValue: 0xFF77153C,
@@ -167,58 +192,59 @@ class _ForgetPasswordState extends State<ForgetPassword> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      SizedBox(height: 50,),
+                      SizedBox(height: 50.h),
                       Containers(
-                        wHeight: 70,
-                        wWidth: 70,
+                        wHeight: 70.h,
+                        wWidth: 70.h,
                         hexValue: 0xFFC8A0B0,
                         shape: BoxShape.circle,
-                        child: MyIcons(
-                          iconData: Icons.mail_outlined, size: 30,),
+                        child: MyIcons(iconData: Icons.mail_outlined, size: 30),
                       ),
-                      SizedBox(height: 20,),
-                      Texts(text: "Forget Password ?",
+                      SizedBox(height: 20.h),
+                      Texts(
+                        text: "Forget Password ?",
                         size: 26,
                         fontWeight: FontWeight.w600,
                         colorHexValue: 0xFF000000,
                         edgeInsets: EdgeInsets.only(bottom: 10),
                       ),
                       Texts(
-                          textAlign: TextAlign.center,
-                          size: 13,
-                          colorHexValue: 0xFF727272,
-                          text: " Don’t worry, it happens to all of us. Just\nenter your"
-                          " email address and we’ll send you\na one-time code to help you get back in"),
-                      SizedBox(height: 50,),
+                        textAlign: TextAlign.center,
+                        size: 13,
+                        colorHexValue: 0xFF727272,
+                        text:
+                            " Don’t worry, it happens to all of us. Just\nenter your"
+                            " email address and we’ll send you\na one-time code to help you get back in",
+                      ),
+                      SizedBox(height: 50.h),
                       Padding(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 20.0),
+                        padding: const EdgeInsets.symmetric(horizontal: 20.0),
                         child: CustomInputField(
                           controller: _emailController,
                           fillColor: 0xFFFFFFFF,
                           borderColor: 0xFF77153C,
                           hintText: "Enter your email address",
-                           prefixIcon: Icons.mail_outline,),
+                          prefixIcon: Icons.mail_outline,
+                        ),
                       ),
                     ],
                   ),
                 ),
                 Padding(
-                  padding: EdgeInsets.only(top: screenHeight*.23),
+                  padding: EdgeInsets.only(top: screenHeight * .23),
                   child: Buttons(
                     isLoading: _isLoading,
                     text: "Continue",
                     hexValue: 0xFFFFFFFF,
-                    onTap: (){
+                    onTap: () {
                       _handleContinue();
                     },
-                    gradient: LinearGradient(colors: [
-                      Color(0xFF77153C),
-                      Color(0xFFDD276F),
-                    ]),
+                    gradient: LinearGradient(
+                      colors: [Color(0xFF77153C), Color(0xFFDD276F)],
+                    ),
                   ),
                 ),
-                SizedBox(height: isLandscape? 20:0,),
+                SizedBox(height: isLandscape ? 20 : 0),
               ],
             ),
           ),

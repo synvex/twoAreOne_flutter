@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 
 import 'package:two_are_one/core/widgets/image.dart';
@@ -10,7 +9,8 @@ class StepperField extends StatelessWidget {
   final VoidCallback onDecrement;
   final VoidCallback onIncrement;
 
-  const StepperField({super.key,
+  const StepperField({
+    super.key,
     required this.label,
     required this.displayValue,
     required this.imageStr,
@@ -31,9 +31,11 @@ class StepperField extends StatelessWidget {
         children: [
           // Icon
           Container(
-            width: 30, height: 30,
+            width: 30,
+            height: 30,
             decoration: const BoxDecoration(
-              color: Color(0xFF77153C), shape: BoxShape.circle,
+              color: Color(0xFF77153C),
+              shape: BoxShape.circle,
             ),
             child: Padding(
               padding: const EdgeInsets.all(6),
@@ -54,13 +56,23 @@ class StepperField extends StatelessWidget {
           GestureDetector(
             onTap: onDecrement,
             child: Container(
-              width: 32, height: 32,
+              width: 32,
+              height: 32,
               decoration: BoxDecoration(
                 color: Colors.white,
                 shape: BoxShape.circle,
-                boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.08), blurRadius: 4)],
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.08),
+                    blurRadius: 4,
+                  ),
+                ],
               ),
-              child: const Icon(Icons.remove, size: 16, color: Color(0xFF77153C)),
+              child: const Icon(
+                Icons.remove,
+                size: 16,
+                color: Color(0xFF77153C),
+              ),
             ),
           ),
           const SizedBox(width: 10),
@@ -68,7 +80,11 @@ class StepperField extends StatelessWidget {
           // Value
           Text(
             displayValue,
-            style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: Color(0xFF333333)),
+            style: const TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.w600,
+              color: Color(0xFF333333),
+            ),
           ),
           const SizedBox(width: 10),
 
@@ -76,11 +92,17 @@ class StepperField extends StatelessWidget {
           GestureDetector(
             onTap: onIncrement,
             child: Container(
-              width: 32, height: 32,
+              width: 32,
+              height: 32,
               decoration: BoxDecoration(
                 color: const Color(0xFF77153C),
                 shape: BoxShape.circle,
-                boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.08), blurRadius: 4)],
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.08),
+                    blurRadius: 4,
+                  ),
+                ],
               ),
               child: const Icon(Icons.add, size: 16, color: Colors.white),
             ),

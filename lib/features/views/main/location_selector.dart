@@ -16,7 +16,8 @@ class LocationSelectorField extends StatefulWidget {
   const LocationSelectorField({
     super.key,
     this.labels,
-    required this.onLocationSelected, this.fillColor,
+    required this.onLocationSelected,
+    this.fillColor,
   });
 
   @override
@@ -29,7 +30,7 @@ class _LocationSelectorFieldState extends State<LocationSelectorField> {
   bool _showSuggestions = false;
   bool _isLoading = false;
 
-  static const String _apiKey ="AIzaSyCqZ38paEOdX0SnqU0u6wBlEasNIwKRNe0";
+  static const String _apiKey = "AIzaSyCqZ38paEOdX0SnqU0u6wBlEasNIwKRNe0";
 
   Future<void> _onSearchChanged(String query) async {
     if (query.length < 2) {
@@ -56,15 +57,17 @@ class _LocationSelectorFieldState extends State<LocationSelectorField> {
       // );
 
       final url = Uri.parse(
-          "https://maps.googleapis.com/maps/api/place/autocomplete/json"
-              "?input=${Uri.encodeComponent(query)}"
-              "&key=$_apiKey"
-              "&types=geocode"
+        "https://maps.googleapis.com/maps/api/place/autocomplete/json"
+        "?input=${Uri.encodeComponent(query)}"
+        "&key=$_apiKey"
+        "&types=geocode",
       );
       final response = await http.get(
-          url, headers: {
-        'User-Agent': 'TwoAreOne_App', // Required by OSM policy
-      });
+        url,
+        headers: {
+          'User-Agent': 'TwoAreOne_App', // Required by OSM policy
+        },
+      );
 
       if (response.statusCode == 200) {
         // final List data = json.decode(response.body);
@@ -73,7 +76,7 @@ class _LocationSelectorFieldState extends State<LocationSelectorField> {
           _suggestions = data['predictions'];
           _showSuggestions = _suggestions.isNotEmpty;
         });
-      }else{
+      } else {
         setState(() {
           _suggestions = [];
           _showSuggestions = false;
@@ -85,13 +88,14 @@ class _LocationSelectorFieldState extends State<LocationSelectorField> {
       if (mounted) setState(() => _isLoading = false);
     }
   }
+
   Future<void> _getPlaceDetails(String placeId, String displayName) async {
     try {
       final url = Uri.parse(
-          "https://maps.googleapis.com/maps/api/place/details/json"
-              "?place_id=$placeId"
-              "&fields=geometry,address_components"
-              "&key=$_apiKey"
+        "https://maps.googleapis.com/maps/api/place/details/json"
+        "?place_id=$placeId"
+        "&fields=geometry,address_components"
+        "&key=$_apiKey",
       );
 
       final response = await http.get(url);
@@ -114,7 +118,8 @@ class _LocationSelectorFieldState extends State<LocationSelectorField> {
               country = component['long_name'];
             } else if (types.contains('administrative_area_level_1')) {
               state = component['long_name'];
-            } else if (types.contains('locality') || types.contains('administrative_area_level_2')) {
+            } else if (types.contains('locality') ||
+                types.contains('administrative_area_level_2')) {
               city = component['long_name'];
             }
           }
@@ -135,26 +140,28 @@ class _LocationSelectorFieldState extends State<LocationSelectorField> {
       debugPrint("Place Details Error: $e");
     }
   }
+
   @override
   Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-          CustomInputField(
-            fillColor: widget.fillColor ?? 0xFFF0EFEF,
-            label: widget.labels,
-            controller: _controller,
-            onChanged: _onSearchChanged,
-            prefixImg: Padding(
-              padding: const EdgeInsets.only(left: 8.0),
-              child: Images(
-                imageStr: "assets/svg_images/locationImg.svg",
+        CustomInputField(
+          fillColor: widget.fillColor ?? 0xFFF0EFEF,
+          label: widget.labels,
+          controller: _controller,
+          onChanged: _onSearchChanged,
+          prefixImg: Padding(
+            padding: const EdgeInsets.only(left: 8.0),
+            child: Images(
+              imageStr: "assets/svg_images/locationImg.svg",
 
-                height: 20,width: 20,
-                ),
+              height: 20,
+              width: 20,
             ),
-             hintText: 'Search',
           ),
+          hintText: 'Search',
+        ),
         // 3. Suggestions List
         if (_showSuggestions)
           Containers(
@@ -162,19 +169,18 @@ class _LocationSelectorFieldState extends State<LocationSelectorField> {
             radius: BorderRadius.circular(10),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.05),
+                color: Colors.black.withValues(alpha: 0.05),
                 blurRadius: 10,
                 offset: const Offset(0, 5),
-              )
+              ),
             ],
             hexValue: 0xFFFFFFFF,
             child: ListView.separated(
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),
               itemCount: _suggestions.length,
-              separatorBuilder: (
-                  context, index) => const Divider(
-                  height: 1, color: Color(0xFFEEEEEE)),
+              separatorBuilder: (context, index) =>
+                  const Divider(height: 1, color: Color(0xFFEEEEEE)),
               itemBuilder: (context, index) {
                 final item = _suggestions[index];
                 // final String displayName = item['display_name'];
@@ -220,5 +226,3 @@ class _LocationSelectorFieldState extends State<LocationSelectorField> {
     );
   }
 }
-
-
