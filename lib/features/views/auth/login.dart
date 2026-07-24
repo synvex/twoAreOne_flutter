@@ -373,6 +373,7 @@ class _LoginPageState extends State<LoginPage> {
                   const Spacer(),
                   TxtButton(
                     fontWeight: FontWeight.w500,
+
                     text: "Forgot the Password?",
                     sizeTxt: 12,
                     colorHex: 0xFF000000,
