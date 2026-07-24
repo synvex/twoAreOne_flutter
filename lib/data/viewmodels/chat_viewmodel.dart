@@ -6,10 +6,24 @@ import '../services/chat_service.dart';
 class ChatViewModel extends ChangeNotifier {
   final ChatService _chatService = ChatService();
 
+  bool isLoading = false;
+
   List<ChatMemberModel> chatMembers = [];
   List<ChatHistoryModel> chatHistory = [];
+  List<ChatMemberModel> chatSearch = [];
 
-  bool isLoading = false;
+  void searchChatMembers(String query) {
+    if (query.trim().isEmpty) {
+      chatSearch = List.from(chatMembers);
+    } else {
+      chatSearch = chatMembers.where((member) {
+        final name = (member.fullName ?? "").toLowerCase();
+        return name.contains(query.toLowerCase());
+      }).toList();
+    }
+
+    notifyListeners();
+  }
 
   Future<void> getChatMembers() async {
     try {

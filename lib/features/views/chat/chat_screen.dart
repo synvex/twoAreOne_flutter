@@ -342,6 +342,7 @@ class _MessageInputBar extends StatelessWidget {
                     shape: BoxShape.circle,
                     gradient: LinearGradient(
                       begin: Alignment.topCenter,
+
                       colors: [AppColors.mehroon, AppColors.blue],
                     ),
                   ),

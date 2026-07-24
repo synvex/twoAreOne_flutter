@@ -20,6 +20,9 @@ class MessageScreen extends StatefulWidget {
 }
 
 class _MessageScreenState extends State<MessageScreen> {
+  final TextEditingController _searchController = TextEditingController();
+  late ChatViewModel _viewModel;
+
   @override
   void initState() {
     super.initState();
@@ -28,6 +31,18 @@ class _MessageScreenState extends State<MessageScreen> {
     Future.microtask(() {
       context.read<ChatViewModel>().getChatMembers();
     });
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      _viewModel = context.read<ChatViewModel>();
+      await _viewModel.getChatMembers();
+      _viewModel.searchChatMembers(_searchController.text);
+    });
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+    _searchController.dispose();
   }
 
   @override
@@ -84,8 +99,13 @@ class _MessageScreenState extends State<MessageScreen> {
                     ),
                     SizedBox(height: 40.h),
                     TextFormField(
+                      controller: _searchController,
+                      onChanged: (value) {
+                        chatViewModel.searchChatMembers(value);
+                      },
                       style: GoogleFonts.poltawskiNowy(
                         fontSize: 14,
+
                         fontWeight: FontWeight(400),
                         color: AppColors.background,
                       ),
@@ -149,150 +169,163 @@ class _MessageScreenState extends State<MessageScreen> {
                   topRight: Radius.circular(36.r),
                 ),
               ),
-              child: chatViewModel.isLoading
-                  ? const Center(child: CircularProgressIndicator())
-                  : chatViewModel.chatMembers.isEmpty
-                  ? Center(
-                      child: Text(
-                        'No messages yet',
-                        style: GoogleFonts.roboto(fontSize: 14),
-                      ),
-                    )
-                  : SingleChildScrollView(
-                      child: Column(
-                        children: [
-                          ListView.builder(
-                            itemCount: chatViewModel.chatMembers.length,
-                            shrinkWrap: true,
-                            physics: const NeverScrollableScrollPhysics(),
-                            itemBuilder: (context, index) {
-                              final item = chatViewModel.chatMembers[index];
+              child: Consumer<ChatViewModel>(
+                builder: (context, viewModel, child) {
+                  return viewModel.isLoading
+                      ? const Center(child: CircularProgressIndicator())
+                      : viewModel.chatMembers.isEmpty
+                      ? Center(
+                          child: Text(
+                            'No messages yet',
+                            style: GoogleFonts.roboto(fontSize: 14),
+                          ),
+                        )
+                      : SingleChildScrollView(
+                          child: Column(
+                            children: [
+                              ListView.builder(
+                                itemCount: viewModel.chatSearch.isNotEmpty
+                                    ? viewModel.chatSearch.length
+                                    : viewModel.chatMembers.length,
+                                shrinkWrap: true,
+                                physics: const NeverScrollableScrollPhysics(),
+                                itemBuilder: (context, index) {
+                                  final item = viewModel.chatSearch.isNotEmpty
+                                      ? viewModel.chatSearch[index]
+                                      : viewModel.chatMembers[index];
 
-                              return GestureDetector(
-                                onTap: () => Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => ChatScreen(
-                                      receiverId: int.parse(
-                                        item.userId.toString(),
-                                      ),
-                                      name: item.fullName.toString(),
-                                      avatarUrl: item.profilePicture.toString(),
-                                      statusText: item.isOnline == true
-                                          ? "Online"
-                                          : "Offline",
-                                    ),
-                                  ),
-                                ),
-                                child: Container(
-                                  height: 60.h,
-                                  margin: EdgeInsets.only(
-                                    left: 16.w,
-                                    right: 16.w,
-                                    top: 16.h,
-                                  ),
-                                  padding: EdgeInsets.symmetric(
-                                    horizontal: 16.w,
-                                    vertical: 8.h,
-                                  ),
-                                  decoration: BoxDecoration(
-                                    color: AppColors.lightGray,
-                                    borderRadius: BorderRadius.circular(50),
-                                  ),
-                                  child: Row(
-                                    children: [
-                                      ClipRRect(
-                                        borderRadius: BorderRadius.circular(
-                                          50.r,
-                                        ),
-                                        child: Image(
-                                          image: NetworkImage(
-                                            item.profilePicture.toString(),
+                                  return GestureDetector(
+                                    onTap: () => Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => ChatScreen(
+                                          receiverId: int.parse(
+                                            item.userId.toString(),
                                           ),
-                                          width: 48.w,
-                                          height: 48.h,
-                                          fit: BoxFit.cover,
-                                          errorBuilder:
-                                              (context, error, stackTrace) {
-                                                return Icon(
-                                                  AppIcons.personIcon,
-                                                  size: 32.sp,
-                                                  color: AppColors.grayColor,
-                                                );
-                                              },
+                                          name: item.fullName.toString(),
+                                          avatarUrl: item.profilePicture
+                                              .toString(),
+                                          statusText: item.isOnline == true
+                                              ? "Online"
+                                              : "Offline",
                                         ),
                                       ),
-                                      // CircleAvatar(
-                                      //   radius: 24.r,
-                                      //   backgroundImage: NetworkImage(
-                                      //     item.profilePicture.toString(),
-                                      //   ),
-                                      // (avatarUrl != null &&
-                                      //     avatarUrl.isNotEmpty)
-                                      // ? NetworkImage(avatarUrl)
-                                      // : const NetworkImage(
-                                      //     'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRDz5V_uTTpPqDGDazCOM2G3C8N8q30Cwoin05thNEcUknwnHfHN0RFs8xk&s=10',
-                                      //   ),
-                                      //),
-                                      SizedBox(width: 10.w),
-                                      Column(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.start,
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
+                                    ),
+                                    child: Container(
+                                      height: 60.h,
+                                      margin: EdgeInsets.only(
+                                        left: 16.w,
+                                        right: 16.w,
+                                        top: 16.h,
+                                      ),
+                                      padding: EdgeInsets.symmetric(
+                                        horizontal: 16.w,
+                                        vertical: 8.h,
+                                      ),
+                                      decoration: BoxDecoration(
+                                        color: AppColors.lightGray,
+                                        borderRadius: BorderRadius.circular(50),
+                                      ),
+                                      child: Row(
                                         children: [
-                                          Text(
-                                            item.fullName.toString(),
-                                            style: GoogleFonts.roboto(
-                                              fontSize: 14,
-                                              fontWeight: FontWeight.w500,
+                                          ClipRRect(
+                                            borderRadius: BorderRadius.circular(
+                                              50.r,
                                             ),
+                                            child: Image(
+                                              image: NetworkImage(
+                                                item.profilePicture.toString(),
+                                              ),
+                                              width: 48.w,
+                                              height: 48.h,
+                                              fit: BoxFit.cover,
+                                              errorBuilder:
+                                                  (context, error, stackTrace) {
+                                                    return Icon(
+                                                      AppIcons.personIcon,
+                                                      size: 32.sp,
+                                                      color:
+                                                          AppColors.grayColor,
+                                                    );
+                                                  },
+                                            ),
+                                          ),
+                                          // CircleAvatar(
+                                          //   radius: 24.r,
+                                          //   backgroundImage: NetworkImage(
+                                          //     item.profilePicture.toString(),
+                                          //   ),
+                                          // (avatarUrl != null &&
+                                          //     avatarUrl.isNotEmpty)
+                                          // ? NetworkImage(avatarUrl)
+                                          // : const NetworkImage(
+                                          //     'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRDz5V_uTTpPqDGDazCOM2G3C8N8q30Cwoin05thNEcUknwnHfHN0RFs8xk&s=10',
+                                          //   ),
+                                          //),
+                                          SizedBox(width: 10.w),
+                                          Column(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.start,
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Text(
+                                                item.fullName.toString(),
+                                                style: GoogleFonts.roboto(
+                                                  fontSize: 14,
+                                                  fontWeight: FontWeight.w500,
+                                                ),
+                                              ),
+                                              Spacer(),
+                                              SizedBox(
+                                                width: 150.w,
+                                                child: Text(
+                                                  maxLines: 1,
+                                                  item.lastMessage.toString(),
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                  style: GoogleFonts.roboto(
+                                                    fontSize: 12,
+                                                    fontWeight: FontWeight.w500,
+                                                  ),
+                                                ),
+                                              ),
+                                            ],
                                           ),
                                           Spacer(),
-                                          SizedBox(
-                                            width: 150.w,
-                                            child: Text(
-                                              maxLines: 1,
-                                              item.lastMessage.toString(),
-                                              overflow: TextOverflow.ellipsis,
-                                              style: GoogleFonts.roboto(
-                                                fontSize: 12,
-                                                fontWeight: FontWeight.w500,
+                                          Column(
+                                            children: [
+                                              if (item.isOnline == true)
+                                                CircleAvatar(
+                                                  radius: 6.r,
+                                                  backgroundColor:
+                                                      AppColors.green,
+                                                ),
+                                              const Spacer(),
+                                              Text(
+                                                DateTimeFormatter.chatTime(
+                                                  item.lastMessageTime
+                                                      .toString(),
+                                                ),
+                                                style: GoogleFonts.inter(
+                                                  fontSize: 10,
+                                                  fontWeight: FontWeight.w400,
+                                                ),
                                               ),
-                                            ),
+                                            ],
                                           ),
                                         ],
                                       ),
-                                      Spacer(),
-                                      Column(
-                                        children: [
-                                          if (item.isOnline == true)
-                                            CircleAvatar(
-                                              radius: 6.r,
-                                              backgroundColor: AppColors.green,
-                                            ),
-                                          const Spacer(),
-                                          Text(
-                                            DateTimeFormatter.chatTime(
-                                              item.lastMessageTime.toString(),
-                                            ),
-                                            style: GoogleFonts.inter(
-                                              fontSize: 10,
-                                              fontWeight: FontWeight.w400,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              );
-                            },
+                                    ),
+                                  );
+                                },
+                              ),
+                              SizedBox(height: 50.h),
+                            ],
                           ),
-                          SizedBox(height: 50.h),
-                        ],
-                      ),
-                    ),
+                        );
+                },
+              ),
             ),
           ),
         ],
