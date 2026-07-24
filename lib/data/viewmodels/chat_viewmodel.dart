@@ -7,6 +7,7 @@ class ChatViewModel extends ChangeNotifier {
   final ChatService _chatService = ChatService();
 
   bool isLoading = false;
+  bool sendSmsLoading = false;
 
   List<ChatMemberModel> chatMembers = [];
   List<ChatHistoryModel> chatHistory = [];
@@ -53,31 +54,29 @@ class ChatViewModel extends ChangeNotifier {
     }
   }
 
-  // Future<Map<String, dynamic>> sendMessage({
-  //   required int receiverId,
-  //   required String message,
-  //   String? type,
-  // }) async {
-  //   try {
-  //     isLoading = true;
-  //     notifyListeners();
+  Future<Map<String, dynamic>> sendMessage({
+    required int receiverId,
+    required String message,
+  }) async {
+    try {
+      sendSmsLoading = true;
+      notifyListeners();
 
-  //     final resp = await _chatService.sendMessage(
-  //       receiverId: receiverId,
-  //       message: message,
-  //       type: type,
-  //     );
+      final resp = await _chatService.sendMessage(
+        receiverId: receiverId,
+        message: message,
+      );
 
-  //     // Refresh history after sending
-  //     await fetchedChatHistory(receiverId);
+      // Refresh history after sending
+      // await fetchedChatHistory(receiverId);
 
-  //     return resp;
-  //   } catch (e) {
-  //     debugPrint("Send Message Error: $e");
-  //     rethrow;
-  //   } finally {
-  //     isLoading = false;
-  //     notifyListeners();
-  //   }
-  // }
+      return resp;
+    } catch (e) {
+      debugPrint("Send Message Error: $e");
+      rethrow;
+    } finally {
+      sendSmsLoading = false;
+      notifyListeners();
+    }
+  }
 }

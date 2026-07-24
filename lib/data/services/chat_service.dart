@@ -9,43 +9,6 @@ import 'package:two_are_one/data/models/chat_member_model.dart';
 class ChatService {
   final String baseUrl = "https://www.twoareone.love/api";
 
-  // ============================================================
-  // GET RECEIVE MESSAGES
-  // ============================================================
-
-  // Future<Map<String, dynamic>> fetchReceivedMessages() async {
-  //   try {
-  //     final prefs = await SharedPreferences.getInstance();
-  //     final token = prefs.getString('auth_token') ?? '';
-  //     final response = await http.get(
-  //       Uri.parse("$baseUrl/user/messages/receive.php"),
-  //       headers: {
-  //         "Accept": "application/json",
-  //         "Content-Type": "application/json",
-  //         "x-api-key": token,
-  //         "Authorization": "Bearer $token",
-  //       },
-  //     );
-
-  //     print(response);
-
-  //     final data = jsonDecode(response.body);
-
-  //     if (data is Map<String, dynamic>) {
-  //       return data;
-  //     }
-
-  //     return {};
-  //   } catch (e) {
-  //     debugPrint("❌ fetchReceivedMessages Error: $e");
-  //     rethrow;
-  //   }
-  // }
-
-  // ============================================================
-  // GET CHAT HISTORY
-  // ============================================================
-
   Future<List<ChatHistoryModel>> fetchChatHistory({
     required int receiverId,
   }) async {
@@ -122,46 +85,40 @@ class ChatService {
   // SEND MESSAGE
   // ============================================================
 
-  // Future<Map<String, dynamic>> sendMessage({
-  //   required int receiverId,
-  //   required String message,
-  //   String? type,
-  // }) async {
-  //   final prefs = await SharedPreferences.getInstance();
-  //   final token = prefs.getString('auth_token') ?? '';
-  //   try {
-  //     final response = await http.post(
-  //       Uri.parse("$baseUrl/user/messages/send.php"),
+  Future<Map<String, dynamic>> sendMessage({
+    required int receiverId,
+    required String message,
+  }) async {
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('auth_token') ?? '';
+    try {
+      final response = await http.post(
+        Uri.parse("$baseUrl/user/messages/send.php"),
 
-  //       headers: {
-  //         "Accept": "application/json",
-  //         "Content-Type": "application/json",
-  //         "x-api-key": token,
-  //         "Authorization": "Bearer $token",
-  //       },
-  //       body: jsonEncode({
-  //         "receiver_id": receiverId,
+        headers: {
+          "Accept": "application/json",
+          "Content-Type": "application/json",
+          "x-api-key": token,
+          "Authorization": "Bearer $token",
+        },
+        body: jsonEncode({"receiver_id": receiverId, "message": message}),
+      );
+      print("******************************");
+      print("Send Message Response: ${response.body}");
+      print(response);
 
-  //         "message": message,
+      final data = jsonDecode(response.body);
 
-  //         if (type != null) "type": type,
-  //       }),
-  //     );
+      if (data is Map<String, dynamic>) {
+        return data;
+      }
 
-  //     print(response);
-
-  //     final data = jsonDecode(response.body);
-
-  //     if (data is Map<String, dynamic>) {
-  //       return data;
-  //     }
-
-  //     return {};
-  //   } catch (e) {
-  //     debugPrint("❌ sendMessage Error: $e");
-  //     rethrow;
-  //   }
-  // }
+      return {};
+    } catch (e) {
+      debugPrint("❌ sendMessage Error: $e");
+      rethrow;
+    }
+  }
 
   // ============================================================
   // MARK MESSAGE READ

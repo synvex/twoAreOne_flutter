@@ -89,14 +89,6 @@ class _ChatScreenState extends State<ChatScreen> {
     });
   }
 
-  void _handleSend(ChatViewModel chatViewModel) {
-    final text = _messageController.text.trim();
-    if (text.isEmpty) return;
-
-    _messageController.clear();
-    FocusScope.of(context).unfocus();
-  }
-
   @override
   Widget build(BuildContext context) {
     final chatViewModel = context.watch<ChatViewModel>();
@@ -248,10 +240,49 @@ class _ChatScreenState extends State<ChatScreen> {
                             },
                           ),
                   ),
-                  _MessageInputBar(
-                    controller: _messageController,
-                    onSend: () => _handleSend(chatViewModel),
+                  Consumer(
+                    builder: (context, value, child) {
+                      return _MessageInputBar(
+                        controller: _messageController,
+                        onSend: () => chatViewModel
+                            .sendMessage(
+                              receiverId: widget.receiverId,
+                              message: _messageController.text.trim(),
+                            )
+                            .then((_) {
+                              _messageController.clear();
+                              FocusScope.of(context).unfocus();
+                              chatViewModel.chatHistory.add(
+                                ChatHistoryModel(
+                                  id: widget.receiverId,
+                                  user1: _currentUserId,
+                                  user2: widget.receiverId,
+                                  message: _messageController.text.trim(),
+                                  isSticker: 0,
+                                  isPhoto: 0,
+                                  stickerId: 0,
+                                  time: 0,
+                                  isFirst: 0,
+                                  isSeen1: 0,
+                                  isSeen2: 0,
+                                  isVideo: 0,
+                                  isNew: 0,
+                                  isSeen: 0,
+                                  senderName: '',
+                                  senderProfilePicture: '',
+                                  receiverName: '',
+
+                                  receiverProfilePicture: '',
+                                  messageTime: 'Just now',
+                                  senderProfilePictureUrl: '',
+                                  receiverProfilePictureUrl: '',
+                                ),
+                              );
+                            }),
+                      );
+                    },
                   ),
+
                   SizedBox(height: 16.h),
                 ],
               ),
@@ -346,7 +377,12 @@ class _MessageInputBar extends StatelessWidget {
                       colors: [AppColors.mehroon, AppColors.blue],
                     ),
                   ),
-                  child: Center(child: SvgPicture.asset(AppIcons.send_msg)),
+                  child: Center(
+                    child: GestureDetector(
+                      onTap: onSend,
+                      child: SvgPicture.asset(AppIcons.send_msg),
+                    ),
+                  ),
                 ),
               ),
             ),
