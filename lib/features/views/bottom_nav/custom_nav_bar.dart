@@ -259,7 +259,7 @@ class _ShadowPainter extends CustomPainter {
     canvas.drawPath(
       path.shift(const Offset(0, -1)),
       Paint()
-        ..color = Colors.black.withOpacity(0.07)
+        ..color = Colors.black.withValues(alpha: 0.07)
         ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 1)
         ..style = PaintingStyle.fill,
     );

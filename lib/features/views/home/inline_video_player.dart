@@ -10,6 +10,7 @@ class InlineVideoPlayer extends StatefulWidget {
   @override
   State<InlineVideoPlayer> createState() => _InlineVideoPlayerState();
 }
+
 class _InlineVideoPlayerState extends State<InlineVideoPlayer> {
   VideoPlayerController? _controller;
   bool _initialized = false;
@@ -45,7 +46,9 @@ class _InlineVideoPlayerState extends State<InlineVideoPlayer> {
     });
 
     try {
-      final controller = VideoPlayerController.networkUrl(Uri.parse(widget.url));
+      final controller = VideoPlayerController.networkUrl(
+        Uri.parse(widget.url),
+      );
       _controller = controller;
 
       await controller.initialize().timeout(
@@ -64,8 +67,7 @@ class _InlineVideoPlayerState extends State<InlineVideoPlayer> {
       controller.setVolume(_isMuted ? 0 : 1);
       await controller.play();
       _autoHideControls();
-    }
-    catch (e) {
+    } catch (e) {
       if (mounted) {
         setState(() {
           _failed = true;
@@ -178,12 +180,17 @@ class _InlineVideoPlayerState extends State<InlineVideoPlayer> {
           color: Colors.black,
           child: Center(
             child: Container(
-              width: 56, height: 56,
+              width: 56,
+              height: 56,
               decoration: BoxDecoration(
-                color: Colors.black.withOpacity(0.5),
+                color: Colors.black.withValues(alpha: 0.5),
                 shape: BoxShape.circle,
               ),
-              child: const Icon(Icons.play_arrow_rounded, color: Colors.white, size: 40),
+              child: const Icon(
+                Icons.play_arrow_rounded,
+                color: Colors.white,
+                size: 40,
+              ),
             ),
           ),
         ),
@@ -214,25 +221,31 @@ class _InlineVideoPlayerState extends State<InlineVideoPlayer> {
             )
           else
             const Center(
-              child: CircularProgressIndicator(color: Color(0xFF77153C), strokeWidth: 2),
+              child: CircularProgressIndicator(
+                color: Color(0xFF77153C),
+                strokeWidth: 2,
+              ),
             ),
 
           // 2. Center Play/Pause Overlay
-          if (_showControls || (_initialized && !(_controller?.value.isPlaying ?? false)))
+          if (_showControls ||
+              (_initialized && !(_controller?.value.isPlaying ?? false)))
             Center(
               child: GestureDetector(
                 onTap: _togglePlay,
                 child: Container(
-                  width: 56, height: 56,
+                  width: 56,
+                  height: 56,
                   decoration: BoxDecoration(
-                    color: Colors.black.withOpacity(0.5),
+                    color: Colors.black.withValues(alpha: 0.5),
                     shape: BoxShape.circle,
                   ),
                   child: Icon(
                     (_initialized && (_controller?.value.isPlaying ?? false))
                         ? Icons.pause_rounded
                         : Icons.play_arrow_rounded,
-                    color: Colors.white, size: 40,
+                    color: Colors.white,
+                    size: 40,
                   ),
                 ),
               ),
@@ -241,16 +254,21 @@ class _InlineVideoPlayerState extends State<InlineVideoPlayer> {
           // 3. Mute Button
           if (_showControls)
             Positioned(
-              top: 10, right: 10,
+              top: 10,
+              right: 10,
               child: GestureDetector(
                 onTap: _toggleMute,
                 child: Container(
                   padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
-                    color: Colors.black.withOpacity(0.5),
+                    color: Colors.black.withValues(alpha: 0.5),
                     shape: BoxShape.circle,
                   ),
-                  child: Icon(_isMuted ? Icons.volume_off : Icons.volume_up, color: Colors.white, size: 20),
+                  child: Icon(
+                    _isMuted ? Icons.volume_off : Icons.volume_up,
+                    color: Colors.white,
+                    size: 20,
+                  ),
                 ),
               ),
             ),
@@ -258,12 +276,15 @@ class _InlineVideoPlayerState extends State<InlineVideoPlayer> {
           // 4. Bottom Controls Layer
           if (_showControls)
             Positioned(
-              bottom: 0, left: 0, right: 0,
+              bottom: 0,
+              left: 0,
+              right: 0,
               child: Container(
                 decoration: const BoxDecoration(
                   gradient: LinearGradient(
                     colors: [Colors.transparent, Colors.black54],
-                    begin: Alignment.topCenter, end: Alignment.bottomCenter,
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
                   ),
                 ),
                 child: Column(
@@ -289,11 +310,18 @@ class _InlineVideoPlayerState extends State<InlineVideoPlayer> {
                             _initialized && controller != null
                                 ? "${_formatDuration(controller.value.position)} / ${_formatDuration(controller.value.duration)}"
                                 : "00:00 / 00:00",
-                            style: const TextStyle(color: Colors.white, fontSize: 11),
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 11,
+                            ),
                           ),
                           GestureDetector(
                             onTap: _openFullscreen,
-                            child: const Icon(Icons.fullscreen, color: Colors.white, size: 24),
+                            child: const Icon(
+                              Icons.fullscreen,
+                              color: Colors.white,
+                              size: 24,
+                            ),
                           ),
                         ],
                       ),
@@ -307,7 +335,6 @@ class _InlineVideoPlayerState extends State<InlineVideoPlayer> {
     );
   }
 }
-
 
 //
 // import 'dart:async';

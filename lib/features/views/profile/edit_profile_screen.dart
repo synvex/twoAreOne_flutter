@@ -1,4 +1,3 @@
-
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
@@ -46,7 +45,12 @@ class _ImageEntry {
   final File? localFile;
   final bool uploading;
 
-  _ImageEntry({this.id, this.networkUrl, this.localFile, this.uploading = false});
+  _ImageEntry({
+    this.id,
+    this.networkUrl,
+    this.localFile,
+    this.uploading = false,
+  });
 }
 
 class _EditProfileScreenState extends State<EditProfileScreen>
@@ -163,24 +167,28 @@ class _EditProfileScreenState extends State<EditProfileScreen>
     if (!mounted) return;
 
     if (res['success'] == true && res['data'] is Map) {
-      final user =
-      UserFullProfile.fromJson((res['data'] as Map).cast<String, dynamic>());
+      final user = UserFullProfile.fromJson(
+        (res['data'] as Map).cast<String, dynamic>(),
+      );
       setState(() {
         _user = user;
         _nameController.text = user.fullName;
         _bioController.text = user.bio;
         _workController.text = user.work;
-        _selectedGender = user.gender.isNotEmpty ? user.gender.toLowerCase() : null;
+        _selectedGender = user.gender.isNotEmpty
+            ? user.gender.toLowerCase()
+            : null;
         _selectedAge = user.age.isNotEmpty ? user.age : null;
         _selectedHeight = user.height.isNotEmpty ? user.height : null;
         _selectedWeight = user.weight.isNotEmpty ? user.weight : null;
         _existingVideo = user.userVideo;
         _imageEntries
           ..clear()
-          ..addAll(user.allImages.map((img) => _ImageEntry(
-            id: img.id,
-            networkUrl: _fullUrl(img.url),
-          )));
+          ..addAll(
+            user.allImages.map(
+              (img) => _ImageEntry(id: img.id, networkUrl: _fullUrl(img.url)),
+            ),
+          );
         _loadingUser = false;
       });
     } else {
@@ -198,6 +206,7 @@ class _EditProfileScreenState extends State<EditProfileScreen>
     if (path == null || path.isEmpty) return '';
     return path.startsWith('http') ? path : '$kEditProfileUploadBase$path';
   }
+
   Future<bool> _requestCameraPermission() async {
     final status = await Permission.camera.status;
     if (status.isGranted) return true;
@@ -251,8 +260,8 @@ class _EditProfileScreenState extends State<EditProfileScreen>
       TopToast.show(
         context,
         title: "Error",
-        message: res['error']?.toString() ??
-            "Something went wrong while uploading",
+        message:
+            res['error']?.toString() ?? "Something went wrong while uploading",
         type: ToastType.error,
       );
     }
@@ -287,9 +296,9 @@ class _EditProfileScreenState extends State<EditProfileScreen>
   }
 
   Future<void> _addImage(File file) async {
-    setState(() => _imageEntries.add(
-      _ImageEntry(localFile: file, uploading: true),
-    ));
+    setState(
+      () => _imageEntries.add(_ImageEntry(localFile: file, uploading: true)),
+    );
 
     final res = await _profileService.addUserPhoto(file);
     if (!mounted) return;
@@ -429,12 +438,12 @@ class _EditProfileScreenState extends State<EditProfileScreen>
       },
     );
   }
+
   void _openMediaSheet({
     required bool isVideo,
     required Future<void> Function() onCamera,
     required Future<void> Function() onGallery,
-  })
-  {
+  }) {
     showModalBottomSheet(
       context: context,
       backgroundColor: Colors.white,
@@ -449,7 +458,8 @@ class _EditProfileScreenState extends State<EditProfileScreen>
             children: [
               const SizedBox(height: 12),
               Container(
-                width: 40, height: 4,
+                width: 40,
+                height: 4,
                 decoration: BoxDecoration(
                   color: Colors.grey[300],
                   borderRadius: BorderRadius.circular(2),
@@ -463,8 +473,9 @@ class _EditProfileScreenState extends State<EditProfileScreen>
                   await Future.delayed(const Duration(milliseconds: 250));
                   if (mounted) await onCamera();
                 },
-                gradient:
-                const LinearGradient(colors: [_kMehroon, Color(0xFFDD276F)]),
+                gradient: const LinearGradient(
+                  colors: [_kMehroon, Color(0xFFDD276F)],
+                ),
               ),
               const SizedBox(height: 15),
               Buttons(
@@ -474,15 +485,17 @@ class _EditProfileScreenState extends State<EditProfileScreen>
                   await Future.delayed(const Duration(milliseconds: 250));
                   if (mounted) await onGallery();
                 },
-                gradient:
-                const LinearGradient(colors: [_kMehroon, Color(0xFFDD276F)]),
+                gradient: const LinearGradient(
+                  colors: [_kMehroon, Color(0xFFDD276F)],
+                ),
               ),
               const SizedBox(height: 15),
               Buttons(
                 text: "Cancel",
                 onTap: () => Navigator.pop(sheetContext),
-                gradient:
-                const LinearGradient(colors: [_kMehroon, Color(0xFFDD226F)]),
+                gradient: const LinearGradient(
+                  colors: [_kMehroon, Color(0xFFDD226F)],
+                ),
               ),
               const SizedBox(height: 15),
             ],
@@ -493,15 +506,19 @@ class _EditProfileScreenState extends State<EditProfileScreen>
   }
 
   bool _validate() {
-    final nameOk = RegExp(r'^[A-Za-z\s]+$').hasMatch(_nameController.text.trim());
-    final workOk =
-    RegExp(
-
-        // r'^[\s\S]*$'
-        r"^[a-zA-Z0-9\s,.'-]+$"
+    final nameOk = RegExp(
+      r'^[A-Za-z\s]+$',
+    ).hasMatch(_nameController.text.trim());
+    final workOk = RegExp(
+      // r'^[\s\S]*$'
+      r"^[a-zA-Z0-9\s,.'-]+$",
     ).hasMatch(_workController.text);
     if ((_pickedLocation?.state ?? _user?.state ?? '').isEmpty) {
-      TopToast.show(context, title: "Error", message: "Please select a location with a valid state");
+      TopToast.show(
+        context,
+        title: "Error",
+        message: "Please select a location with a valid state",
+      );
       return false;
     }
     final bioOk = RegExp(r"^[a-zA-Z0-9\s,.'-]+$").hasMatch(_bioController.text);
@@ -514,8 +531,8 @@ class _EditProfileScreenState extends State<EditProfileScreen>
     });
     debugPrint("nameOk: $nameOk, workOk: $workOk, bioOk: $bioOk");
     return nameOk && workOk && bioOk;
-
   }
+
   Future<void> _onUpdate() async {
     if (!_validate()) return;
 
@@ -555,8 +572,8 @@ class _EditProfileScreenState extends State<EditProfileScreen>
       TopToast.show(
         context,
         title: "Error",
-        message: res['error']?.toString() ??
-            "Something went wrong while uploading",
+        message:
+            res['error']?.toString() ?? "Something went wrong while uploading",
         type: ToastType.error,
       );
     }
@@ -604,14 +621,17 @@ class _EditProfileScreenState extends State<EditProfileScreen>
 
   void _onPressCategory(dynamic category) {
     final userId = _user?.id ?? 0;
-    Navigator.of(context).push(MaterialPageRoute(
-      builder: (_) => CategoryQuestionsScreen(
-        categoryId: category.categoryId,
-        categoryName: category.categoryName,
-        userId: userId,
-        editable: true, // RN: navigate params `{ isEdit: true, cat: category }`
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (_) => CategoryQuestionsScreen(
+          categoryId: category.categoryId,
+          categoryName: category.categoryName,
+          userId: userId,
+          editable:
+              true, // RN: navigate params `{ isEdit: true, cat: category }`
+        ),
       ),
-    ));
+    );
   }
 
   @override
@@ -634,8 +654,7 @@ class _EditProfileScreenState extends State<EditProfileScreen>
             children: [
               _buildHeader(),
               Padding(
-                padding: const EdgeInsets.symmetric(
-                    horizontal: 25),
+                padding: const EdgeInsets.symmetric(horizontal: 25),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -655,14 +674,20 @@ class _EditProfileScreenState extends State<EditProfileScreen>
                             maxLines: 5,
                             textAlignVertical: TextAlignVertical.top,
                             onChanged: (_) => setState(() => _bioError = ''),
-                            style: const TextStyle(fontSize: 14, color: _kFieldText),
+                            style: const TextStyle(
+                              fontSize: 14,
+                              color: _kFieldText,
+                            ),
                             decoration: const InputDecoration(
                               border: InputBorder.none,
                               isDense: true,
                               contentPadding: EdgeInsets.zero,
                               counterText: '',
                               hintText: "Tell us something about yourself",
-                              hintStyle: TextStyle(fontSize: 14, color: _kFieldText),
+                              hintStyle: TextStyle(
+                                fontSize: 14,
+                                color: _kFieldText,
+                              ),
                             ),
                           ),
                           if (_bioError.isNotEmpty) _errorText(_bioError),
@@ -690,8 +715,9 @@ class _EditProfileScreenState extends State<EditProfileScreen>
                         border: Border.all(color: _kFieldBorder),
                       ),
                       child: LocationSelectorField(
-                        labels: (_user?.city.isNotEmpty == true &&
-                            _user?.country.isNotEmpty == true)
+                        labels:
+                            (_user?.city.isNotEmpty == true &&
+                                _user?.country.isNotEmpty == true)
                             ? "${_user?.city},${_user?.country}"
                             : "Search location",
                         fillColor: 0xFFFFFFFF,
@@ -718,9 +744,7 @@ class _EditProfileScreenState extends State<EditProfileScreen>
                                 child: _fieldLabel("Gender", padBottom: 6),
                               ),
                               const SizedBox(width: 10),
-                              Expanded(
-                                child: _fieldLabel("Age", padBottom: 6),
-                              ),
+                              Expanded(child: _fieldLabel("Age", padBottom: 6)),
                             ],
                           ),
                           Row(
@@ -787,7 +811,9 @@ class _EditProfileScreenState extends State<EditProfileScreen>
                             width: double.infinity,
 
                             padding: const EdgeInsets.symmetric(
-                                horizontal: 16, vertical: 12),
+                              horizontal: 16,
+                              vertical: 12,
+                            ),
                             decoration: BoxDecoration(
                               color: Colors.white,
                               borderRadius: BorderRadius.circular(20),
@@ -798,20 +824,25 @@ class _EditProfileScreenState extends State<EditProfileScreen>
                               maxLength: 100,
                               maxLines: 3,
                               onChanged: (_) => setState(() => _workError = ''),
-                              style: const TextStyle(fontSize: 15, color: _kFieldText),
+                              style: const TextStyle(
+                                fontSize: 15,
+                                color: _kFieldText,
+                              ),
                               decoration: const InputDecoration(
                                 border: InputBorder.none,
                                 isDense: true,
                                 contentPadding: EdgeInsets.zero,
                                 counterText: '',
                                 hintText: "Enter your work",
-                                hintStyle:
-                                TextStyle(fontSize: 14, color: _kFieldText),
+                                hintStyle: TextStyle(
+                                  fontSize: 14,
+                                  color: _kFieldText,
+                                ),
                               ),
                             ),
                           ),
                           if (_workError.isNotEmpty) _errorText(_workError),
-                          SizedBox(height: 8,)
+                          SizedBox(height: 8),
                         ],
                       ),
                     ),
@@ -839,10 +870,15 @@ class _EditProfileScreenState extends State<EditProfileScreen>
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
       child: Row(
         children: [
-          Back_Button(onTap: () { Navigator.push(context,
-              MaterialPageRoute(builder: (
-                  context) => ProfileScreen(),)); }),
-          SizedBox(width: 110,),
+          Back_Button(
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => ProfileScreen()),
+              );
+            },
+          ),
+          SizedBox(width: 110),
           const Text(
             "Edit Profile",
             style: TextStyle(fontSize: 22, fontWeight: FontWeight.w600),
@@ -851,6 +887,7 @@ class _EditProfileScreenState extends State<EditProfileScreen>
       ),
     );
   }
+
   Widget _sectionCard({required String title, required Widget child}) {
     return Container(
       width: double.infinity,
@@ -872,22 +909,26 @@ class _EditProfileScreenState extends State<EditProfileScreen>
             ),
           ),
           Divider(height: 1, thickness: 1, color: _kCardBorder),
-          Padding(
-            padding: const EdgeInsets.all(8),
-            child: child,
-          ),
+          Padding(padding: const EdgeInsets.all(8), child: child),
         ],
       ),
     );
   }
+
   /// Plain (non-card) label used above outlined fields, e.g. "Full Name".
   Widget _fieldLabel(String text, {double padBottom = 8}) => Padding(
     padding: EdgeInsets.only(bottom: padBottom, top: 4),
-    child: Text(text, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w400)),
+    child: Text(
+      text,
+      style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w400),
+    ),
   );
   Widget _errorText(String message) => Padding(
     padding: const EdgeInsets.only(left: 16, top: 4),
-    child: Text(message, style: const TextStyle(color: Colors.red, fontSize: 12)),
+    child: Text(
+      message,
+      style: const TextStyle(color: Colors.red, fontSize: 12),
+    ),
   );
   Widget _outlinedField({
     required TextEditingController controller,
@@ -896,8 +937,7 @@ class _EditProfileScreenState extends State<EditProfileScreen>
     int? maxLength,
     TextInputType? keyboardType,
     ValueChanged<String>? onChanged,
-  })
-  {
+  }) {
     return TextField(
       controller: controller,
       maxLength: maxLength,
@@ -909,14 +949,17 @@ class _EditProfileScreenState extends State<EditProfileScreen>
         hintStyle: const TextStyle(fontSize: 14, color: _kFieldText),
         filled: true,
         fillColor: Colors.white,
-        contentPadding: const EdgeInsets.symmetric(vertical: 14, horizontal: 16),
+        contentPadding: const EdgeInsets.symmetric(
+          vertical: 14,
+          horizontal: 16,
+        ),
         prefixIconConstraints: const BoxConstraints(minWidth: 46),
         prefixIcon: Padding(
           padding: const EdgeInsets.only(left: 12, right: 8),
           child: CircleAvatar(
             radius: 12,
             backgroundColor: Colors.white,
-            child:Images(imageStr: icon, height: 30, width: 30, ),
+            child: Images(imageStr: icon, height: 30, width: 30),
           ),
         ),
         border: OutlineInputBorder(
@@ -934,6 +977,7 @@ class _EditProfileScreenState extends State<EditProfileScreen>
       ),
     );
   }
+
   Widget _buildAvatarSection() {
     final avatarUrl = _fullUrl(_user?.profilePicture);
     return Center(
@@ -946,21 +990,28 @@ class _EditProfileScreenState extends State<EditProfileScreen>
             padding: const EdgeInsets.all(2),
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              border: Border.all(color: Colors.grey.withOpacity(0.3), width: 4),
+              border: Border.all(
+                color: Colors.grey.withValues(alpha: 0.3),
+                width: 4,
+              ),
             ),
             child: ClipOval(
               child: _avatarUploading
-                  ? const Center(child: CircularProgressIndicator(color: _kMehroon))
+                  ? const Center(
+                      child: CircularProgressIndicator(color: _kMehroon),
+                    )
                   : _pickedAvatarFile != null
                   ? Image.file(_pickedAvatarFile!, fit: BoxFit.cover)
                   : (avatarUrl.isNotEmpty
-                  ? Image.network(
-                avatarUrl,
-                fit: BoxFit.cover,
-                errorBuilder: (context, e, s) =>
-                const Icon(Icons.person_outline_sharp, size: 80),
-              )
-                  : const Icon(Icons.person_outline_sharp, size: 80)),
+                        ? Image.network(
+                            avatarUrl,
+                            fit: BoxFit.cover,
+                            errorBuilder: (context, e, s) => const Icon(
+                              Icons.person_outline_sharp,
+                              size: 80,
+                            ),
+                          )
+                        : const Icon(Icons.person_outline_sharp, size: 80)),
             ),
           ),
           Positioned(
@@ -969,14 +1020,13 @@ class _EditProfileScreenState extends State<EditProfileScreen>
             child: GestureDetector(
               onTap: _pickAvatar,
               child: Container(
-                  height: 43,
-                  width: 42,
-                  alignment: Alignment.center,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                  ),
-                  child: Images(
-                      imageStr: "assets/svg_images/Profile/addImageCamera.svg")
+                height: 43,
+                width: 42,
+                alignment: Alignment.center,
+                decoration: BoxDecoration(shape: BoxShape.circle),
+                child: Images(
+                  imageStr: "assets/svg_images/Profile/addImageCamera.svg",
+                ),
               ),
             ),
           ),
@@ -984,15 +1034,16 @@ class _EditProfileScreenState extends State<EditProfileScreen>
       ),
     );
   }
+
   Widget _buildDropdown({
     required String hint,
     required String? value,
     required List<_DropdownOption> items,
     required ValueChanged<String?> onChanged,
-  })
-  {
-    final safeValue =
-    (value != null && items.any((o) => o.value == value)) ? value : null;
+  }) {
+    final safeValue = (value != null && items.any((o) => o.value == value))
+        ? value
+        : null;
 
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -1003,9 +1054,12 @@ class _EditProfileScreenState extends State<EditProfileScreen>
       ),
       child: DropdownButtonHideUnderline(
         child: DropdownButtonFormField<String>(
-          value: safeValue,
+          initialValue: safeValue,
           isExpanded: true,
-          hint: Text(hint, style: const TextStyle(fontSize: 14, color: _kFieldText)),
+          hint: Text(
+            hint,
+            style: const TextStyle(fontSize: 14, color: _kFieldText),
+          ),
           icon: const Icon(Icons.arrow_drop_down, color: _kFieldText),
           menuMaxHeight: 300,
           style: const TextStyle(fontSize: 14, color: _kFieldText),
@@ -1015,16 +1069,22 @@ class _EditProfileScreenState extends State<EditProfileScreen>
             contentPadding: EdgeInsets.symmetric(vertical: 14),
           ),
           items: items
-              .map((opt) => DropdownMenuItem(
-            value: opt.value,
-            child: Text(opt.label, style: const TextStyle(fontSize: 14, color: _kFieldText)),
-          ))
+              .map(
+                (opt) => DropdownMenuItem(
+                  value: opt.value,
+                  child: Text(
+                    opt.label,
+                    style: const TextStyle(fontSize: 14, color: _kFieldText),
+                  ),
+                ),
+              )
               .toList(),
           onChanged: onChanged,
         ),
       ),
     );
   }
+
   Widget _buildUpdateButton() {
     return Buttons(
       text: "Update",
@@ -1033,9 +1093,9 @@ class _EditProfileScreenState extends State<EditProfileScreen>
       gradient: const LinearGradient(colors: [_kGradientStart, _kGradientEnd]),
       width: 160,
       height: 47,
-
     );
   }
+
   Widget _buildMediaSection() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -1044,26 +1104,34 @@ class _EditProfileScreenState extends State<EditProfileScreen>
           children: [
             Expanded(
               child: _mediaActionButton(
-                  'assets/svg_images/add_photo.svg', "Add Photos", _pickAdditionalImage),
+                'assets/svg_images/add_photo.svg',
+                "Add Photos",
+                _pickAdditionalImage,
+              ),
             ),
             const SizedBox(width: 35),
             Expanded(
               child: _mediaActionButton(
-                  "assets/svg_images/add_video.svg", "Add Videos", _pickVideo),
+                "assets/svg_images/add_video.svg",
+                "Add Videos",
+                _pickVideo,
+              ),
             ),
           ],
         ),
         if (_imageEntries.isNotEmpty) ...[
           const SizedBox(height: 15),
-          const Text("Selected Images",
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+          const Text(
+            "Selected Images",
+            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+          ),
           const SizedBox(height: 10),
           SizedBox(
             height: 100,
             child: ListView.separated(
               scrollDirection: Axis.horizontal,
               itemCount: _imageEntries.length,
-              separatorBuilder: (_, __) => const SizedBox(width: 10),
+              separatorBuilder: (_, _) => const SizedBox(width: 10),
               itemBuilder: (context, index) {
                 final entry = _imageEntries[index];
                 final removing = _removingIndex == index;
@@ -1073,16 +1141,23 @@ class _EditProfileScreenState extends State<EditProfileScreen>
                     ClipRRect(
                       borderRadius: BorderRadius.circular(12),
                       child: entry.localFile != null
-                          ? Image.file(entry.localFile!,
-                          width: 100, height: 100, fit: BoxFit.cover)
+                          ? Image.file(
+                              entry.localFile!,
+                              width: 100,
+                              height: 100,
+                              fit: BoxFit.cover,
+                            )
                           : Image.network(
-                        entry.networkUrl ?? '',
-                        width: 100,
-                        height: 100,
-                        fit: BoxFit.cover,
-                        errorBuilder: (c, e, s) => Container(
-                            width: 100, height: 100, color: const Color(0xFFECECEC)),
-                      ),
+                              entry.networkUrl ?? '',
+                              width: 100,
+                              height: 100,
+                              fit: BoxFit.cover,
+                              errorBuilder: (c, e, s) => Container(
+                                width: 100,
+                                height: 100,
+                                color: const Color(0xFFECECEC),
+                              ),
+                            ),
                     ),
                     if (entry.uploading)
                       Positioned.fill(
@@ -1099,11 +1174,18 @@ class _EditProfileScreenState extends State<EditProfileScreen>
                                 width: 18,
                                 height: 18,
                                 child: CircularProgressIndicator(
-                                    strokeWidth: 2, color: Colors.white),
+                                  strokeWidth: 2,
+                                  color: Colors.white,
+                                ),
                               ),
                               SizedBox(height: 4),
-                              Text("Uploading...",
-                                  style: TextStyle(color: Colors.white, fontSize: 11)),
+                              Text(
+                                "Uploading...",
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 11,
+                                ),
+                              ),
                             ],
                           ),
                         ),
@@ -1120,7 +1202,10 @@ class _EditProfileScreenState extends State<EditProfileScreen>
                             opacity: _fadeController,
                             child: const Text(
                               "Removing...",
-                              style: TextStyle(color: Colors.white, fontSize: 11),
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 11,
+                              ),
                               textAlign: TextAlign.center,
                             ),
                           ),
@@ -1135,7 +1220,11 @@ class _EditProfileScreenState extends State<EditProfileScreen>
                           child: const CircleAvatar(
                             radius: 12,
                             backgroundColor: Colors.white,
-                            child: Icon(Icons.close, size: 16, color: Colors.red),
+                            child: Icon(
+                              Icons.close,
+                              size: 16,
+                              color: Colors.red,
+                            ),
                           ),
                         ),
                       ),
@@ -1147,8 +1236,10 @@ class _EditProfileScreenState extends State<EditProfileScreen>
         ],
         if (_existingVideo != null || _pickedVideoFile != null) ...[
           const SizedBox(height: 20),
-          const Text("Selected Video",
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+          const Text(
+            "Selected Video",
+            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+          ),
           const SizedBox(height: 10),
           Stack(
             clipBehavior: Clip.none,
@@ -1160,9 +1251,7 @@ class _EditProfileScreenState extends State<EditProfileScreen>
                   borderRadius: BorderRadius.circular(12),
                   child: _pickedVideoFile != null
                       ? _LocalVideoPreview(file: _pickedVideoFile!)
-                      : InlineVideoPlayer(
-                    url: _fullUrl(_existingVideo?.url),
-                  ),
+                      : InlineVideoPlayer(url: _fullUrl(_existingVideo?.url)),
                 ),
               ),
               if (_videoUploading)
@@ -1178,7 +1267,10 @@ class _EditProfileScreenState extends State<EditProfileScreen>
                       children: [
                         CircularProgressIndicator(color: Colors.white),
                         SizedBox(height: 8),
-                        Text("Uploading video...", style: TextStyle(color: Colors.white)),
+                        Text(
+                          "Uploading video...",
+                          style: TextStyle(color: Colors.white),
+                        ),
                       ],
                     ),
                   ),
@@ -1194,10 +1286,15 @@ class _EditProfileScreenState extends State<EditProfileScreen>
                       backgroundColor: Colors.white,
                       child: _removingVideo
                           ? const SizedBox(
-                          width: 12,
-                          height: 12,
-                          child: CircularProgressIndicator(strokeWidth: 2))
-                          : const Icon(Icons.close, size: 16, color: Colors.red),
+                              width: 12,
+                              height: 12,
+                              child: CircularProgressIndicator(strokeWidth: 2),
+                            )
+                          : const Icon(
+                              Icons.close,
+                              size: 16,
+                              color: Colors.red,
+                            ),
                     ),
                   ),
                 ),
@@ -1207,6 +1304,7 @@ class _EditProfileScreenState extends State<EditProfileScreen>
       ],
     );
   }
+
   Widget _mediaActionButton(String icon, String label, VoidCallback onTap) {
     return GestureDetector(
       onTap: onTap,
@@ -1230,6 +1328,7 @@ class _EditProfileScreenState extends State<EditProfileScreen>
       ),
     );
   }
+
   Widget _buildQuestionsSection() {
     final categories = _user?.categories ?? [];
     if (categories.isEmpty) return const SizedBox.shrink();
@@ -1237,35 +1336,45 @@ class _EditProfileScreenState extends State<EditProfileScreen>
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        const Text("Manage Questions",
-            textAlign: TextAlign.center,
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500)),
+        const Text(
+          "Manage Questions",
+          textAlign: TextAlign.center,
+          style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
+        ),
         const SizedBox(height: 20),
-        ...categories.map((category) => Padding(
-          padding: const EdgeInsets.only(bottom: 12),
-          child: Column(
-            children: [
-              Texts(text: category.categoryName,size: 18,
-                  textAlign: TextAlign.center),
-              const SizedBox(height: 10),
-              SizedBox(
-                width: double.infinity,
-                height: 46,
-                child: ElevatedButton(
-                  onPressed: () => _onPressCategory(category),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: _kMehroon,
-                    shape:
-                    RoundedRectangleBorder(borderRadius: BorderRadius.circular(100)),
-                  ),
-                  child: const Text("View Answers",
-                      style: TextStyle(color: Colors.white)),
+        ...categories.map(
+          (category) => Padding(
+            padding: const EdgeInsets.only(bottom: 12),
+            child: Column(
+              children: [
+                Texts(
+                  text: category.categoryName,
+                  size: 18,
+                  textAlign: TextAlign.center,
                 ),
-              ),
-              const SizedBox(height: 10),
-            ],
+                const SizedBox(height: 10),
+                SizedBox(
+                  width: double.infinity,
+                  height: 46,
+                  child: ElevatedButton(
+                    onPressed: () => _onPressCategory(category),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: _kMehroon,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(100),
+                      ),
+                    ),
+                    child: const Text(
+                      "View Answers",
+                      style: TextStyle(color: Colors.white),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 10),
+              ],
+            ),
           ),
-        )),
+        ),
       ],
     );
   }
@@ -1287,11 +1396,14 @@ class _LocalVideoPreviewState extends State<_LocalVideoPreview> {
     super.initState();
     final controller = VideoPlayerController.file(widget.file);
     _controller = controller;
-    controller.initialize().then((_) {
-      if (mounted) setState(() {});
-    }).catchError((_) {
-      // Ignored — the uploading overlay covers this preview regardless.
-    });
+    controller
+        .initialize()
+        .then((_) {
+          if (mounted) setState(() {});
+        })
+        .catchError((_) {
+          // Ignored — the uploading overlay covers this preview regardless.
+        });
   }
 
   @override
@@ -1316,7 +1428,6 @@ class _LocalVideoPreviewState extends State<_LocalVideoPreview> {
     );
   }
 }
-
 
 // // lib/features/Screens/edit_profile_screen.dart
 // //

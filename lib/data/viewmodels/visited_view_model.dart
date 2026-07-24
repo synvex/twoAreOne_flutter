@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:two_are_one/data/models/visited_blocked_model.dart';
 
 import '../repo/visited_blocked_service.dart';
-import 'blocked_viewmodel.dart';
-
 
 class VisitedUserViewModel extends ChangeNotifier {
   final UserRelationsService _service = UserRelationsService();
@@ -36,7 +34,10 @@ class VisitedUserViewModel extends ChangeNotifier {
     if (res['success'] == true) {
       final List raw = (res['data'] is List) ? res['data'] : [];
       final fetched = raw
-          .map((e) => VisitedBlockedUserModel.fromJson(Map<String, dynamic>.from(e)))
+          .map(
+            (e) =>
+                VisitedBlockedUserModel.fromJson(Map<String, dynamic>.from(e)),
+          )
           .toList();
 
       // De-dupe by profileId, same as the RN screen does.

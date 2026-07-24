@@ -108,7 +108,7 @@ class AppTheme {
     cardColor: ThemeColors.white,
     // errorColor: ThemeColors.red,
     dividerColor: ThemeColors.sheetSeparator,
-    splashColor: ThemeColors.mehroon.withOpacity(0.12),
+    splashColor: ThemeColors.mehroon.withValues(alpha: 0.12),
     appBarTheme: const AppBarTheme(
       backgroundColor: ThemeColors.white,
       elevation: 0,
@@ -122,12 +122,10 @@ class AppTheme {
     colorScheme: const ColorScheme.light(
       primary: ThemeColors.primary,
       secondary: ThemeColors.mehroon,
-      background: ThemeColors.screenBackground,
       surface: ThemeColors.white,
       error: ThemeColors.red,
       onPrimary: ThemeColors.white,
       onSecondary: ThemeColors.white,
-      onBackground: ThemeColors.black,
       onSurface: ThemeColors.black,
       onError: ThemeColors.white,
     ),

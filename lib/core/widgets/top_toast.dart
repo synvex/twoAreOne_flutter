@@ -3,16 +3,17 @@ import 'package:two_are_one/core/widgets/containers.dart';
 import 'package:two_are_one/core/widgets/texts.dart';
 
 enum ToastType { success, error, info }
+
 class TopToast {
   static OverlayEntry? _currentEntry;
 
   static void show(
-      BuildContext context, {
-        required String title,
-        String? message,
-        ToastType type = ToastType.success,
-        Duration duration = const Duration(milliseconds: 2200),
-      }) {
+    BuildContext context, {
+    required String title,
+    String? message,
+    ToastType type = ToastType.success,
+    Duration duration = const Duration(milliseconds: 2200),
+  }) {
     _currentEntry?.remove();
     _currentEntry = null;
 
@@ -70,8 +71,10 @@ class _TopToastWidgetState extends State<_TopToastWidget>
       vsync: this,
       duration: const Duration(milliseconds: 260),
     );
-    _offset = Tween<Offset>(begin: const Offset(0, -1.3), end: Offset.zero)
-        .animate(CurvedAnimation(parent: _controller, curve: Curves.easeOut));
+    _offset = Tween<Offset>(
+      begin: const Offset(0, -1.3),
+      end: Offset.zero,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeOut));
 
     _controller.forward();
 
@@ -87,6 +90,7 @@ class _TopToastWidgetState extends State<_TopToastWidget>
     _controller.dispose();
     super.dispose();
   }
+
   // Default toast-message accent colors
   Color get _barColor {
     switch (widget.type) {
@@ -118,14 +122,14 @@ class _TopToastWidgetState extends State<_TopToastWidget>
             },
             child: Containers(
               hexValue: 0xFFFFFFFF,
-                radius: BorderRadius.circular(6),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.18),
-                    blurRadius: 10,
-                    offset: const Offset(0, 4),
-                  ),
-                ],
+              radius: BorderRadius.circular(6),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.18),
+                  blurRadius: 10,
+                  offset: const Offset(0, 4),
+                ),
+              ],
               // ✅ ClipRRect keeps the colored left bar following the
               // same rounded corners as the card (matches the video exactly)
               child: ClipRRect(
@@ -143,10 +147,10 @@ class _TopToastWidgetState extends State<_TopToastWidget>
                             mainAxisSize: MainAxisSize.min,
                             children: [
                               Texts(
-                                text:widget.title,
-                                  size: 15,
-                                  fontWeight: FontWeight.bold,
-                                  colorHexValue: 0xDD000000 ,
+                                text: widget.title,
+                                size: 15,
+                                fontWeight: FontWeight.bold,
+                                colorHexValue: 0xDD000000,
                               ),
                               if (widget.message != null &&
                                   widget.message!.isNotEmpty) ...[

@@ -1,11 +1,9 @@
-import 'dart:ui';
-
 import 'package:flutter/material.dart';
 
 class SeekingOption {
   final String id;
   final String label;
-  final String genderId;    // e.g., '1' for Male, '2' for Female
+  final String genderId; // e.g., '1' for Male, '2' for Female
   final String sexualityId; // e.g., '1' for Male, '2' for Female
   final IconData icon1;
   final IconData icon2;

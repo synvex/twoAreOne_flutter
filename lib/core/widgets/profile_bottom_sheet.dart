@@ -47,7 +47,7 @@ class MenuBottomSheet extends StatelessWidget {
             child: Column(
               children: [
                 _sheetItem(
-                 iconImg: 'assets/svg_images/Profile/profileEdit.svg',
+                  iconImg: 'assets/svg_images/Profile/profileEdit.svg',
                   label: "Edit Profile",
                   onTap: onSettings,
                 ),
@@ -56,14 +56,18 @@ class MenuBottomSheet extends StatelessWidget {
                   iconImg: 'assets/svg_images/Profile/deleteAccount.svg',
                   // icon: Icons.logout_rounded,
                   label: "Delete Account",
-                  labelColor: const Color(0xFF77153C), // Maroon color for Logout
+                  labelColor: const Color(
+                    0xFF77153C,
+                  ), // Maroon color for Logout
                   onTap: onDelete,
                 ),
                 _sheetItem(
                   iconImg: 'assets/svg_images/Profile/profileLogout.svg',
                   // icon: Icons.logout_rounded,
                   label: "Logout",
-                  labelColor: const Color(0xFF77153C), // Maroon color for Logout
+                  labelColor: const Color(
+                    0xFF77153C,
+                  ), // Maroon color for Logout
                   onTap: onLogout,
                 ),
               ],
@@ -95,13 +99,13 @@ class MenuBottomSheet extends StatelessWidget {
             Container(
               width: 55,
               height: 55,
-              decoration:  BoxDecoration(
+              decoration: BoxDecoration(
                 color: Colors.grey.shade300, // Thora light color for better UI
                 shape: BoxShape.circle,
               ),
               alignment: Alignment.center,
-              child: Images(imageStr: iconImg)
-            // Icon(icon, color: labelColor ?? Colors.black87),
+              child: Images(imageStr: iconImg),
+              // Icon(icon, color: labelColor ?? Colors.black87),
             ),
             const SizedBox(width: 12),
             Text(
@@ -119,6 +123,7 @@ class MenuBottomSheet extends StatelessWidget {
     );
   }
 }
+
 class CurveBackgroundPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
@@ -127,7 +132,7 @@ class CurveBackgroundPainter extends CustomPainter {
       ..style = PaintingStyle.fill;
 
     final shadowPaint = Paint()
-      ..color = Colors.black.withOpacity(0.05)
+      ..color = Colors.black.withValues(alpha: 0.05)
       ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 10);
 
     final path = Path();

@@ -32,18 +32,21 @@ class _FavouriteScreenState extends State<FavouriteScreen> {
     _scrollController.addListener(_onScroll);
     _getData(page: 1, refresh: true);
   }
+
   @override
   void dispose() {
     _scrollController.removeListener(_onScroll);
     _scrollController.dispose();
     super.dispose();
   }
+
   void _onScroll() {
     if (_scrollController.position.pixels >=
         _scrollController.position.maxScrollExtent - 200) {
       _loadMore();
     }
   }
+
   Future<void> _getData({required int page, bool refresh = false}) async {
     if (!refresh) {
       setState(() => _loading = true);
@@ -65,7 +68,9 @@ class _FavouriteScreenState extends State<FavouriteScreen> {
           _data.addAll(result.where((item) => !existingIds.contains(item.id)));
         }
         _page = page;
-        _hasMore = result.length == _perPage; // agar API total_pages deti hai to wo use karein
+        _hasMore =
+            result.length ==
+            _perPage; // agar API total_pages deti hai to wo use karein
         _loading = false;
         _refreshing = false;
       });
@@ -78,15 +83,18 @@ class _FavouriteScreenState extends State<FavouriteScreen> {
       _showError(e.toString());
     }
   }
+
   void _loadMore() {
     if (!_loading && _hasMore && _data.length >= _perPage) {
       _getData(page: _page + 1);
     }
   }
+
   Future<void> _onRefresh() async {
     setState(() => _refreshing = true);
     await _getData(page: 1, refresh: true);
   }
+
   // ── Unfavorite (RN ke onUnfavoritePress jaisa) ───────────────────────────
   Future<void> _onUnfavoritePress(FilterMatchModel item) async {
     setState(() => _unFavoriteLoaderId = item.id.toString());
@@ -103,6 +111,7 @@ class _FavouriteScreenState extends State<FavouriteScreen> {
       _showError(e.toString());
     }
   }
+
   Future<void> _blockUser() async {
     if (_selectedItem == null) return;
     setState(() => _blockUserLoading = true);
@@ -125,11 +134,13 @@ class _FavouriteScreenState extends State<FavouriteScreen> {
       _showError(e.toString());
     }
   }
+
   void _showError(String message) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(message)),
-    );
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text(message)));
   }
+
   void _onNotificationPress() {
     // TODO: Apni notification screen route yahan navigate karein
     // Navigator.pushNamed(context, NotificationScreen.routeName);
@@ -138,6 +149,7 @@ class _FavouriteScreenState extends State<FavouriteScreen> {
     setState(() => _selectedItem = item);
     showCustomBottomSheet(context);
   }
+
   void _showBottomSheet() {
     showModalBottomSheet(
       context: context,
@@ -179,6 +191,7 @@ class _FavouriteScreenState extends State<FavouriteScreen> {
       },
     );
   }
+
   // ── Header (RN ke Header() jaisa) ────────────────────────────────────────
   // Widget _buildHeader() {
   //   return Padding(
@@ -224,7 +237,11 @@ class _FavouriteScreenState extends State<FavouriteScreen> {
                 shape: BoxShape.circle,
                 color: Colors.grey.shade100,
               ),
-              child: const Icon(Icons.star_border, size: 34, color: Colors.grey),
+              child: const Icon(
+                Icons.star_border,
+                size: 34,
+                color: Colors.grey,
+              ),
             ),
             const SizedBox(height: 12),
             const Text(
@@ -236,6 +253,7 @@ class _FavouriteScreenState extends State<FavouriteScreen> {
       ),
     );
   }
+
   // ── Skeleton Card (RN ke renderSkeletonItem jaisa) ───────────────────────
   Widget _buildSkeletonCard() {
     return Container(
@@ -272,12 +290,12 @@ class _FavouriteScreenState extends State<FavouriteScreen> {
                 child: const Center(
                   child: Texts(
                     text: "NO-PIC",
-                      colorHexValue: 0x8A000000,
-                      fontWeight: FontWeight.bold,
-                      size: 16,
-                    ),
+                    colorHexValue: 0x8A000000,
+                    fontWeight: FontWeight.bold,
+                    size: 16,
                   ),
                 ),
+              ),
             ),
             // Bottom gradient overlay for text readability
             Positioned(
@@ -290,7 +308,10 @@ class _FavouriteScreenState extends State<FavouriteScreen> {
                   gradient: LinearGradient(
                     begin: Alignment.topCenter,
                     end: Alignment.bottomCenter,
-                    colors: [Colors.transparent, Colors.black.withOpacity(0.65)],
+                    colors: [
+                      Colors.transparent,
+                      Colors.black.withValues(alpha: 0.65),
+                    ],
                   ),
                 ),
               ),
@@ -303,7 +324,9 @@ class _FavouriteScreenState extends State<FavouriteScreen> {
                 onTap: () => _onMenuPress(person),
                 child: const MyIcons(
                   iconData: Icons.more_horiz_outlined,
-                  size: 40, color: Colors.white,),
+                  size: 40,
+                  color: Colors.white,
+                ),
               ),
             ),
             // Name / Age / Location bottom-left
@@ -318,13 +341,15 @@ class _FavouriteScreenState extends State<FavouriteScreen> {
                     text: "${person.name}, ${person.age}",
                     colorHexValue: 0xFFFFFFFF,
                     fontWeight: FontWeight.bold,
-                      size: 17,
+                    size: 17,
                     maxLines: 1,
                   ),
                   const SizedBox(height: 2),
                   Texts(
-                   text: "${person.city.isNotEmpty ? person.city : 'N/A'} , ${person.location ?? 'N/A'}",
-                    colorHexValue: 0xB3FFFFFF, size: 16,
+                    text:
+                        "${person.city.isNotEmpty ? person.city : 'N/A'} , ${person.location ?? 'N/A'}",
+                    colorHexValue: 0xB3FFFFFF,
+                    size: 16,
                     maxLines: 1,
                     // overflow: TextOverflow.ellipsis,
                   ),
@@ -345,32 +370,31 @@ class _FavouriteScreenState extends State<FavouriteScreen> {
                   child: Center(
                     child: isUnfavoriting
                         ? SizedBox(
-                      width: 18,
-                      height: 18,
-                      child: ShaderMask(
-                        shaderCallback: (bounds) => const LinearGradient(
-                          colors: [
-                            Color(0xFF477CB6),
-                            Color(0xFF8B4DAB),
-                            Color(0xFFDD276F),
-                          ],
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight,
-                        ).createShader(bounds),
-                        child: CircularProgressIndicator(
-                            strokeWidth: 2,
-                      ),
-                      // child: CircularProgressIndicator(
-                      //   strokeWidth: 2,
-                      //   color: Color(0xFFDD276F),
-                      //  
-                      // ),
-                    )
-                    )  :
-                    const Images(imageStr: "assets/svg_images/star_coloured.svg",
-                    height: 25,
-                      width: 25,
-                    ),
+                            width: 18,
+                            height: 18,
+                            child: ShaderMask(
+                              shaderCallback: (bounds) => const LinearGradient(
+                                colors: [
+                                  Color(0xFF477CB6),
+                                  Color(0xFF8B4DAB),
+                                  Color(0xFFDD276F),
+                                ],
+                                begin: Alignment.topLeft,
+                                end: Alignment.bottomRight,
+                              ).createShader(bounds),
+                              child: CircularProgressIndicator(strokeWidth: 2),
+                              // child: CircularProgressIndicator(
+                              //   strokeWidth: 2,
+                              //   color: Color(0xFFDD276F),
+                              //
+                              // ),
+                            ),
+                          )
+                        : const Images(
+                            imageStr: "assets/svg_images/star_coloured.svg",
+                            height: 25,
+                            width: 25,
+                          ),
                     // ShaderMask(
                     //   shaderCallback: (bounds) => const LinearGradient(
                     //     colors: [
@@ -404,57 +428,72 @@ class _FavouriteScreenState extends State<FavouriteScreen> {
             Expanded(
               child: _loading && _data.isEmpty
                   ? ListView.builder(
-                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                itemCount: 4,
-                itemBuilder: (context, index) => _buildSkeletonCard(),
-              )
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 20,
+                        vertical: 10,
+                      ),
+                      itemCount: 4,
+                      itemBuilder: (context, index) => _buildSkeletonCard(),
+                    )
                   : RefreshIndicator(
-                color: const Color(0xFFDD276F),
-                onRefresh: _onRefresh,
-                child: _data.isEmpty
-                    ? ListView(
-                  // ListView taake RefreshIndicator kaam kare empty state pe bhi
-                  children: [_buildEmptyState()],
-                )
-                    : ListView.builder(
-                  controller: _scrollController,
-                  padding: const EdgeInsets.fromLTRB(20, 10, 20, 30),
-                  itemCount: _data.length + (_loading ? 1 : 0),
-                  itemBuilder: (context, index) {
-                    if (index >= _data.length) {
-                      return _buildSkeletonCard();
-                    }
-                    return _buildCard(_data[index]);
-                  },
-                ),
-              ),
+                      color: const Color(0xFFDD276F),
+                      onRefresh: _onRefresh,
+                      child: _data.isEmpty
+                          ? ListView(
+                              // ListView taake RefreshIndicator kaam kare empty state pe bhi
+                              children: [_buildEmptyState()],
+                            )
+                          : ListView.builder(
+                              controller: _scrollController,
+                              padding: const EdgeInsets.fromLTRB(
+                                20,
+                                10,
+                                20,
+                                30,
+                              ),
+                              itemCount: _data.length + (_loading ? 1 : 0),
+                              itemBuilder: (context, index) {
+                                if (index >= _data.length) {
+                                  return _buildSkeletonCard();
+                                }
+                                return _buildCard(_data[index]);
+                              },
+                            ),
+                    ),
             ),
-
           ],
         ),
       ),
     );
   }
+
   Widget _buildHeader() {
     return Padding(
       padding: const EdgeInsets.fromLTRB(25, 25, 25, 10),
       child: Row(
         children: [
-          Texts(text: "Favorites", size: 24, fontWeight: FontWeight.w600,),
+          Texts(text: "Favorites", size: 24, fontWeight: FontWeight.w600),
           Spacer(),
           GestureDetector(
-              onTap: _onNotificationPress,
-              child: Containers(
-                hexValue: 0xFFFFFFFF,
-                shape: BoxShape.circle,
-                padding: const EdgeInsets.only(left: 10, right: 10, top: 10, bottom: 10),
-                border: Border.all(color: Colors.grey,style:BorderStyle.solid),
-                child: Images(
-                  imageStr: "assets/svg_images/notification.svg", height: 30,),
-              )
-          ),        ],
+            onTap: _onNotificationPress,
+            child: Containers(
+              hexValue: 0xFFFFFFFF,
+              shape: BoxShape.circle,
+              padding: const EdgeInsets.only(
+                left: 10,
+                right: 10,
+                top: 10,
+                bottom: 10,
+              ),
+              border: Border.all(color: Colors.grey, style: BorderStyle.solid),
+              child: Images(
+                imageStr: "assets/svg_images/notification.svg",
+                height: 30,
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
-
 }

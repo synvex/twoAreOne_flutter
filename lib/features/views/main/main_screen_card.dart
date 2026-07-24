@@ -5,7 +5,8 @@ class StackedUserCards extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final bool isLandscape = MediaQuery.of(context).orientation == Orientation.landscape;
+    final bool isLandscape =
+        MediaQuery.of(context).orientation == Orientation.landscape;
     final double screenWidth = MediaQuery.of(context).size.width;
     const double sideCardWidth = 230.0;
     const double sideCardHeight = 248.0;
@@ -29,7 +30,7 @@ class StackedUserCards extends StatelessWidget {
           // --- LEFT CARD ---
           Positioned(
             top: 5,
-            left: isLandscape ? 212: 7,
+            left: isLandscape ? 212 : 7,
             child: Transform.rotate(
               angle: -0.05,
               child: Container(
@@ -39,7 +40,7 @@ class StackedUserCards extends StatelessWidget {
                   borderRadius: borderRadius,
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withOpacity(0.06),
+                      color: Colors.black.withValues(alpha: 0.06),
                       blurRadius: 10,
                       spreadRadius: -2,
                       offset: const Offset(5, 8),
@@ -57,7 +58,7 @@ class StackedUserCards extends StatelessWidget {
           // --- RIGHT CARD ---
           Positioned(
             top: 5,
-            right: isLandscape? 218: 7, // exactly 1px from right edge
+            right: isLandscape ? 218 : 7, // exactly 1px from right edge
             child: Transform.rotate(
               angle: 0.05,
               child: Container(
@@ -67,7 +68,7 @@ class StackedUserCards extends StatelessWidget {
                   borderRadius: BorderRadius.circular(42),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withOpacity(0.1),
+                      color: Colors.black.withValues(alpha: 0.1),
                       blurRadius: 10,
                       spreadRadius: -2,
                       offset: const Offset(-5, 8),
@@ -92,10 +93,10 @@ class StackedUserCards extends StatelessWidget {
                 borderRadius: BorderRadius.circular(42),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.08),
+                    color: Colors.black.withValues(alpha: 0.08),
                     blurRadius: 15,
                     spreadRadius: -10,
-                    offset: const Offset(0,18),
+                    offset: const Offset(0, 18),
                   ),
                 ],
               ),
