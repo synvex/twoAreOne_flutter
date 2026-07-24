@@ -1,6 +1,5 @@
-import 'dart:convert';
+import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
-import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:two_are_one/data/models/chat_history_model.dart';
@@ -8,28 +7,32 @@ import 'package:two_are_one/data/models/chat_member_model.dart';
 
 class ChatService {
   final String baseUrl = "https://www.twoareone.love/api";
+  final Dio _dio = Dio();
+
+  Future<Map<String, String>> _headers() async {
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('auth_token') ?? '';
+
+    return {
+      "Accept": "application/json",
+      "Content-Type": "application/json",
+      "x-api-key": token,
+      "Authorization": "Bearer $token",
+    };
+  }
 
   Future<List<ChatHistoryModel>> fetchChatHistory({
     required int receiverId,
   }) async {
-    final prefs = await SharedPreferences.getInstance();
-    final token = prefs.getString('auth_token') ?? '';
-
     try {
-      final response = await http.get(
-        Uri.parse(
-          "$baseUrl/user/messages/one-to-one-chat-histories.php?receiver_id=$receiverId",
-        ),
-        headers: {
-          "Accept": "application/json",
-          "Content-Type": "application/json",
-          "x-api-key": token,
-          "Authorization": "Bearer $token",
-        },
+      final response = await _dio.get(
+        "$baseUrl/user/messages/one-to-one-chat-histories.php",
+        queryParameters: {"receiver_id": receiverId},
+        options: Options(headers: await _headers()),
       );
 
       if (response.statusCode == 200) {
-        final data = jsonDecode(response.body);
+        final data = response.data;
         print("✅ Fetched ${data['data'].length} chat members successfully.");
         print("✅ Fetched chat history for receiverId $data");
 
@@ -51,22 +54,14 @@ class ChatService {
   // ============================================================
 
   Future<List<ChatMemberModel>> fetchChatMembers() async {
-    final prefs = await SharedPreferences.getInstance();
-    final token = prefs.getString('auth_token') ?? '';
-
     try {
-      final response = await http.get(
-        Uri.parse("$baseUrl/user/messages/chat-members.php"),
-        headers: {
-          "Accept": "application/json",
-          "Content-Type": "application/json",
-          "x-api-key": token,
-          "Authorization": "Bearer $token",
-        },
+      final response = await _dio.get(
+        "$baseUrl/user/messages/chat-members.php",
+        options: Options(headers: await _headers()),
       );
 
       if (response.statusCode == 200) {
-        final data = jsonDecode(response.body);
+        final data = response.data;
         print("✅ Fetched ${data['data'].length} chat members successfully.");
 
         return (data['data'] as List)
@@ -89,25 +84,18 @@ class ChatService {
     required int receiverId,
     required String message,
   }) async {
-    final prefs = await SharedPreferences.getInstance();
-    final token = prefs.getString('auth_token') ?? '';
     try {
-      final response = await http.post(
-        Uri.parse("$baseUrl/user/messages/send.php"),
-
-        headers: {
-          "Accept": "application/json",
-          "Content-Type": "application/json",
-          "x-api-key": token,
-          "Authorization": "Bearer $token",
-        },
-        body: jsonEncode({"receiver_id": receiverId, "message": message}),
+      final response = await _dio.post(
+        "$baseUrl/user/messages/send.php",
+        options: Options(headers: await _headers()),
+        data: {"receiver_id": receiverId, "message": message},
       );
+
       print("******************************");
-      print("Send Message Response: ${response.body}");
+      print("Send Message Response: ${response.data}");
       print(response);
 
-      final data = jsonDecode(response.body);
+      final data = response.data;
 
       if (data is Map<String, dynamic>) {
         return data;
@@ -127,24 +115,16 @@ class ChatService {
   // Future<Map<String, dynamic>> markMessagesRead({
   //   required int partnerId,
   // }) async {
-  //   final prefs = await SharedPreferences.getInstance();
-  //   final token = prefs.getString('auth_token') ?? '';
   //   try {
-  //     final response = await http.post(
-  //       Uri.parse("$baseUrl/user/messages/mark_messages_read.php"),
-
-  //       headers: {
-  //         "Accept": "application/json",
-  //         "Content-Type": "application/json",
-  //         "x-api-key": token,
-  //         "Authorization": "Bearer $token",
-  //       },
-  //       body: jsonEncode({"partner_id": partnerId}),
+  //     final response = await _dio.post(
+  //       "$baseUrl/user/messages/mark_messages_read.php",
+  //       options: Options(headers: await _headers()),
+  //       data: {"partner_id": partnerId},
   //     );
 
   //     print(response);
 
-  //     final data = jsonDecode(response.body);
+  //     final data = response.data;
 
   //     if (data is Map<String, dynamic>) {
   //       return data;
