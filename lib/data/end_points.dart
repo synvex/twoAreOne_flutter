@@ -83,3 +83,13 @@ class InterestedEndpoints {
     },
   );
 }
+
+class ApiEndpoint {
+  final String method; // 'get' | 'POST'
+  final String url; // relative path, appended to ApiConstants.apiUrl
+  final Map<String, String>? headers;
+
+  const ApiEndpoint({required this.method, required this.url, this.headers});
+
+  bool get isGet => method.toLowerCase() == 'get';
+}

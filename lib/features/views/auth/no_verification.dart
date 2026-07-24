@@ -111,7 +111,7 @@ class _NoVerificationState extends State<NoVerification> {
       onCodeSent: (verificationId) {
         if (!mounted) return;
         setState(() => _isLoading = false);
-        Navigator.push(
+        Navigator.pushReplacement(
           context,
           MaterialPageRoute(
             builder: (context) => NoOtpVerification(

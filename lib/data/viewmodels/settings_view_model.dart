@@ -27,7 +27,10 @@
 // than the ViewModel importing BuildContext/Navigator), keeping this class
 // UI-framework-free and easily testable.
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
+import 'package:two_are_one/features/views/Settings/change_email_otp_screen.dart';
 
 import '../../data/models/user_info.dart';
 import '../../data/services/setting.dart';
@@ -170,21 +173,12 @@ class SettingsViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  /// RN: `onContinuePress` (sends the OTP via Firebase phone auth).
-  ///
-  /// RN uses `signInWithPhoneNumber` (react-native-firebase's confirmation-
-  /// result flow), which has no native equivalent in the `firebase_auth`
-  /// Flutter package. This uses the app's existing `AuthService
-  /// .verifyPhoneNumber` (the standard Flutter `verifyPhoneNumber`
-  /// callback flow already used elsewhere in this app) and hands the
-  /// resulting `verificationId` to the caller instead of RN's
-  /// `confirmation` object — the OTP screen verifies against that
-  /// `verificationId` when it's built.
   Future<void> confirmPhoneChange({
     required void Function(String verificationId, String phone, int endTime)
     onCodeSent,
     required ValueChanged<String> onError,
-  }) async {
+  }) async
+  {
     final phone = user.phoneNo;
     if (phone.isEmpty) {
       onError('Phone number not found.');
@@ -220,7 +214,7 @@ class SettingsViewModel extends ChangeNotifier {
   // ── Change Email flow ────────────────────────────────────────────────
   void openEmailConfirm() {
     showEmailConfirm = true;
-    notifyListeners();
+       notifyListeners();
   }
 
   void closeEmailConfirm() {
@@ -232,12 +226,13 @@ class SettingsViewModel extends ChangeNotifier {
   Future<void> confirmEmailChange({
     required void Function(String email, int endTime) onSent,
     required ValueChanged<String> onError,
-  }) async {
+  }) async
+  {
     emailLoading = true;
     notifyListeners();
 
-    final res =
-    await _settingsService.sendEmailChangeOtp(oldEmail: user.email);
+    final res = await _settingsService.sendEmailChangeOtp(
+        oldEmail: user.email);
 
     if (res['success'] == true) {
       emailLoading = false;

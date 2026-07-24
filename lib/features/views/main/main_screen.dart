@@ -79,14 +79,10 @@ class _MainScreenState extends State<MainScreen> {
         sexuality: pref.lookingFor,
       );
 
-      Navigator.push(
+      Navigator.pushReplacement(
         context,
         MaterialPageRoute(
           builder: (_) => ProfileSetupScreen(
-            // Keep original named params for any callers that still use them.
-            // gender:     pref.gender,
-            // lookingFor: pref.lookingFor,
-            // NEW: pass the full model so ProfileSetupScreen can extend it.
             profileModel: profileModel,
           ),
         ),

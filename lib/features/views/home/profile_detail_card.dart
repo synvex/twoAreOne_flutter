@@ -153,10 +153,6 @@ class ProfileDetailCard extends StatelessWidget {
   }
 }
 
-/// Small round frosted button that "bumps" (scale 1 -> 1.3 -> 1) whenever it
-/// is tapped — mirrors the `Animated.sequence` heart/star/block bump in the
-/// RN DetailCardComponent. `delayBeforeCallback` mirrors the RN block button,
-/// which waits ~300ms after the bump animation before firing `onDislike`.
 class _ActionBumpIcon extends StatefulWidget {
   final VoidCallback? onTap;
   final Widget child;

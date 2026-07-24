@@ -99,7 +99,10 @@ class MenuItem extends StatelessWidget {
   }
 }
 
-void showCustomBottomSheet(BuildContext context) {
+void showCustomBottomSheet(BuildContext context, {
+  required VoidCallback onViewProfile,
+  required VoidCallback onBlockProfile})
+{
   showModalBottomSheet(
     context: context,
     backgroundColor: Colors.transparent,
@@ -110,12 +113,10 @@ void showCustomBottomSheet(BuildContext context) {
         width: double.infinity,
         child: Stack(
           children: [
-            // 1. Custom SVG Background
             CustomPaint(
               size: const Size(double.infinity, 350),
               painter: NotchSheetPainter(),
             ),
-            // 2. The Notch Handle (Pill shape at the very top)
             Positioned(
               top: 2,
               left: 0,
@@ -129,27 +130,20 @@ void showCustomBottomSheet(BuildContext context) {
                 ),
               ),
             ),
-            // 3. Content
             Padding(
               padding: const EdgeInsets.only(top: 50.0), // Content ko notch se niche lane ke liye
               child: Column(
                 children: [
                   MenuItem(
-
                     imgStr: 'assets/svg_images/Favorite/viewProfile.svg',
                     label: "View Profile",
-                    onPress: () {
-                      Navigator.pop(context);
-                      // Navigate logic here
-                    },
+                    onPress:onViewProfile,
                   ),
                   MenuItem(
                     imgStr: 'assets/svg_images/Favorite/blockProfile.svg',
                     label: "Block Profile",
                     iconLoading: false, // pass state here
-                    onPress: () {
-                      // Block logic
-                    },
+                    onPress: onBlockProfile,
                   ),
                 ],
               ),

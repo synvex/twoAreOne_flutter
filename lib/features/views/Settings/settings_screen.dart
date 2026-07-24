@@ -35,8 +35,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
     super.dispose();
   }
 
-  // ── Navigation helpers ────────────────────────────────────────────────
-
   Future<void> _navigateOrComingSoon(
     String routeName, {
     Object? arguments,
