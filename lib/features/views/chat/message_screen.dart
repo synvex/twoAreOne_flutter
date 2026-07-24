@@ -80,21 +80,21 @@ class _MessageScreenState extends State<MessageScreen> {
                             ),
                           ),
                         ),
-                        Align(
-                          alignment: Alignment.centerRight,
-                          child: GestureDetector(
-                            onTap: () async {
-                              await chatViewModel.getChatMembers();
-                            },
-                            child: SvgPicture.asset(
-                              AppIcons.vert_more,
-                              colorFilter: ColorFilter.mode(
-                                AppColors.background,
-                                BlendMode.srcIn,
-                              ),
-                            ),
-                          ),
-                        ),
+                        // Align(
+                        //   alignment: Alignment.centerRight,
+                        //   child: GestureDetector(
+                        //     onTap: () async {
+                        //       await chatViewModel.getChatMembers();
+                        //     },
+                        //     child: SvgPicture.asset(
+                        //       AppIcons.vert_more,
+                        //       colorFilter: ColorFilter.mode(
+                        //         AppColors.background,
+                        //         BlendMode.srcIn,
+                        //       ),
+                        //     ),
+                        //   ),
+                        // ),
                       ],
                     ),
                     SizedBox(height: 40.h),
