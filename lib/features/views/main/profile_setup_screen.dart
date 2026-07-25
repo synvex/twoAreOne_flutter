@@ -7,7 +7,7 @@ import 'package:two_are_one/core/widgets/containers.dart';
 import 'package:two_are_one/core/widgets/my_icons.dart';
 import 'package:two_are_one/features//views/main/question_screen.dart';
 import 'package:two_are_one/features//views/main/video.dart';
-import 'package:two_are_one/core/widgets/buttons.dart';
+import 'package:two_are_one/core/widgets/main_button_widget.dart';
 import 'package:two_are_one/core/widgets/drop_down_field.dart';
 import 'package:two_are_one/core/widgets/image.dart';
 import 'package:two_are_one/core/widgets/texts.dart';
@@ -22,9 +22,9 @@ class ProfileSetupScreen extends StatefulWidget {
 
   const ProfileSetupScreen({
     super.key,
-     this.gender,
-     this.lookingFor,
-     required this.profileModel,
+    this.gender,
+    this.lookingFor,
+    required this.profileModel,
   });
 
   @override
@@ -32,7 +32,7 @@ class ProfileSetupScreen extends StatefulWidget {
 }
 
 class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
-  final TextEditingController _bioController  = TextEditingController();
+  final TextEditingController _bioController = TextEditingController();
   final TextEditingController _workController = TextEditingController();
 
   // ── Media ─────────────────────────────────────────────────────────────────
@@ -51,12 +51,11 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
 
   List<String> get _heightOptions => List.generate(33, (i) {
     final totalInches = 58 + i;
-    final feet   = totalInches ~/ 12;
+    final feet = totalInches ~/ 12;
     final inches = totalInches % 12;
     return "$feet'$inches\"";
   });
-  List<String> get _weightOptions =>
-      List.generate(374, (i) => "${66 + i} lbs");
+  List<String> get _weightOptions => List.generate(374, (i) => "${66 + i} lbs");
 
   @override
   void initState() {
@@ -64,12 +63,14 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
     super.initState();
     _syncToken();
   }
+
   @override
   void dispose() {
     _bioController.dispose();
     _workController.dispose();
     super.dispose();
   }
+
   Future<void> _syncToken() async {
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('auth_token');
@@ -81,6 +82,7 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
       debugPrint("WARNING: No token found in ProfileSetup initState");
     }
   }
+
   Future<void> _onNextTapped() async {
     // 1. Validation
     setState(() {
@@ -140,17 +142,22 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
       _showError(result['error'] ?? "Failed to upload profile info.");
     }
   }
+
   Future<void> _persistProfileLocally() async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString('profile_height', _selectedHeight ?? '');
     await prefs.setString('profile_weight', _selectedWeight ?? '');
-    await prefs.setString('profile_work',   _workController.text.trim());
-    await prefs.setString('profile_bio',    _bioController.text.trim());
-    await prefs.setString('profile_gender',    widget.profileModel.gender ?? '');
-    await prefs.setString('profile_sexuality', widget.profileModel.sexuality ?? '');
+    await prefs.setString('profile_work', _workController.text.trim());
+    await prefs.setString('profile_bio', _bioController.text.trim());
+    await prefs.setString('profile_gender', widget.profileModel.gender ?? '');
+    await prefs.setString(
+      'profile_sexuality',
+      widget.profileModel.sexuality ?? '',
+    );
     // Note: file paths for images are not stored – the server is the
     // authoritative source for media URLs after upload.
   }
+
   void _showError(String message) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
@@ -160,6 +167,7 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
       ),
     );
   }
+
   Future<void> _pickMedia(int type) async {
     showModalBottomSheet(
       context: context,
@@ -173,7 +181,8 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
           children: [
             const SizedBox(height: 12),
             Container(
-              width: 40, height: 4,
+              width: 40,
+              height: 4,
               decoration: BoxDecoration(
                 color: Colors.grey[300],
                 borderRadius: BorderRadius.circular(2),
@@ -181,7 +190,7 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
             ),
             const SizedBox(height: 20),
 
-            Buttons(
+            MainButtonWidget(
               text: type == 2 ? "Record Video" : "Take Photo",
               onTap: () async {
                 Navigator.pop(context);
@@ -195,7 +204,7 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
             ),
             const SizedBox(height: 15),
 
-            Buttons(
+            MainButtonWidget(
               text: type == 2 ? "Upload Video" : "Upload from Gallery",
               onTap: () async {
                 Navigator.pop(context);
@@ -209,7 +218,7 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
             ),
             const SizedBox(height: 15),
 
-            Buttons(
+            MainButtonWidget(
               text: "Cancel",
               onTap: () => Navigator.pop(context),
               gradient: const LinearGradient(
@@ -236,7 +245,9 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
         final micRequest = await Permission.microphone.request();
         if (micRequest == PermissionStatus.granted) return true;
         if (micRequest == PermissionStatus.permanentlyDenied) {
-          _showPermissionDialog("Microphone access is required to record videos.");
+          _showPermissionDialog(
+            "Microphone access is required to record videos.",
+          );
           return false;
         }
         _showError("Microphone access is required for video recording.");
@@ -249,7 +260,9 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
         final micRequest = await Permission.microphone.request();
         if (micRequest == PermissionStatus.granted) return true;
         if (micRequest == PermissionStatus.permanentlyDenied) {
-          _showPermissionDialog("Microphone access is required to record videos.");
+          _showPermissionDialog(
+            "Microphone access is required to record videos.",
+          );
           return false;
         }
         _showError("Microphone access is required.");
@@ -257,20 +270,21 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
       }
 
       if (cameraRequest == PermissionStatus.permanentlyDenied) {
-        _showPermissionDialog("Camera access is required. Please enable it in settings.");
+        _showPermissionDialog(
+          "Camera access is required. Please enable it in settings.",
+        );
         return false;
       }
 
       _showError("Camera access is required.");
       return false;
-
     } catch (e) {
       debugPrint("Camera permission error: $e");
       return true; // let picker try anyway
     }
   }
 
-// ── Permission dialog ─────────────────────────────────────────────────────
+  // ── Permission dialog ─────────────────────────────────────────────────────
   void _showPermissionDialog(String message) {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
@@ -278,7 +292,9 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
         context: context,
         barrierDismissible: false,
         builder: (ctx) => AlertDialog(
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+          ),
           title: const Text(
             "Permission Required",
             style: TextStyle(fontWeight: FontWeight.bold),
@@ -310,10 +326,11 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
       );
     });
   }
+
   Future<void> _handleMediaSelection(int type, ImageSource source) async {
     try {
       final isCamera = source == ImageSource.camera;
-      final isVideo  = type == 2;
+      final isVideo = type == 2;
 
       // Camera needs explicit permission check
       // Gallery + video gallery — image_picker handles it internally, skip check
@@ -349,22 +366,35 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
             if (picked.isNotEmpty && mounted) {
               final remainingSlots = 6 - _additionalImages.length;
               if (remainingSlots <= 0) {
-                showDialog(context: context, builder: (context) => AlertDialog(
-                  title: const Text("Limit Reached"),
-                  content: const Text("You can upload a maximum of 6 images."),
-                  actions: [TextButton(onPressed: () => Navigator.pop(context), child: const Text("OK"))],
-                ));
+                showDialog(
+                  context: context,
+                  builder: (context) => AlertDialog(
+                    title: const Text("Limit Reached"),
+                    content: const Text(
+                      "You can upload a maximum of 6 images.",
+                    ),
+                    actions: [
+                      TextButton(
+                        onPressed: () => Navigator.pop(context),
+                        child: const Text("OK"),
+                      ),
+                    ],
+                  ),
+                );
                 return;
               }
-              setState(() => _additionalImages.addAll(
-                  picked.take(remainingSlots).map((e) => File(e.path))));
+              setState(
+                () => _additionalImages.addAll(
+                  picked.take(remainingSlots).map((e) => File(e.path)),
+                ),
+              );
             }
           }
           break;
 
         case 2: // Video
-        // Both camera recording and gallery video —
-        // camera already checked above, gallery handled by image_picker
+          // Both camera recording and gallery video —
+          // camera already checked above, gallery handled by image_picker
           final XFile? picked = await _picker.pickVideo(
             source: source,
             maxDuration: const Duration(minutes: 5),
@@ -375,18 +405,18 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
           }
           break;
       }
-
     } catch (e) {
       debugPrint("Picker Error: $e");
       if (mounted) _showError("Something went wrong. Please try again.");
     }
   }
-  Widget _mediaActionButton(
-      String title, String icon, VoidCallback onTap) {
+
+  Widget _mediaActionButton(String title, String icon, VoidCallback onTap) {
     return GestureDetector(
       onTap: onTap,
       child: Containers(
-        wWidth: 165, wHeight: 110,
+        wWidth: 165,
+        wHeight: 110,
         hexValue: 0xFFECECEC,
         radius: BorderRadius.circular(20),
         alignment: Alignment.center,
@@ -401,6 +431,7 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
       ),
     );
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -413,23 +444,28 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
               // Header -------------------------------------------------------
               Images(
                 imageStr: 'assets/images/two_are_one.png',
-                height: 55, width: 218,
+                height: 55,
+                width: 218,
               ),
               const Texts(
-                text: "Increase Your Matches By Uploading\nYour Photos And Videos",
+                text:
+                    "Increase Your Matches By Uploading\nYour Photos And Videos",
                 textAlign: TextAlign.center,
                 size: 12,
                 fontWeight: FontWeight.w400,
               ),
               const SizedBox(height: 25),
-             Center(
+              Center(
                 child: Stack(
                   children: [
                     Containers(
-                      wHeight: 120, wWidth: 120,
+                      wHeight: 120,
+                      wWidth: 120,
                       padding: const EdgeInsets.all(2),
                       border: Border.all(
-                          color: const Color(0xFFB0778E), width: 2),
+                        color: const Color(0xFFB0778E),
+                        width: 2,
+                      ),
                       hexValue: 0xFFFFFFFF,
                       opacityValue: 0,
                       radius: BorderRadius.circular(100),
@@ -437,16 +473,17 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
                       child: ClipOval(
                         child: _profileImage != null
                             ? Image.file(
-                          _profileImage!,
-                          fit: BoxFit.cover,
-                          width: 120, height: 120,
-                        )
-                            : const Icon(
-                            Icons.person_outline_sharp, size: 80),
+                                _profileImage!,
+                                fit: BoxFit.cover,
+                                width: 120,
+                                height: 120,
+                              )
+                            : const Icon(Icons.person_outline_sharp, size: 80),
                       ),
                     ),
                     Positioned(
-                      bottom: 11, right: 9,
+                      bottom: 11,
+                      right: 9,
                       child: GestureDetector(
                         onTap: () => _pickMedia(0),
                         child: Containers(
@@ -480,7 +517,7 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
                   setState(() {
                     _selectedHeight = value;
                     _heightError = false;
-                  } );
+                  });
                 },
               ),
               // Weight dropdown ---------------------------------------------
@@ -508,8 +545,8 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
                 ),
               ),
               TextField(
-                controller: _workController,  // FIX: wired controller
-                onChanged: (_){
+                controller: _workController, // FIX: wired controller
+                onChanged: (_) {
                   setState(() => _workError = false);
                 },
                 style: const TextStyle(fontSize: 14),
@@ -519,7 +556,9 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
                     borderRadius: BorderRadius.circular(50),
                   ),
                   contentPadding: const EdgeInsets.symmetric(
-                      vertical: 15, horizontal: 10),
+                    vertical: 15,
+                    horizontal: 10,
+                  ),
                   filled: true,
                   fillColor: const Color(0xFFF3F3F3),
                   hintText: "Write about your work",
@@ -553,10 +592,11 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
                 radius: BorderRadius.circular(20),
                 alignment: Alignment.topCenter,
                 child: TextField(
-                  controller: _bioController,   // FIX: wired controller
+                  controller: _bioController, // FIX: wired controller
                   maxLength: 250,
                   maxLines: 4,
-                  onChanged: (_) => setState(() => _bioError = false), // clear on type
+                  onChanged: (_) =>
+                      setState(() => _bioError = false), // clear on type
                   style: const TextStyle(
                     fontSize: 15,
                     fontWeight: FontWeight.w400,
@@ -566,9 +606,11 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
                     counterStyle: TextStyle(color: Color(0xFF77153C)),
                     border: InputBorder.none,
                     contentPadding: EdgeInsets.symmetric(
-                        vertical: 10, horizontal: 15),
+                      vertical: 10,
+                      horizontal: 15,
+                    ),
                     hintText:
-                    "Tell us something about yourself in 250 characters or less",
+                        "Tell us something about yourself in 250 characters or less",
                     hintStyle: TextStyle(fontSize: 12),
                   ),
                 ),
@@ -578,11 +620,17 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  _mediaActionButton("Add Photos",
-                      "assets/svg_images/add_photo.svg", () => _pickMedia(1)),
+                  _mediaActionButton(
+                    "Add Photos",
+                    "assets/svg_images/add_photo.svg",
+                    () => _pickMedia(1),
+                  ),
                   Spacer(),
-                  _mediaActionButton("Add Videos",
-                      "assets/svg_images/add_video.svg", () => _pickMedia(2)),
+                  _mediaActionButton(
+                    "Add Videos",
+                    "assets/svg_images/add_video.svg",
+                    () => _pickMedia(2),
+                  ),
                 ],
               ),
               // Image previews -----------------------------------------------
@@ -598,12 +646,13 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
                 ),
                 const SizedBox(height: 10),
                 Wrap(
-                  spacing: 10, runSpacing: 10,
+                  spacing: 10,
+                  runSpacing: 10,
                   children: _additionalImages.asMap().entries.map((entry) {
                     return _buildMediaPreview(
                       entry.value,
-                          () => setState(
-                              () => _additionalImages.removeAt(entry.key)),
+                      () =>
+                          setState(() => _additionalImages.removeAt(entry.key)),
                       isVideo: false,
                     );
                   }).toList(),
@@ -627,8 +676,9 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
                       padding: const EdgeInsets.only(bottom: 10),
                       child: _buildMediaPreview(
                         entry.value,
-                            () => setState(
-                                () => _additionalVideos.removeAt(entry.key)),
+                        () => setState(
+                          () => _additionalVideos.removeAt(entry.key),
+                        ),
                         isVideo: true,
                       ),
                     );
@@ -637,7 +687,7 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
               ],
               const SizedBox(height: 40),
               // Next button --------------------------------------------------
-              Buttons(
+              MainButtonWidget(
                 text: "Next",
                 isLoading: _isLoading,
                 onTap: _isLoading ? null : _onNextTapped,
@@ -654,25 +704,28 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
   }
 
   Widget _buildMediaPreview(
-      File file, VoidCallback onRemove, {required bool isVideo})
-  {
+    File file,
+    VoidCallback onRemove, {
+    required bool isVideo,
+  }) {
     return Stack(
       clipBehavior: Clip.none,
       children: [
         isVideo
             ? VideoPreviewCard(file: file)
             : Containers(
-          wWidth: 100,
-          wHeight: 100,
-          radius: BorderRadius.circular(15),
-          hexValue: 0xFFECECEC,
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(15),
-            child: Image.file(file, fit: BoxFit.cover),
-          ),
-        ),
+                wWidth: 100,
+                wHeight: 100,
+                radius: BorderRadius.circular(15),
+                hexValue: 0xFFECECEC,
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(15),
+                  child: Image.file(file, fit: BoxFit.cover),
+                ),
+              ),
         Positioned(
-          top: -5, right: -5,
+          top: -5,
+          right: -5,
           child: GestureDetector(
             onTap: onRemove,
             child: const CircleAvatar(
@@ -686,6 +739,3 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
     );
   }
 }
-
-
-

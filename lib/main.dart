@@ -3,12 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:two_are_one/core/constants/app_colors.dart';
 import 'package:two_are_one/data/services/Api_Helper/api_manager.dart';
 import 'package:two_are_one/data/services/home_service.dart';
 import 'package:two_are_one/data/viewmodels/chat_viewmodel.dart';
 import 'package:two_are_one/features/views/Interested/interrested_user_screen.dart';
 import 'package:two_are_one/features/views/Settings/settings_screen.dart';
-import 'package:two_are_one/features/views/auth/login.dart';
+import 'package:two_are_one/features/views/auth/login_screen.dart';
 import 'package:two_are_one/features/views/bottom_nav/custom_nav_bar.dart';
 import 'package:two_are_one/features/views/home/profile_details_screen.dart';
 import 'package:two_are_one/features/views/main/main_screen.dart';
@@ -18,7 +19,7 @@ import 'package:two_are_one/features/views/profile/edit_profile_screen.dart';
 import 'core/routes/routes.dart';
 import 'data/models/user_profile_model.dart';
 import 'features/views/Blocked/blocked_screen.dart';
-import 'features/views/auth/onboarding.dart';
+import 'features/views/auth/onboarding_screen.dart';
 import 'features/views/others/privacy.dart';
 import 'features/views/others/terms_and_conditions_screen.dart';
 import 'features/views/visted_screen.dart';
@@ -43,7 +44,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ScreenUtilInit(
-      designSize: Size(390,844),
+      designSize: Size(390, 844),
       minTextAdapt: true,
       splitScreenMode: true,
       child: MaterialApp(
@@ -54,11 +55,12 @@ class MyApp extends StatelessWidget {
         theme: ThemeData(
           colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
           useMaterial3: true,
+          scaffoldBackgroundColor: AppColors.background,
         ),
         routes: {
           '/settings_screen': (context) => const SettingsScreen(),
           '/profile_detail': (context) => const ProfileDetailsScreen(),
-          '/login': (context) => const LoginPage(),
+          '/login': (context) => const LoginScreen(),
           '/interested_screen': (context) => const InterestedUserScreen(),
           '/edit_profile': (context) => const EditProfileScreen(),
           '/blocked_screen': (context) => const BlockedUserScreen(),
@@ -156,7 +158,7 @@ Future<Widget> getInitialScreen() async {
 
   if (res['isSessionExpired'] == true) {
     await ApiManager.logout();
-    return const LoginPage();
+    return const LoginScreen();
   }
 
   final cached = await _readCachedUserInfo(prefs);
@@ -165,5 +167,5 @@ Future<Widget> getInitialScreen() async {
   }
 
   // No cache and no successful response yet — safest fallback.
-  return const LoginPage();
+  return const LoginScreen();
 }

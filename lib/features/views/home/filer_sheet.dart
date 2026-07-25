@@ -2,7 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:two_are_one/core/widgets/buttons.dart';
+import 'package:two_are_one/core/widgets/main_button_widget.dart';
 import 'package:two_are_one/core/widgets/containers.dart';
 import 'package:two_are_one/core/widgets/textfield.dart';
 import 'package:two_are_one/core/widgets/texts.dart';
@@ -329,7 +329,7 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Expanded(
-                        child: Buttons(
+                        child: MainButtonWidget(
                           height: 55,
                           text: "Reset",
                           hexValue: 0xFF77153C,
@@ -350,7 +350,7 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
                       ),
                       const SizedBox(width: 15),
                       Expanded(
-                        child: Buttons(
+                        child: MainButtonWidget(
                           height: 55,
                           text: "Apply",
                           hexValue: 0xFFFFFFFF,
@@ -389,7 +389,7 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
   Widget _buildToggleItem(String title, VoidCallback onTap) {
     bool isSelected = selectedGender == title;
     return Expanded(
-      child: Buttons(
+      child: MainButtonWidget(
         height: 50,
         text: title,
         onTap: onTap,

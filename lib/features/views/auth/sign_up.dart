@@ -5,7 +5,7 @@ import 'package:two_are_one/core/widgets/containers.dart';
 import 'package:two_are_one/core/widgets/my_icons.dart';
 import 'package:two_are_one/core/widgets/texts.dart';
 import 'package:two_are_one/data/models/location_data.dart';
-import 'package:two_are_one/core/widgets/buttons.dart';
+import 'package:two_are_one/core/widgets/main_button_widget.dart';
 import 'package:two_are_one/core/widgets/image.dart';
 import 'package:two_are_one/core/widgets/textfield.dart';
 import 'package:two_are_one/data/services/auth_service.dart';
@@ -71,13 +71,13 @@ class _SignUpPageState extends State<SignUpPage> {
     final password = _passwordController.text.trim();
     final ageStr = _ageController.text.trim();
 
-  // Email Validation
-  final emailRegex = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
-  if (email.isEmpty) {
-   _emailError = "Email is required";
-  } else if (!emailRegex.hasMatch(email)) {
-   _emailError = "Email is invalid";
-  }
+    // Email Validation
+    final emailRegex = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
+    if (email.isEmpty) {
+      _emailError = "Email is required";
+    } else if (!emailRegex.hasMatch(email)) {
+      _emailError = "Email is invalid";
+    }
     // Password Validation
     final passwordRegex = RegExp(
       r'^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z\d])[A-Za-z\d\S]{8,}$',
@@ -188,7 +188,7 @@ class _SignUpPageState extends State<SignUpPage> {
                 colorHexValue: 0xFF4D4D4D,
               ),
               SizedBox(height: 25.h),
-              Buttons(
+              MainButtonWidget(
                 height: 50.h,
                 text: "Close",
                 onTap: () => Navigator.pop(context),
@@ -376,7 +376,7 @@ class _SignUpPageState extends State<SignUpPage> {
             SizedBox(
               // width: double.infinity,
               height: 55.h,
-              child: Buttons(
+              child: MainButtonWidget(
                 width: MediaQuery.of(context).size.width / 1.23,
                 text: 'Signup',
                 isLoading: _isLoading,

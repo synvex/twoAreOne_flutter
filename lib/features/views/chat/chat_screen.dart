@@ -18,8 +18,6 @@ class _ChatMessage {
 
   _ChatMessage({required this.isMe, required this.text, required this.time});
 
-  /// Builds a text message from a [ChatHistoryModel], or returns null
-  /// if the entry has no usable text (e.g. empty message).
   static _ChatMessage? fromChatHistory(
     ChatHistoryModel data, {
     required int currentUserId,
@@ -58,6 +56,7 @@ class ChatScreen extends StatefulWidget {
 
 class _ChatScreenState extends State<ChatScreen> {
   final TextEditingController _messageController = TextEditingController();
+  final FocusNode _focusNode = FocusNode();
   int _currentUserId = 0;
 
   @override
@@ -109,8 +108,16 @@ class _ChatScreenState extends State<ChatScreen> {
   Widget build(BuildContext context) {
     final chatViewModel = context.watch<ChatViewModel>();
 
+    final keyboardVisible = MediaQuery.of(context).viewInsets.bottom > 0;
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<ChatViewModel>().onKeyboardChanged(
+        keyboardVisible,
+        _focusNode,
+      );
+    });
     return Scaffold(
-      resizeToAvoidBottomInset: false,
+      resizeToAvoidBottomInset: true,
       body: Stack(
         children: [
           Container(
@@ -119,7 +126,12 @@ class _ChatScreenState extends State<ChatScreen> {
             decoration: BoxDecoration(
               gradient: LinearGradient(
                 begin: Alignment.topCenter,
-                colors: [AppColors.mehroon, AppColors.blue],
+                end: Alignment.bottomCenter,
+                colors: [
+                  AppColors.gradientFirst,
+                  AppColors.gradientSecond,
+                  AppColors.gradientSecond,
+                ],
               ),
             ),
             child: SafeArea(
@@ -127,42 +139,38 @@ class _ChatScreenState extends State<ChatScreen> {
                 padding: EdgeInsets.symmetric(horizontal: 16.w),
                 child: Column(
                   children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        GestureDetector(
-                          onTap: () {
-                            Navigator.pop(context);
-                          },
-                          child: SvgPicture.asset(
-                            AppIcons.backIcon,
-                            colorFilter: ColorFilter.mode(
-                              AppColors.background,
-                              BlendMode.srcIn,
+                    SizedBox(
+                      height: 40,
+                      child: Stack(
+                        alignment: Alignment.center,
+                        children: [
+                          Positioned(
+                            left: 0,
+                            child: GestureDetector(
+                              onTap: () => Navigator.pop(context),
+                              child: SvgPicture.asset(
+                                AppIcons.backIcon,
+                                colorFilter: const ColorFilter.mode(
+                                  AppColors.background,
+                                  BlendMode.srcIn,
+                                ),
+                              ),
                             ),
                           ),
-                        ),
-                        Text(
-                          "Chat",
-                          style: GoogleFonts.poltawskiNowy(
-                            fontSize: 24,
-                            color: AppColors.background,
-                          ),
-                        ),
-                        GestureDetector(
-                          onTap: () {
-                            chatViewModel.fetchedChatHistory(widget.receiverId);
-                          },
-                          child: SvgPicture.asset(
-                            AppIcons.vert_more,
-                            colorFilter: ColorFilter.mode(
-                              AppColors.background,
-                              BlendMode.srcIn,
+
+                          Center(
+                            child: Text(
+                              "Chat",
+                              style: GoogleFonts.poltawskiNowy(
+                                fontSize: 24,
+                                color: AppColors.background,
+                              ),
                             ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
+
                     SizedBox(height: 40.h),
                     Row(
                       children: [
@@ -173,7 +181,7 @@ class _ChatScreenState extends State<ChatScreen> {
                             width: 60.w,
                             fit: BoxFit.cover,
                             errorBuilder: (_, __, ___) {
-                              return Icon(Icons.person, size: 35.sp);
+                              return Icon(AppIcons.personIcon, size: 35.sp);
                             },
                           ),
                         ),
@@ -208,8 +216,11 @@ class _ChatScreenState extends State<ChatScreen> {
             left: 0,
             right: 0,
             bottom: 0,
-            child: Container(
-              height: 600.h,
+            child: AnimatedContainer(
+              duration: const Duration(milliseconds: 300),
+              curve: Curves.easeInOut,
+              height: _focusNode.hasFocus ? 500.h : 600.h,
+              width: double.infinity,
               decoration: BoxDecoration(
                 color: AppColors.background,
                 borderRadius: BorderRadius.only(
@@ -226,6 +237,8 @@ class _ChatScreenState extends State<ChatScreen> {
                         : chatViewModel.chatHistory.isEmpty
                         ? const Center(child: Text("No chat available"))
                         : ListView.builder(
+                            controller: chatViewModel.scrollController,
+
                             padding: EdgeInsets.symmetric(horizontal: 16.w),
                             itemCount: chatViewModel.chatHistory.length,
                             itemBuilder: (context, index) {
@@ -252,9 +265,14 @@ class _ChatScreenState extends State<ChatScreen> {
                             },
                           ),
                   ),
-                  _MessageInputBar(
-                    controller: _messageController,
-                    onSend: () => _handleSend(chatViewModel),
+                  SafeArea(
+                    top: false,
+
+                    child: _MessageInputBar(
+                      controller: _messageController,
+                      focusNode: _focusNode,
+                      onSend: () => _handleSend(chatViewModel),
+                    ),
                   ),
                   SizedBox(height: 16.h),
                 ],
@@ -289,7 +307,16 @@ class _TextBubble extends StatelessWidget {
           constraints: BoxConstraints(maxWidth: 0.68.sw),
           padding: EdgeInsets.symmetric(horizontal: 18.w, vertical: 14.h),
           decoration: BoxDecoration(
-            color: msg.isMe ? Colors.grey.shade200 : AppColors.mehroon,
+            gradient: LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors: msg.isMe
+                  ? [AppColors.grey1, AppColors.grey1]
+                  : [
+                      AppColors.mehroon.withValues(alpha: 0.8),
+                      AppColors.gradientFirst.withValues(alpha: 0.8),
+                    ],
+            ),
             borderRadius: BorderRadius.circular(20.r),
           ),
           child: Text(
@@ -340,10 +367,15 @@ class _TextBubble extends StatelessWidget {
 }
 
 class _MessageInputBar extends StatelessWidget {
-  const _MessageInputBar({required this.controller, required this.onSend});
+  const _MessageInputBar({
+    required this.controller,
+    required this.onSend,
+    required this.focusNode,
+  });
 
   final TextEditingController controller;
   final VoidCallback onSend;
+  final FocusNode focusNode;
 
   @override
   Widget build(BuildContext context) {
@@ -354,6 +386,7 @@ class _MessageInputBar extends StatelessWidget {
           Expanded(
             child: TextField(
               controller: controller,
+              focusNode: focusNode,
               textInputAction: TextInputAction.send,
               onSubmitted: (_) => onSend(),
               decoration: InputDecoration(
@@ -365,14 +398,12 @@ class _MessageInputBar extends StatelessWidget {
                 filled: true,
                 fillColor: AppColors.lightGray,
                 suffixIcon: Container(
-                  height: 46,
-                  width: 46,
+                  height: 46.h,
+                  width: 46.w,
+                  margin: EdgeInsets.symmetric(horizontal: 8.w, vertical: 8.h),
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    gradient: LinearGradient(
-                      begin: Alignment.topCenter,
-                      colors: [AppColors.mehroon, AppColors.blue],
-                    ),
+                    color: AppColors.gradientFirst.withValues(alpha: 0.7),
                   ),
                   child: Center(
                     child: GestureDetector(
