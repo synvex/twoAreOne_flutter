@@ -4,7 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:two_are_one/core/widgets/app_header_widget.dart';
 import 'package:two_are_one/core/widgets/back_button.dart';
+import 'package:two_are_one/core/widgets/header.dart';
 import 'package:two_are_one/core/widgets/image.dart';
 import 'package:two_are_one/core/widgets/textfield.dart';
 import 'package:two_are_one/core/widgets/texts.dart';
@@ -16,14 +18,14 @@ import 'package:two_are_one/features/views/bottom_nav/custom_nav_bar.dart';
 import 'package:two_are_one/features/views/auth/forget_password.dart';
 import 'package:two_are_one/features/views/main/main_screen.dart';
 
-class LoginPage extends StatefulWidget {
-  const LoginPage({super.key});
+class LoginScreen extends StatefulWidget {
+  const LoginScreen({super.key});
 
   @override
-  State<LoginPage> createState() => _LoginPageState();
+  State<LoginScreen> createState() => _LoginScreenState();
 }
 
-class _LoginPageState extends State<LoginPage> {
+class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final AuthService _authService = AuthService();
@@ -262,10 +264,7 @@ class _LoginPageState extends State<LoginPage> {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               SizedBox(height: 40.h),
-              Align(
-                alignment: Alignment.topLeft,
-                child: Back_Button(onTap: () => Navigator.pop(context)),
-              ),
+              AppHeaderWidget(isLeading: true, isTrailing: false),
               SizedBox(height: 37.h),
               Images(
                 imageStr: 'assets/images/two_are_one.png',

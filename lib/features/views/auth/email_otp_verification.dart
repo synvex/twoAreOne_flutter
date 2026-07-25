@@ -11,7 +11,7 @@ import 'package:two_are_one/core/widgets/texts.dart';
 import 'package:two_are_one/data/services/auth_service.dart';
 import 'package:two_are_one/core/widgets/containers.dart';
 import '../main/main_screen.dart';
-import 'login.dart';
+import 'login_screen.dart';
 import 'new_password.dart';
 
 class EmailOtpVerification extends StatefulWidget {
@@ -303,7 +303,7 @@ class _EmailOtpVerificationState extends State<EmailOtpVerification> {
                       onTap: () => Navigator.pushReplacement(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => const LoginPage(),
+                          builder: (context) => const LoginScreen(),
                         ),
                       ),
                       child: const Texts(

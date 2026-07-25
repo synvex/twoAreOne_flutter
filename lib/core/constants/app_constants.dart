@@ -2,6 +2,7 @@
 class AppConstants {
   AppConstants._();
   static const String baseUrl = 'https://www.twoareone.love/';
+
   /// Ported 1:1 from RN `constants.js` -> `Upload_Images`.
   static const String uploadImagesUrl = 'https://www.twoareone.love/uploads/';
 
@@ -22,11 +23,17 @@ class AppConstant {
 
   static const String googleApiKey = 'AIzaSyCqZ38paEOdX0SnqU0u6wBlEasNIwKRNe0';
 }
+
 class AppRegex {
   AppRegex._();
 
-  static final RegExp email = RegExp(r"^[A-Z0-9a-z\._%+-]+@([A-Za-z0-9-]+\.)+[A-Za-z]{2,4}$", caseSensitive: false);
-  static final RegExp password = RegExp(r"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[$@$!%*?&])[A-Za-z\d$@$!%*?&]{8,}$");
+  static final RegExp email = RegExp(
+    r"^[A-Z0-9a-z\._%+-]+@([A-Za-z0-9-]+\.)+[A-Za-z]{2,4}$",
+    caseSensitive: false,
+  );
+  static final RegExp password = RegExp(
+    r"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[$@$!%*?&])[A-Za-z\d$@$!%*?&]{8,}$",
+  );
   static final RegExp numberOnly = RegExp(r'^[0-9]+$');
   static final RegExp alphabetOnly = RegExp(r'^[A-Za-z]+$');
   static final RegExp name = RegExp(r"^([a-zA-Z\-_]+( |')?)+$");
@@ -40,7 +47,7 @@ class AppOptions {
   AppOptions._();
   static final List<Map<String, String>> weightOptions = List.generate(
     440 - 66 + 1,
-        (i) => {'label': '${66 + i} lbs', 'value': '${66 + i}'},
+    (i) => {'label': '${66 + i} lbs', 'value': '${66 + i}'},
   );
   static const List<Map<String, String>> heightOptions = [
     {'label': "4'10", 'value': '4.10'},
@@ -83,6 +90,6 @@ class AppOptions {
   ];
   static final List<Map<String, String>> ageOptions = List.generate(
     88,
-        (i) => {'label': '${i + 13}', 'value': '${i + 13}'},
+    (i) => {'label': '${i + 13}', 'value': '${i + 13}'},
   );
 }

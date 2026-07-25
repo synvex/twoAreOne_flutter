@@ -15,12 +15,21 @@ class Containers extends StatelessWidget {
   final AlignmentGeometry? alignment;
   final List<BoxShadow>? boxShadow;
 
-  const Containers({super.key,
-    required this.hexValue, this.radius,
-    this.child, this.opacityValue,
-     this.wHeight, this.wWidth,
-    this.margin, this.padding,
-    this.shape, this.border, this.alignment, this.boxShadow});
+  const Containers({
+    super.key,
+    required this.hexValue,
+    this.radius,
+    this.child,
+    this.opacityValue,
+    this.wHeight,
+    this.wWidth,
+    this.margin,
+    this.padding,
+    this.shape,
+    this.border,
+    this.alignment,
+    this.boxShadow,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -31,12 +40,11 @@ class Containers extends StatelessWidget {
       width: wWidth, // Removed the forced screen percentage default
       height: wHeight, // Removed the forced screen percentage default
       decoration: BoxDecoration(
-        color: Color(hexValue,).withValues(
-            alpha: opacityValue ?? 1.0),
+        color: Color(hexValue).withValues(alpha: opacityValue ?? 1.0),
         borderRadius: radius,
         boxShadow: boxShadow,
         shape: shape ?? BoxShape.rectangle,
-        border: border
+        border: border,
       ),
       child: child,
     );

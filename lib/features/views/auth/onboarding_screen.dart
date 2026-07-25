@@ -5,8 +5,9 @@ import 'package:two_are_one/core/constants/app_images.dart';
 import 'package:two_are_one/core/constants/app_colors.dart';
 
 import 'package:two_are_one/core/widgets/main_button_widget.dart';
+import 'package:two_are_one/features/views/notification/notification_screen.dart';
 
-import 'login.dart';
+import 'login_screen.dart';
 import 'no_verification.dart';
 
 class OnboardingScreen extends StatefulWidget {
@@ -213,7 +214,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                   onTap: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => LoginPage()),
+                      MaterialPageRoute(builder: (context) => LoginScreen()),
                     );
                   },
                 ),

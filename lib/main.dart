@@ -9,7 +9,7 @@ import 'package:two_are_one/data/services/home_service.dart';
 import 'package:two_are_one/data/viewmodels/chat_viewmodel.dart';
 import 'package:two_are_one/features/views/Interested/interrested_user_screen.dart';
 import 'package:two_are_one/features/views/Settings/settings_screen.dart';
-import 'package:two_are_one/features/views/auth/login.dart';
+import 'package:two_are_one/features/views/auth/login_screen.dart';
 import 'package:two_are_one/features/views/bottom_nav/custom_nav_bar.dart';
 import 'package:two_are_one/features/views/home/profile_details_screen.dart';
 import 'package:two_are_one/features/views/main/main_screen.dart';
@@ -60,7 +60,7 @@ class MyApp extends StatelessWidget {
         routes: {
           '/settings_screen': (context) => const SettingsScreen(),
           '/profile_detail': (context) => const ProfileDetailsScreen(),
-          '/login': (context) => const LoginPage(),
+          '/login': (context) => const LoginScreen(),
           '/interested_screen': (context) => const InterestedUserScreen(),
           '/edit_profile': (context) => const EditProfileScreen(),
           '/blocked_screen': (context) => const BlockedUserScreen(),
@@ -158,7 +158,7 @@ Future<Widget> getInitialScreen() async {
 
   if (res['isSessionExpired'] == true) {
     await ApiManager.logout();
-    return const LoginPage();
+    return const LoginScreen();
   }
 
   final cached = await _readCachedUserInfo(prefs);
@@ -167,5 +167,5 @@ Future<Widget> getInitialScreen() async {
   }
 
   // No cache and no successful response yet — safest fallback.
-  return const LoginPage();
+  return const LoginScreen();
 }

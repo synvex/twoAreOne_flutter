@@ -4,7 +4,7 @@ import 'package:two_are_one/core/widgets/main_button_widget.dart';
 import 'package:two_are_one/core/widgets/containers.dart';
 import 'package:two_are_one/core/widgets/textfield.dart';
 import 'package:two_are_one/core/widgets/texts.dart';
-import 'login.dart';
+import 'login_screen.dart';
 import 'onboarding_screen.dart';
 
 class NewPassword extends StatefulWidget {
@@ -112,7 +112,7 @@ class _NewPasswordState extends State<NewPassword> {
                       setState(() {});
                       Navigator.pushReplacement(
                         context,
-                        MaterialPageRoute(builder: (context) => LoginPage()),
+                        MaterialPageRoute(builder: (context) => LoginScreen()),
                       );
                     },
                     gradient: LinearGradient(
