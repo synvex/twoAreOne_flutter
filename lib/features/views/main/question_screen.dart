@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
-import 'package:two_are_one/core/widgets/buttons.dart';
+import 'package:two_are_one/core/widgets/main_button_widget.dart';
 import 'package:two_are_one/core/widgets/failed.dart';
 import 'package:two_are_one/data/models/question_model.dart';
 import 'package:two_are_one/data/models/user_profile_model.dart';
@@ -36,11 +36,13 @@ class _QuestionnaireScreenState extends State<QuestionnaireScreen>
     _lottieController = AnimationController(vsync: this);
     _fetchPage();
   }
+
   @override
   void dispose() {
     _lottieController.dispose();
     super.dispose();
   }
+
   // Logic to calculate Lottie frame based on order_no (Matching RN useMemo)
   double get _progressValue {
     if (_orderNo == 0) return 0;
@@ -49,6 +51,7 @@ class _QuestionnaireScreenState extends State<QuestionnaireScreen>
     int frame = (step == 0) ? totalFrames - 1 : step - 1;
     return (frame / totalFrames).clamp(0.0, 1.0);
   }
+
   Future<void> _fetchPage() async {
     setState(() {
       _loading = true;
@@ -182,7 +185,7 @@ class _QuestionnaireScreenState extends State<QuestionnaireScreen>
                 colorHexValue: 0xFF4D4D4D,
               ),
               const SizedBox(height: 25),
-              Buttons(
+              MainButtonWidget(
                 height: 50,
                 text: "Close",
                 onTap: () => Navigator.pop(context),
@@ -204,7 +207,9 @@ class _QuestionnaireScreenState extends State<QuestionnaireScreen>
       MaterialPageRoute(builder: (_) => const MainBarScreen()),
     );
   }
-  String _capitalize(String val) => val.isEmpty ? "" : val[0].toUpperCase() + val.substring(1);
+
+  String _capitalize(String val) =>
+      val.isEmpty ? "" : val[0].toUpperCase() + val.substring(1);
 
   // String _capitalize(String val) =>
   //     val.isEmpty ? "" : val[0].toUpperCase() + val.substring(1);
@@ -226,7 +231,7 @@ class _QuestionnaireScreenState extends State<QuestionnaireScreen>
             children: [
               const Texts(text: "Something went wrong!"),
               const SizedBox(height: 10),
-              Buttons(
+              MainButtonWidget(
                 text: 'Retry',
                 onTap: () => _fetchPage(),
                 gradient: const LinearGradient(
@@ -395,7 +400,7 @@ class _QuestionnaireScreenState extends State<QuestionnaireScreen>
                 bottom: 30,
                 left: 20,
                 right: 20,
-                child: Buttons(
+                child: MainButtonWidget(
                   text: 'Next',
                   isLoading: _btnLoader,
                   onTap: _handleNext,

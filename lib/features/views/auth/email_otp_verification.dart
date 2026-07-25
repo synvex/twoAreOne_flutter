@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:two_are_one/core/widgets/back_button.dart';
-import 'package:two_are_one/core/widgets/buttons.dart';
+import 'package:two_are_one/core/widgets/main_button_widget.dart';
 import 'package:two_are_one/core/widgets/image.dart';
 import 'package:two_are_one/core/widgets/textfield.dart';
 import 'package:two_are_one/core/widgets/texts.dart';
@@ -280,7 +280,7 @@ class _EmailOtpVerificationState extends State<EmailOtpVerification> {
                 ),
                 Padding(
                   padding: EdgeInsets.only(top: screenHeight * .23),
-                  child: Buttons(
+                  child: MainButtonWidget(
                     isLoading: _isLoading,
                     text: "Verify",
                     hexValue: 0xFFFFFFFF,

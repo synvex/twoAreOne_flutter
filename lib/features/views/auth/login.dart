@@ -10,7 +10,7 @@ import 'package:two_are_one/core/widgets/textfield.dart';
 import 'package:two_are_one/core/widgets/texts.dart';
 import 'package:two_are_one/data/services/Api_Helper/api_manager.dart';
 import 'package:two_are_one/data/services/auth_service.dart';
-import 'package:two_are_one/core/widgets/buttons.dart';
+import 'package:two_are_one/core/widgets/main_button_widget.dart';
 import 'package:two_are_one/core/widgets/failed.dart';
 import 'package:two_are_one/features/views/bottom_nav/custom_nav_bar.dart';
 import 'package:two_are_one/features/views/auth/forget_password.dart';
@@ -151,7 +151,7 @@ class _LoginPageState extends State<LoginPage> {
                       colorHexValue: 0xFF4D4D4D,
                     ),
                     const SizedBox(height: 25),
-                    Buttons(
+                    MainButtonWidget(
                       height: 50,
                       text: "Close",
 
@@ -224,7 +224,7 @@ class _LoginPageState extends State<LoginPage> {
                 child: Texts(text: message, size: 18),
               ),
               const SizedBox(height: 25),
-              Buttons(
+              MainButtonWidget(
                 height: 50,
                 text: "Close",
                 onTap: () => Navigator.pop(context),
@@ -393,7 +393,7 @@ class _LoginPageState extends State<LoginPage> {
               SizedBox(
                 width: double.infinity,
                 height: 55.h,
-                child: Buttons(
+                child: MainButtonWidget(
                   text: 'Login',
                   hexValue: 0xFFFFFFFF,
                   isLoading: _isLoading,

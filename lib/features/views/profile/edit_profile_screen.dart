@@ -6,7 +6,7 @@ import 'package:two_are_one/core/widgets/image.dart';
 import 'package:two_are_one/features//views/bottom_nav/profile_screen.dart';
 import 'package:video_player/video_player.dart';
 import 'package:two_are_one/core/widgets/back_button.dart';
-import 'package:two_are_one/core/widgets/buttons.dart';
+import 'package:two_are_one/core/widgets/main_button_widget.dart';
 import 'package:two_are_one/core/widgets/texts.dart';
 import 'package:two_are_one/core/widgets/top_toast.dart';
 import 'package:two_are_one/data/models/location_data.dart';
@@ -466,7 +466,7 @@ class _EditProfileScreenState extends State<EditProfileScreen>
                 ),
               ),
               const SizedBox(height: 20),
-              Buttons(
+              MainButtonWidget(
                 text: isVideo ? "Record Video" : "Camera",
                 onTap: () async {
                   Navigator.pop(sheetContext);
@@ -478,7 +478,7 @@ class _EditProfileScreenState extends State<EditProfileScreen>
                 ),
               ),
               const SizedBox(height: 15),
-              Buttons(
+              MainButtonWidget(
                 text: isVideo ? "Upload Video" : "Upload Image",
                 onTap: () async {
                   Navigator.pop(sheetContext);
@@ -490,7 +490,7 @@ class _EditProfileScreenState extends State<EditProfileScreen>
                 ),
               ),
               const SizedBox(height: 15),
-              Buttons(
+              MainButtonWidget(
                 text: "Cancel",
                 onTap: () => Navigator.pop(sheetContext),
                 gradient: const LinearGradient(
@@ -1086,7 +1086,7 @@ class _EditProfileScreenState extends State<EditProfileScreen>
   }
 
   Widget _buildUpdateButton() {
-    return Buttons(
+    return MainButtonWidget(
       text: "Update",
       isLoading: _saving,
       onTap: _onUpdate,

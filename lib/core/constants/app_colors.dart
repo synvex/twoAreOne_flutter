@@ -32,4 +32,7 @@ class AppColors {
   //saqib ticket 01
   static const Color gradientFirst = Color(0xFFDD276F);
   static const Color gradientSecond = Color(0xFF477CB6);
+
+  // onboarding screen
+  static const Color onboardingCircleBlue = Color(0xFF7EA3CC);
 }

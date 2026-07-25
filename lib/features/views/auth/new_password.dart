@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:two_are_one/core/widgets/back_button.dart';
-import 'package:two_are_one/core/widgets/buttons.dart';
+import 'package:two_are_one/core/widgets/main_button_widget.dart';
 import 'package:two_are_one/core/widgets/containers.dart';
 import 'package:two_are_one/core/widgets/textfield.dart';
 import 'package:two_are_one/core/widgets/texts.dart';
 import 'login.dart';
-import 'onboarding.dart';
+import 'onboarding_screen.dart';
 
 class NewPassword extends StatefulWidget {
   const NewPassword({super.key});
@@ -104,7 +104,7 @@ class _NewPasswordState extends State<NewPassword> {
                 ),
                 Padding(
                   padding: EdgeInsets.only(top: screenHeight * .21),
-                  child: Buttons(
+                  child: MainButtonWidget(
                     text: "Submit",
                     isLoading: _isLoading,
                     hexValue: 0xFFFFFFFF,
