@@ -8,7 +8,7 @@ import 'package:two_are_one/core/widgets/image.dart';
 import 'package:two_are_one/data/services/auth_service.dart';
 import 'package:two_are_one/core/widgets/textfield.dart';
 import 'package:two_are_one/core/widgets/texts.dart';
-import 'package:two_are_one/core/widgets/buttons.dart';
+import 'package:two_are_one/core/widgets/main_button_widget.dart';
 import 'no_otp_verification.dart';
 
 class NoVerification extends StatefulWidget {
@@ -201,7 +201,7 @@ class _NoVerificationState extends State<NoVerification> {
                   size: 13,
                 ),
                 SizedBox(height: isLandscape ? 20 : screenHeight * 0.52),
-                Buttons(
+                MainButtonWidget(
                   text: "Next",
                   onTap: _verifyPhoneNo,
                   isLoading: _isLoading,
@@ -251,7 +251,7 @@ class _NoVerificationState extends State<NoVerification> {
                   colorHexValue: 0xFF4D4D4D,
                 ),
                 const SizedBox(height: 25),
-                Buttons(
+                MainButtonWidget(
                   height: 50,
                   text: "Close",
                   onTap: () => Navigator.pop(context),

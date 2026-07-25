@@ -8,7 +8,7 @@ import 'package:two_are_one/core/widgets/divider.dart';
 import 'package:two_are_one/core/widgets/image.dart';
 import 'package:two_are_one/core/widgets/my_icons.dart';
 import 'package:two_are_one/core/widgets/texts.dart';
-import 'package:two_are_one/core/widgets/buttons.dart';
+import 'package:two_are_one/core/widgets/main_button_widget.dart';
 import 'package:two_are_one/core/widgets/confirmation_dialogue.dart';
 import 'package:two_are_one/core/widgets/profile_bottom_sheet.dart';
 import 'package:two_are_one/core/widgets/top_toast.dart';
@@ -141,7 +141,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Buttons(
+              MainButtonWidget(
                 text: "Take Photo",
                 onTap: () async {
                   Navigator.pop(sheetContext);
@@ -159,7 +159,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 ),
               ),
               const SizedBox(height: 15),
-              Buttons(
+              MainButtonWidget(
                 text: "Upload from Gallery",
                 onTap: () async {
                   Navigator.pop(sheetContext);
@@ -176,7 +176,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 ),
               ),
               const SizedBox(height: 15),
-              Buttons(
+              MainButtonWidget(
                 text: "Cancel",
                 onTap: () => Navigator.pop(sheetContext),
                 gradient: const LinearGradient(

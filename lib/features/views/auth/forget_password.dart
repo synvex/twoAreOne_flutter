@@ -5,7 +5,7 @@ import 'package:two_are_one/core/widgets/my_icons.dart';
 import 'package:two_are_one/core/widgets/textfield.dart';
 import 'package:two_are_one/core/widgets/texts.dart';
 import 'package:two_are_one/data/services/auth_service.dart';
-import 'package:two_are_one/core/widgets/buttons.dart';
+import 'package:two_are_one/core/widgets/main_button_widget.dart';
 import 'package:two_are_one/core/widgets/containers.dart';
 import 'package:two_are_one/core/widgets/failed.dart';
 import 'email_otp_verification.dart';
@@ -104,7 +104,7 @@ class _ForgetPasswordState extends State<ForgetPassword> {
                   colorHexValue: 0xFF4D4D4D,
                 ),
                 const SizedBox(height: 25),
-                Buttons(
+                MainButtonWidget(
                   height: 50,
                   text: "Close",
                   onTap: () => Navigator.pop(context),
@@ -147,7 +147,7 @@ class _ForgetPasswordState extends State<ForgetPassword> {
                 colorHexValue: 0xFF4D4D4D,
               ),
               const SizedBox(height: 25),
-              Buttons(
+              MainButtonWidget(
                 height: 50,
                 text: "Close",
                 onTap: () => Navigator.pop(context),
@@ -232,7 +232,7 @@ class _ForgetPasswordState extends State<ForgetPassword> {
                 ),
                 Padding(
                   padding: EdgeInsets.only(top: screenHeight * .23),
-                  child: Buttons(
+                  child: MainButtonWidget(
                     isLoading: _isLoading,
                     text: "Continue",
                     hexValue: 0xFFFFFFFF,
