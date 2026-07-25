@@ -9,6 +9,7 @@ import 'package:two_are_one/data/models/user_match_model.dart';
 import 'package:two_are_one/data/services/home_service.dart';
 import 'package:two_are_one/features/views/home/home_filter_screen.dart';
 import 'package:two_are_one/features/views/home/profile_card.dart';
+import 'package:two_are_one/features/views/notification/notification_screen.dart';
 
 const String kUploadImagesBase = "https://www.twoareone.love/uploads/";
 
@@ -401,9 +402,15 @@ class _HomeScreenState extends State<HomeScreen> {
                 bottom: 10,
               ),
               border: Border.all(color: Colors.black45),
-              child: Images(
-                imageStr: "assets/svg_images/notification.svg",
-                height: 20,
+              child: GestureDetector(
+                onTap: () => Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => NotificationScreen()),
+                ),
+                child: Images(
+                  imageStr: "assets/svg_images/notification.svg",
+                  height: 20,
+                ),
               ),
             ),
           ),

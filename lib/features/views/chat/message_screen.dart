@@ -6,8 +6,6 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:two_are_one/core/constants/app_colors.dart';
 import 'package:two_are_one/core/constants/app_icons.dart';
 import 'package:two_are_one/core/utils/date_time_formater.dart';
-import 'package:two_are_one/data/models/chat_member_model.dart';
-import 'package:two_are_one/data/services/chat_service.dart';
 import 'package:two_are_one/data/viewmodels/chat_viewmodel.dart';
 import 'package:two_are_one/features/views/chat/chat_screen.dart';
 import 'package:provider/provider.dart';
