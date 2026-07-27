@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:two_are_one/core/widgets/app_header_widget.dart';
 import 'package:two_are_one/core/widgets/image.dart';
 import 'package:two_are_one/data/models/visited_blocked_model.dart';
 import 'package:two_are_one/features/views/home/profile_details_screen.dart';
@@ -55,21 +57,23 @@ class _BlockedUserScreenState extends State<BlockedUserScreen> {
       context,
       sheetHeight: 340,
       children: [
-        SizedBox(height: 20,),
+        SizedBox(height: 20),
         SheetMenuItem(
           icon: Images(imageStr: 'assets/svg_images/Favorite/viewProfile.svg'),
           label: "View Profile",
           onTap: () {
             Navigator.of(context).pop();
-             Navigator.push(context,
-                 MaterialPageRoute(
-                   builder: (context) => ProfileDetailsScreen(),
-                   settings: RouteSettings(arguments: user),
-                 ));
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => ProfileDetailsScreen(),
+                settings: RouteSettings(arguments: user),
+              ),
+            );
           },
         ),
         SheetMenuItem(
-          icon: Icon(Icons.block_outlined, size: 24,),
+          icon: Icon(Icons.block_outlined, size: 24),
           label: "Remove",
           isLoading: _viewModel.actionLoadingId == user.profileId,
           onTap: () async {
@@ -88,63 +92,73 @@ class _BlockedUserScreenState extends State<BlockedUserScreen> {
     final showInitialLoader = vm.isLoading && vm.users.isEmpty;
     final showEmpty = !vm.isLoading && vm.users.isEmpty;
 
-    return SafeArea(
-      child: Scaffold(
-        backgroundColor: Colors.white,
-        body: Padding(
-          padding: const EdgeInsets.all(18.0),
+    return Scaffold(
+      backgroundColor: Colors.white,
+      body: SafeArea(
+        child: Padding(
+          padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 20.h),
           child: Column(
             children: [
-              Row(children: [
-                Back_Button(onTap: () => Navigator.pop(context)),
-                const SizedBox(width: 64),
-                Text('Blocked', style: GoogleFonts.poltawskiNowy(
-                  fontSize: 24,
+              AppHeaderWidget(
+                title: 'Blocked',
+                titleStyle: GoogleFonts.poltawskiNowy(
+                  fontSize: 24.sp,
                   fontWeight: FontWeight.w500,
-                  color: Colors.black
-                ),)
-              ],),
+                  color: Colors.black,
+                ),
+                isTrailing: false,
+              ),
+
               Expanded(
                 child: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16),
                   child: showInitialLoader
                       ? const Center(child: CircularProgressIndicator())
                       : RefreshIndicator(
-                    onRefresh: () => vm.fetchUsers(refresh: true),
-                    child: showEmpty
-                        ? ListView(
-                      physics: const AlwaysScrollableScrollPhysics(),
-                      children: const [
-                        SizedBox(height: 220),
-                        Center(
-                          child: Text(
-                            "You don't block anyone",
-                            style: TextStyle(color: Colors.grey),
-                          ),
+                          onRefresh: () => vm.fetchUsers(refresh: true),
+                          child: showEmpty
+                              ? ListView(
+                                  physics:
+                                      const AlwaysScrollableScrollPhysics(),
+                                  children: const [
+                                    SizedBox(height: 220),
+                                    Center(
+                                      child: Text(
+                                        "You don't block anyone",
+                                        style: TextStyle(color: Colors.grey),
+                                      ),
+                                    ),
+                                  ],
+                                )
+                              : ListView.builder(
+                                  controller: _scrollController,
+                                  shrinkWrap: true,
+                                  padding: const EdgeInsets.only(
+                                    top: 20,
+                                    bottom: 100,
+                                  ),
+                                  itemCount:
+                                      vm.users.length + (vm.isLoading ? 1 : 0),
+                                  itemBuilder: (context, index) {
+                                    if (index >= vm.users.length) {
+                                      return const Padding(
+                                        padding: EdgeInsets.symmetric(
+                                          vertical: 12,
+                                        ),
+                                        child: Center(
+                                          child: CircularProgressIndicator(),
+                                        ),
+                                      );
+                                    }
+                                    final user = vm.users[index];
+                                    return UserTile(
+                                      user: user,
+                                      imageBaseUrl: kUploadImagesBaseUrl,
+                                      onMenuTap: () => _openMenu(user),
+                                    );
+                                  },
+                                ),
                         ),
-                      ],
-                    )
-                        : ListView.builder(
-                            controller: _scrollController,
-                            shrinkWrap: true,
-                            padding: const EdgeInsets.only(top: 20, bottom: 100),
-                            itemCount: vm.users.length + (vm.isLoading ? 1 : 0),
-                            itemBuilder: (context, index) {
-                          if (index >= vm.users.length) {
-                            return const Padding(
-                              padding: EdgeInsets.symmetric(vertical: 12),
-                              child: Center(child: CircularProgressIndicator()),
-                            );
-                          }
-                          final user = vm.users[index];
-                          return UserTile(
-                            user: user,
-                            imageBaseUrl: kUploadImagesBaseUrl,
-                            onMenuTap: () => _openMenu(user),
-                          );
-                                            },
-                                          ),
-                  ),
                 ),
               ),
             ],

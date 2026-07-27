@@ -1,5 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:two_are_one/core/widgets/app_header_widget.dart';
 import 'package:two_are_one/core/widgets/back_button.dart';
 import 'package:two_are_one/core/widgets/image.dart';
 import 'package:two_are_one/core/widgets/texts.dart';
@@ -40,7 +42,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
     Object? arguments,
   }) async {
     try {
-
       await Navigator.of(context).pushNamed(routeName, arguments: arguments);
       if (mounted) _vm.loadUserInfo();
     } catch (_) {
@@ -130,12 +131,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
             children: [
               SafeArea(
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  padding: EdgeInsets.symmetric(horizontal: 16.w),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const SizedBox(height: 16),
-                      _buildHeader(),
+                      SizedBox(height: 20.h),
+                      AppHeaderWidget(title: 'Settings', isTrailing: false),
                       Expanded(
                         child: SingleChildScrollView(
                           physics: const BouncingScrollPhysics(),

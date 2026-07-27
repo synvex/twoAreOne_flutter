@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:two_are_one/core/widgets/app_header_widget.dart';
 import 'package:two_are_one/core/widgets/back_button.dart';
 import 'package:two_are_one/core/widgets/image.dart';
 import 'package:two_are_one/data/models/visited_blocked_model.dart';
@@ -32,6 +34,7 @@ class _VisitedUserScreenState extends State<VisitedUserScreen> {
   void _onModelChanged() {
     if (mounted) setState(() {});
   }
+
   void _onScroll() {
     final pos = _scrollController.position;
     if (pos.pixels >= pos.maxScrollExtent - 150 &&
@@ -40,6 +43,7 @@ class _VisitedUserScreenState extends State<VisitedUserScreen> {
       _viewModel.fetchUsers();
     }
   }
+
   @override
   void dispose() {
     _viewModel.removeListener(_onModelChanged);
@@ -47,6 +51,7 @@ class _VisitedUserScreenState extends State<VisitedUserScreen> {
     _viewModel.dispose();
     super.dispose();
   }
+
   void _openMenu(VisitedBlockedUserModel user) {
     UserActionBottomSheet.show(
       context,
@@ -62,7 +67,9 @@ class _VisitedUserScreenState extends State<VisitedUserScreen> {
               MaterialPageRoute(
                 builder: (context) => const ProfileDetailsScreen(),
                 // settings: RouteSettings(arguments: user), // Pass the VisitedBlockedUserModel
-                settings: RouteSettings(arguments: {'user': user, 'blocked': false}),
+                settings: RouteSettings(
+                  arguments: {'user': user, 'blocked': false},
+                ),
               ),
             );
           },
@@ -95,73 +102,85 @@ class _VisitedUserScreenState extends State<VisitedUserScreen> {
     final showInitialLoader = vm.isLoading && vm.users.isEmpty;
     final showEmpty = !vm.isLoading && vm.users.isEmpty;
 
-    return SafeArea(
-      child: Scaffold(
-        backgroundColor: Colors.white,
-        body: Padding(
+    return Scaffold(
+      backgroundColor: Colors.white,
+      body: SafeArea(
+        child: Padding(
           padding: const EdgeInsets.all(18.0),
           child: Column(
             children: [
-              Row(children: [
-                Back_Button(onTap: ()=> Navigator.pop(context)),
-                const SizedBox(width: 64),
-      
-                Text('Visited Users', style: GoogleFonts.poltawskiNowy(
-                    fontSize: 24,
-                    fontWeight: FontWeight.w500,
-                    color: Colors.black
-                ),)
-              ],),
+              AppHeaderWidget(
+                title: 'Visited Users',
+                isTrailing: false,
+                titleStyle: GoogleFonts.poltawskiNowy(
+                  fontSize: 24.sp,
+                  fontWeight: FontWeight.w500,
+                  color: Colors.black,
+                ),
+              ),
+
               Expanded(
                 child: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16),
                   child: showInitialLoader
                       ? const Center(child: CircularProgressIndicator())
                       : RefreshIndicator(
-                    onRefresh: () => vm.fetchUsers(refresh: true),
-                    child: showEmpty
-                        ? ListView(
-                      physics: const AlwaysScrollableScrollPhysics(),
-                      children:  [
-                        SizedBox(height: 220),
-                        Center(
-                          child: Text(vm.error ??
-                              "No visited users found.",
-                            style: const TextStyle(color: Colors.grey),
-                          ),
+                          onRefresh: () => vm.fetchUsers(refresh: true),
+                          child: showEmpty
+                              ? ListView(
+                                  physics:
+                                      const AlwaysScrollableScrollPhysics(),
+                                  children: [
+                                    SizedBox(height: 220),
+                                    Center(
+                                      child: Text(
+                                        vm.error ?? "No visited users found.",
+                                        style: const TextStyle(
+                                          color: Colors.grey,
+                                        ),
+                                      ),
+                                    ),
+                                    if (vm.error != null) ...[
+                                      const SizedBox(height: 12),
+                                      Center(
+                                        child: TextButton(
+                                          onPressed: () =>
+                                              vm.fetchUsers(refresh: true),
+                                          child: const Text("Retry"),
+                                        ),
+                                      ),
+                                    ],
+                                  ],
+                                )
+                              : ListView.builder(
+                                  shrinkWrap: true,
+                                  controller: _scrollController,
+                                  padding: const EdgeInsets.only(
+                                    top: 20,
+                                    bottom: 100,
+                                  ),
+                                  itemCount:
+                                      vm.users.length + (vm.isLoading ? 1 : 0),
+                                  itemBuilder: (context, index) {
+                                    if (index >= vm.users.length) {
+                                      return const Padding(
+                                        padding: EdgeInsets.symmetric(
+                                          vertical: 12,
+                                        ),
+                                        child: Center(
+                                          child: CircularProgressIndicator(),
+                                        ),
+                                      );
+                                    }
+                                    final user = vm.users[index];
+                                    return UserTile(
+                                      user: user,
+                                      imageBaseUrl: kUploadImagesBaseUrl,
+                                      onMenuTap: () => _openMenu(user),
+                                    );
+                                  },
+                                ),
                         ),
-                        if (vm.error != null) ...[
-                          const SizedBox(height: 12),
-                          Center(
-                            child: TextButton(
-                              onPressed: () => vm.fetchUsers(refresh: true),
-                              child: const Text("Retry"),
-                            ),
-                          ),
-                        ],
-                      ],
-                    )
-                        : ListView.builder(
-                      shrinkWrap: true,
-                      controller: _scrollController,
-                      padding: const EdgeInsets.only(top: 20, bottom: 100),
-                      itemCount: vm.users.length + (vm.isLoading ? 1 : 0),
-                      itemBuilder: (context, index) {
-                        if (index >= vm.users.length) {
-                          return const Padding(
-                            padding: EdgeInsets.symmetric(vertical: 12),
-                            child: Center(child: CircularProgressIndicator()),
-                          );
-                        }
-                        final user = vm.users[index];
-                        return UserTile(
-                          user: user,
-                          imageBaseUrl: kUploadImagesBaseUrl,
-                          onMenuTap: () => _openMenu(user),
-                        );
-                      },
-                    ),
-                  ),
                 ),
               ),
             ],

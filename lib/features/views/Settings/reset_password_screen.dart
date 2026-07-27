@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:two_are_one/core/widgets/app_header_widget.dart';
 import 'package:two_are_one/features/views/Settings/widgets/custom_alert.dart';
 import 'package:two_are_one/features/views/Settings/widgets/custom_bottom_sheet.dart';
 import 'package:two_are_one/features/views/Settings/widgets/custom_text_field.dart';
@@ -29,13 +31,17 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
 
   bool _validate() {
     setState(() {
-      _oldError = _oldPassword.text.trim().isEmpty ? 'Current password is required' : null;
+      _oldError = _oldPassword.text.trim().isEmpty
+          ? 'Current password is required'
+          : null;
       _newError = _newPassword.text.trim().isEmpty
           ? 'New password is required'
           : (!AppRegex.validate(_newPassword.text.trim(), AppRegex.password)
-              ? 'Password must be at least 8 characters long and include uppercase, lowercase, number, and special character'
-              : null);
-      _confirmError = _newPassword.text.trim() != _confirmPassword.text.trim() ? 'Password mismatch' : null;
+                ? 'Password must be at least 8 characters long and include uppercase, lowercase, number, and special character'
+                : null);
+      _confirmError = _newPassword.text.trim() != _confirmPassword.text.trim()
+          ? 'Password mismatch'
+          : null;
     });
     return _oldError == null && _newError == null && _confirmError == null;
   }
@@ -55,20 +61,34 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            SvgPicture.asset('assets/Settings/passwordChngeDone.svg',
-                height: 90),
+            SvgPicture.asset(
+              'assets/Settings/passwordChngeDone.svg',
+              height: 90,
+            ),
             const SizedBox(height: 12),
-            Text('Your Password Changed',
-                style: GoogleFonts.poppins(fontSize: 18,fontWeight: FontWeight.w700, color: AppColors.grey2)),
+            Text(
+              'Your Password Changed',
+              style: GoogleFonts.poppins(
+                fontSize: 18,
+                fontWeight: FontWeight.w700,
+                color: AppColors.grey2,
+              ),
+            ),
             const SizedBox(height: 6),
-            Text('Your password has been successfully updated.',
-                textAlign: TextAlign.center, style: GoogleFonts.poppins(color: AppColors.grey2)),
+            Text(
+              'Your password has been successfully updated.',
+              textAlign: TextAlign.center,
+              style: GoogleFonts.poppins(color: AppColors.grey2),
+            ),
             const SizedBox(height: 20),
             CustomButton(
               title: 'Done',
               onPress: () {
                 Navigator.of(context).pop();
-                Navigator.of(context).popUntil((r) => r.settings.name == AppRoutes.settingScreen || r.isFirst);
+                Navigator.of(context).popUntil(
+                  (r) =>
+                      r.settings.name == AppRoutes.settingScreen || r.isFirst,
+                );
               },
             ),
           ],
@@ -87,16 +107,28 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
       backgroundColor: AppColors.white,
       body: SafeArea(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(horizontal: 20),
+          padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 20.h),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const BackButtonHeader(title: 'Password Change', noIcon: true),
-              const SizedBox(height: 12),
-              Text('Create New Password', style: GoogleFonts.poppins( fontSize: 20, fontWeight: FontWeight.w700, color: AppColors.black),),
+              AppHeaderWidget(title: 'Password Change', isTrailing: false),
+              SizedBox(height: 20.h),
+              Text(
+                'Create New Password',
+                style: GoogleFonts.poppins(
+                  fontSize: 20,
+                  fontWeight: FontWeight.w700,
+                  color: AppColors.black,
+                ),
+              ),
               const SizedBox(height: 6),
-              Text("Set a new password and you're all set to explore new connections",
-                style: GoogleFonts.poppins(fontSize: 13, color: AppColors.grey2),),
+              Text(
+                "Set a new password and you're all set to explore new connections",
+                style: GoogleFonts.poppins(
+                  fontSize: 13,
+                  color: AppColors.grey2,
+                ),
+              ),
               const SizedBox(height: 16),
               CustomTextField(
                 label: 'Current Password',
@@ -104,7 +136,13 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                 controller: _oldPassword,
                 obscureText: _o1,
                 errorText: _oldError,
-                suffixIcon: IconButton(icon: Icon(_o1 ? Icons.visibility_off : Icons.visibility, size: 20), onPressed: () => setState(() => _o1 = !_o1)),
+                suffixIcon: IconButton(
+                  icon: Icon(
+                    _o1 ? Icons.visibility_off : Icons.visibility,
+                    size: 20,
+                  ),
+                  onPressed: () => setState(() => _o1 = !_o1),
+                ),
               ),
               const SizedBox(height: 14),
               CustomTextField(
@@ -113,7 +151,13 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                 controller: _newPassword,
                 obscureText: _o2,
                 errorText: _newError,
-                suffixIcon: IconButton(icon: Icon(_o2 ? Icons.visibility_off : Icons.visibility, size: 20), onPressed: () => setState(() => _o2 = !_o2)),
+                suffixIcon: IconButton(
+                  icon: Icon(
+                    _o2 ? Icons.visibility_off : Icons.visibility,
+                    size: 20,
+                  ),
+                  onPressed: () => setState(() => _o2 = !_o2),
+                ),
               ),
               const SizedBox(height: 14),
               CustomTextField(
@@ -122,10 +166,20 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                 controller: _confirmPassword,
                 obscureText: _o3,
                 errorText: _confirmError,
-                suffixIcon: IconButton(icon: Icon(_o3 ? Icons.visibility_off : Icons.visibility, size: 20), onPressed: () => setState(() => _o3 = !_o3)),
+                suffixIcon: IconButton(
+                  icon: Icon(
+                    _o3 ? Icons.visibility_off : Icons.visibility,
+                    size: 20,
+                  ),
+                  onPressed: () => setState(() => _o3 = !_o3),
+                ),
               ),
               const SizedBox(height: 24),
-              CustomButton(title: 'Submit', loading: _loading, onPress: _onSubmit),
+              CustomButton(
+                title: 'Submit',
+                loading: _loading,
+                onPress: _onSubmit,
+              ),
               const SizedBox(height: 24),
             ],
           ),

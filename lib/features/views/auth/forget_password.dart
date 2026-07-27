@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:two_are_one/core/constants/app_colors.dart';
+import 'package:two_are_one/core/constants/app_icons.dart';
+import 'package:two_are_one/core/widgets/app_header_widget.dart';
 import 'package:two_are_one/core/widgets/back_button.dart';
 import 'package:two_are_one/core/widgets/my_icons.dart';
 import 'package:two_are_one/core/widgets/textfield.dart';
@@ -148,9 +150,9 @@ class _ForgetPasswordState extends State<ForgetPassword> {
                 size: 14,
                 colorHexValue: 0xFF4D4D4D,
               ),
-              const SizedBox(height: 25),
+              SizedBox(height: 25.h),
               MainButtonWidget(
-                height: 50,
+                height: 50.h,
                 text: "Close",
                 onTap: () => Navigator.pop(context),
                 gradient: const LinearGradient(
@@ -170,64 +172,67 @@ class _ForgetPasswordState extends State<ForgetPassword> {
     final bool isLandscape =
         MediaQuery.of(context).orientation == Orientation.landscape;
     return Scaffold(
-      backgroundColor: Colors.white,
       resizeToAvoidBottomInset: false,
       body: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.only(right: 25, left: 25.0, top: 60),
+          padding: EdgeInsets.only(right: 25.w, left: 25.0.w, top: 20.h),
           child: SingleChildScrollView(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Back_Button(
-                  onTap: () {
-                    Navigator.pop(context);
-                  },
-                ),
-                Containers(
-                  margin: EdgeInsets.only(top: 20),
-                  hexValue: 0xFF77153C,
-                  opacityValue: 0.15,
-                  radius: BorderRadius.circular(40),
-                  wHeight: 400,
-                  wWidth: double.infinity,
+                AppHeaderWidget(isLeading: true, isTrailing: false),
+                Container(
+                  margin: EdgeInsets.only(top: 20.h),
+                  width: double.infinity,
+                  height: 400.h,
+                  decoration: BoxDecoration(
+                    color: AppColors.mehroon.withValues(alpha: 0.15),
+                    borderRadius: BorderRadius.circular(40),
+                  ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       SizedBox(height: 50.h),
-                      Containers(
-                        wHeight: 70.h,
-                        wWidth: 70.h,
 
-                        hexValue: 0xFFC8A0B0,
-                        shape: BoxShape.circle,
-                        child: MyIcons(iconData: Icons.mail_outlined, size: 30),
+                      Container(
+                        width: 70.h,
+                        height: 70.h,
+                        decoration: const BoxDecoration(
+                          color: Color(0xFFC8A0B0),
+                          shape: BoxShape.circle,
+                        ),
+                        child: Icon(AppIcons.mailIcon, size: 30),
                       ),
+
                       SizedBox(height: 20.h),
+
                       Text(
                         "Forget Password ?",
                         style: GoogleFonts.inter(
                           fontSize: 26.sp,
                           fontWeight: FontWeight.w600,
-                          color: AppColors.black,
                         ),
                       ),
+
                       Text(
-                        " Don’t worry, it happens to all of us. Just\nenter your"
-                        " email address and we’ll send you\na one-time code to help you get back in",
+                        "Don’t worry, it happens to all of us. Just\n"
+                        "enter your email address and we’ll send you\n"
+                        "a one-time code to help you get back in",
+                        textAlign: TextAlign.center,
                         style: GoogleFonts.inter(
                           fontSize: 13.sp,
-                          fontWeight: FontWeight(500),
+                          fontWeight: FontWeight.w500,
                         ),
-                        textAlign: TextAlign.center,
                       ),
 
                       SizedBox(height: 50.h),
+
                       Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                        padding: const EdgeInsets.symmetric(horizontal: 20),
                         child: CustomInputField(
                           controller: _emailController,
                           fillColor: 0xFFFFFFFF,
+
                           borderColor: 0xFF77153C,
                           hintText: "Enter your email address",
                           prefixIcon: Icons.mail_outline,
@@ -236,21 +241,20 @@ class _ForgetPasswordState extends State<ForgetPassword> {
                     ],
                   ),
                 ),
-                Padding(
-                  padding: EdgeInsets.only(top: screenHeight * .23),
-                  child: MainButtonWidget(
-                    isLoading: _isLoading,
-                    text: "Continue",
-                    hexValue: 0xFFFFFFFF,
-                    onTap: () {
-                      _handleContinue();
-                    },
-                    gradient: LinearGradient(
-                      colors: [Color(0xFF77153C), Color(0xFFDD276F)],
-                    ),
+                SizedBox(height: 200.h),
+                MainButtonWidget(
+                  isLoading: _isLoading,
+                  text: "Continue",
+                  hexValue: 0xFFFFFFFF,
+                  onTap: () {
+                    _handleContinue();
+                  },
+                  gradient: LinearGradient(
+                    colors: [Color(0xFF77153C), Color(0xFFDD276F)],
                   ),
                 ),
-                SizedBox(height: isLandscape ? 20 : 0),
+
+                SizedBox(height: 20.h),
               ],
             ),
           ),

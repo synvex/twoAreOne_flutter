@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:two_are_one/core/Error/api_error.dart';
+import 'package:two_are_one/core/widgets/app_header_widget.dart';
 import 'package:two_are_one/features/views/Settings/widgets/custom_alert.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/routes/routes.dart';
@@ -16,14 +17,22 @@ class ChangeEmailOtpScreen extends StatefulWidget {
   final bool isCurrent;
   final DateTime endTime;
 
-  const ChangeEmailOtpScreen({super.key, required this.email, required this.isCurrent, required this.endTime});
+  const ChangeEmailOtpScreen({
+    super.key,
+    required this.email,
+    required this.isCurrent,
+    required this.endTime,
+  });
 
   @override
   State<ChangeEmailOtpScreen> createState() => _ChangeEmailOtpScreenState();
 }
 
 class _ChangeEmailOtpScreenState extends State<ChangeEmailOtpScreen> {
-  final List<TextEditingController> _controllers = List.generate(6, (_) => TextEditingController());
+  final List<TextEditingController> _controllers = List.generate(
+    6,
+    (_) => TextEditingController(),
+  );
   Timer? _timer;
   int _remaining = 60;
   bool _loading = false;
@@ -64,19 +73,29 @@ class _ChangeEmailOtpScreenState extends State<ChangeEmailOtpScreen> {
     });
     try {
       if (widget.isCurrent) {
-        await ApiService.request(ApiEndpoints.currentEmailVerifyOtp, {'otp': _code});
+        await ApiService.request(ApiEndpoints.currentEmailVerifyOtp, {
+          'otp': _code,
+        });
         if (!mounted) return;
         // Navigator.of(context).pushReplacementNamed(AuthRoutes.verifiedScreen);
         Navigator.of(context).pushReplacementNamed(SettingsRoutes.addNewEmail);
       } else {
-        await ApiService.request(ApiEndpoints.updateEmailVerifyOtp, {'new_email': widget.email, 'otp': _code});
+        await ApiService.request(ApiEndpoints.updateEmailVerifyOtp, {
+          'new_email': widget.email,
+          'otp': _code,
+        });
         if (!mounted) return;
         // final authVm = context.read<AuthViewModel>();
         // authVm.setRefreshProfile(!authVm.refreshProfile);
-        await CustomAlert.showMessage(context, title: 'Success', message: 'Your email address has been changed');
+        await CustomAlert.showMessage(
+          context,
+          title: 'Success',
+          message: 'Your email address has been changed',
+        );
         if (mounted) {
-          Navigator.of(context).popUntil((r) => r.settings.name ==
-              AppRoutes.settingScreen || r.isFirst);
+          Navigator.of(context).popUntil(
+            (r) => r.settings.name == AppRoutes.settingScreen || r.isFirst,
+          );
         }
       }
     } on ApiError catch (e) {
@@ -91,10 +110,16 @@ class _ChangeEmailOtpScreenState extends State<ChangeEmailOtpScreen> {
   Future<void> _resend() async {
     setState(() => _resendLoading = true);
     try {
-      await ApiService.request(ApiEndpoints.updateEmailResendOtp, {'email': widget.email});
+      await ApiService.request(ApiEndpoints.updateEmailResendOtp, {
+        'email': widget.email,
+      });
       if (!mounted) return;
       setState(() => _remaining = 60);
-      await CustomAlert.showMessage(context, title: 'OTP sent', message: 'Otp sent to ${widget.email}');
+      await CustomAlert.showMessage(
+        context,
+        title: 'OTP sent',
+        message: 'Otp sent to ${widget.email}',
+      );
     } on ApiError catch (e) {
       if (mounted) await CustomAlert.showError(context, e);
     } finally {
@@ -118,7 +143,8 @@ class _ChangeEmailOtpScreenState extends State<ChangeEmailOtpScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const BackButtonHeader(title: 'Change Email', noIcon: true),
+              AppHeaderWidget(title: 'Change Email', isTrailing: false),
+
               const SizedBox(height: 12),
               Center(
                 child: Column(
@@ -127,28 +153,56 @@ class _ChangeEmailOtpScreenState extends State<ChangeEmailOtpScreen> {
                       width: 64,
                       height: 64,
                       alignment: Alignment.center,
-                      decoration: BoxDecoration(color: Color(0xFFF0EFEF), shape: BoxShape.circle),
-                      child: SvgPicture.asset( 'assets/Settings/emailIcon.svg', width: 30, height: 30),
+                      decoration: BoxDecoration(
+                        color: Color(0xFFF0EFEF),
+                        shape: BoxShape.circle,
+                      ),
+                      child: SvgPicture.asset(
+                        'assets/Settings/emailIcon.svg',
+                        width: 30,
+                        height: 30,
+                      ),
                     ),
                     const SizedBox(height: 16),
-                    Text('OTP VERIFICATION', style: GoogleFonts.poppins(fontWeight: FontWeight.w600, fontSize: 16)),
+                    Text(
+                      'OTP VERIFICATION',
+                      style: GoogleFonts.poppins(
+                        fontWeight: FontWeight.w600,
+                        fontSize: 16,
+                      ),
+                    ),
                     const SizedBox(height: 8),
                     RichText(
                       textAlign: TextAlign.center,
                       text: TextSpan(
                         style: GoogleFonts.poppins(
-                            fontSize: 13,color:  AppColors.grey2
+                          fontSize: 13,
+                          color: AppColors.grey2,
                         ),
                         children: [
-                          const TextSpan(text: "We've sent a 6-digit code to your "),
-                          TextSpan(text: widget.email, style: const TextStyle(fontWeight: FontWeight.bold, color: AppColors.black)),
+                          const TextSpan(
+                            text: "We've sent a 6-digit code to your ",
+                          ),
+                          TextSpan(
+                            text: widget.email,
+                            style: const TextStyle(
+                              fontWeight: FontWeight.bold,
+                              color: AppColors.black,
+                            ),
+                          ),
                         ],
                       ),
                     ),
                     const SizedBox(height: 4),
-                    Text("Enter the code below to confirm it's really you", textAlign: TextAlign.center,
-                        style: GoogleFonts.poppins(fontSize: 13, color: AppColors.grey2)),
-                        const SizedBox(height: 20),
+                    Text(
+                      "Enter the code below to confirm it's really you",
+                      textAlign: TextAlign.center,
+                      style: GoogleFonts.poppins(
+                        fontSize: 13,
+                        color: AppColors.grey2,
+                      ),
+                    ),
+                    const SizedBox(height: 20),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: List.generate(6, (i) {
@@ -160,27 +214,56 @@ class _ChangeEmailOtpScreenState extends State<ChangeEmailOtpScreen> {
                             textAlign: TextAlign.center,
                             keyboardType: TextInputType.number,
                             maxLength: 1,
-                            decoration: const InputDecoration(counterText: '', border: OutlineInputBorder()),
+                            decoration: const InputDecoration(
+                              counterText: '',
+                              border: OutlineInputBorder(),
+                            ),
                             onChanged: (v) {
                               setState(() {});
-                              if (v.isNotEmpty && i < 5) FocusScope.of(context).nextFocus();
+                              if (v.isNotEmpty && i < 5)
+                                FocusScope.of(context).nextFocus();
                             },
                           ),
                         );
                       }),
                     ),
-                    if (_error != null) Padding(padding: const EdgeInsets.only(top: 8), child: Text(_error!, style: const TextStyle(color: AppColors.red, fontSize: 12))),
+                    if (_error != null)
+                      Padding(
+                        padding: const EdgeInsets.only(top: 8),
+                        child: Text(
+                          _error!,
+                          style: const TextStyle(
+                            color: AppColors.red,
+                            fontSize: 12,
+                          ),
+                        ),
+                      ),
                     const SizedBox(height: 16),
-                    Text(_timerLabel, style:GoogleFonts.poppins(fontSize: 14, color: AppColors.grey2),),
+                    Text(
+                      _timerLabel,
+                      style: GoogleFonts.poppins(
+                        fontSize: 14,
+                        color: AppColors.grey2,
+                      ),
+                    ),
                     if (_remaining == 0)
                       TextButton(
                         onPressed: _resendLoading ? null : _resend,
                         child: Text.rich(
                           TextSpan(
-                            style: GoogleFonts.poppins(fontSize: 13, color: AppColors.grey2),
+                            style: GoogleFonts.poppins(
+                              fontSize: 13,
+                              color: AppColors.grey2,
+                            ),
                             children: [
                               const TextSpan(text: "Didn't receive OTP? "),
-                              TextSpan(text: 'Send OTP', style: const TextStyle(color: AppColors.mehroon, fontWeight: FontWeight.w600)),
+                              TextSpan(
+                                text: 'Send OTP',
+                                style: const TextStyle(
+                                  color: AppColors.mehroon,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
                             ],
                           ),
                         ),
@@ -189,7 +272,11 @@ class _ChangeEmailOtpScreenState extends State<ChangeEmailOtpScreen> {
                 ),
               ),
               const SizedBox(height: 20),
-              CustomButton(title: 'Verify', loading: _loading, onPress: _verify),
+              CustomButton(
+                title: 'Verify',
+                loading: _loading,
+                onPress: _verify,
+              ),
             ],
           ),
         ),

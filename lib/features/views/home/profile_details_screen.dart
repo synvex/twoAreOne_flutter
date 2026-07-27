@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:two_are_one/core/constants/app_icons.dart';
+import 'package:two_are_one/core/widgets/app_header_widget.dart';
 import 'package:two_are_one/core/widgets/image.dart';
 import 'package:two_are_one/core/widgets/texts.dart';
 import 'package:two_are_one/core/widgets/back_button.dart';
@@ -8,6 +11,8 @@ import 'package:two_are_one/data/models/details_screen_model.dart';
 import 'package:two_are_one/data/models/user_match_model.dart';
 import 'package:two_are_one/data/models/visited_blocked_model.dart';
 import 'package:two_are_one/data/services/home_service.dart';
+import 'package:two_are_one/data/services/notification_service.dart';
+import 'package:two_are_one/features/views/notification/notification_screen.dart';
 import '../../../data/models/favourite_model.dart';
 import 'package:two_are_one/data/models/interested_model.dart';
 import 'category_questions_screen.dart';
@@ -52,8 +57,7 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
 
     if (args is FilterMatchModel) {
       _cardUser = args;
-    }
-    else if (args is FavouriteUserModel) {
+    } else if (args is FavouriteUserModel) {
       _cardUser = FilterMatchModel(
         id: args.id,
         name: args.fullName,
@@ -63,8 +67,7 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
         city: '',
         matchPercent: '0%',
       );
-    }
-    else if (args is InterestedUserModel) {
+    } else if (args is InterestedUserModel) {
       _cardUser = FilterMatchModel(
         id: args.id,
         name: args.fullName,
@@ -74,27 +77,24 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
         city: '',
         matchPercent: '0%',
       );
-    }
-    else if (args is VisitedBlockedUserModel) {
+    } else if (args is VisitedBlockedUserModel) {
       _cardUser = FilterMatchModel(
-          id: args.profileId,
-          name: args.fullName,
-          imagePath: args.profilePicture ?? '',
-          age: 0,
-          location: '',
-          city: '',
-          matchPercent: '0%'
+        id: args.profileId,
+        name: args.fullName,
+        imagePath: args.profilePicture ?? '',
+        age: 0,
+        location: '',
+        city: '',
+        matchPercent: '0%',
       );
       _blocked = true;
-    }
-    else if (args is Map) {
+    } else if (args is Map) {
       final u = args['user'];
       _blocked = args['blocked'] == true;
 
       if (u is FilterMatchModel) {
         _cardUser = u;
-      }
-      else if (u is FavouriteUserModel) {
+      } else if (u is FavouriteUserModel) {
         _cardUser = FilterMatchModel(
           id: u.id,
           name: u.fullName,
@@ -104,8 +104,7 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
           city: '',
           matchPercent: '0%',
         );
-      }
-      else if (u is InterestedUserModel) {
+      } else if (u is InterestedUserModel) {
         _cardUser = FilterMatchModel(
           id: u.id,
           name: u.fullName,
@@ -115,8 +114,8 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
           city: '',
           matchPercent: '0%',
         );
-      }
-      else if (u is VisitedBlockedUserModel) { // Move this inside the Map block
+      } else if (u is VisitedBlockedUserModel) {
+        // Move this inside the Map block
         _cardUser = FilterMatchModel(
           id: u.profileId, // Use profileId
           name: u.fullName,
@@ -144,11 +143,10 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
     }
     final res = await _homeService.addVisitedUser(id);
     debugPrint("visited/add.php -> $res");
-
   }
 
   Future<void> _getUserDetails() async {
-    final id = _cardUser?.id?? widget.userId;
+    final id = _cardUser?.id ?? widget.userId;
     if (id == null) {
       setState(() => _loading = false);
       return;
@@ -301,11 +299,38 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
 
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: AppBar(title: Text(widget.userId.toString()),),
       body: SafeArea(
         child: Column(
           children: [
-            _buildHeader(),
+            SizedBox(height: 20.h),
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 16.w),
+              child: AppHeaderWidget(
+                trailing: GestureDetector(
+                  onTap: () {
+                    // RN navigates to NotificationScreen here.
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => NotificationScreen(),
+                      ),
+                    );
+                  },
+                  child: Containers(
+                    wWidth: 45,
+                    wHeight: 45,
+                    shape: BoxShape.circle,
+                    hexValue: 0xFFFFFFFF,
+                    border: Border.all(color: Colors.black12),
+                    alignment: Alignment.center,
+                    child: const Images(
+                      imageStr: "assets/svg_images/notification.svg",
+                    ),
+                  ),
+                ),
+              ),
+            ),
+
             Expanded(
               child: SingleChildScrollView(
                 padding: EdgeInsets.symmetric(
@@ -451,12 +476,14 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
                       ),
                     ],
                     // ── Video ─────────────────────────────────────────
-                    if(details?.video?.isNotEmpty ?? false) ...[
+                    if (details?.video?.isNotEmpty ?? false) ...[
                       const SizedBox(height: 16),
                       const Text(
                         "Uploaded Video",
-                        style: TextStyle(fontSize: 16, color: Color(
-                            0xD9000000)),
+                        style: TextStyle(
+                          fontSize: 16,
+                          color: Color(0xD9000000),
+                        ),
                       ),
                       const SizedBox(height: 8),
                       InlineVideoPlayer(url: _fullUrl(details!.video)),
@@ -688,6 +715,7 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
       ),
     );
   }
+
   Widget _sectionTitle(String text) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 6),
@@ -701,6 +729,7 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
       ),
     );
   }
+
   Widget _infoBadge(String label, String? value) {
     return SizedBox(
       width: (MediaQuery.of(context).size.width * 0.92) / 2,

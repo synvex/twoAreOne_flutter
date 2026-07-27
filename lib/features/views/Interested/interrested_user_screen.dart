@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
+import 'package:two_are_one/core/widgets/app_header_widget.dart';
 import 'package:two_are_one/core/widgets/back_button.dart';
 import 'package:two_are_one/data/services/interested_services.dart';
 import 'package:two_are_one/features/views/Interested/widgets/interested_action_sheet.dart';
@@ -7,7 +10,6 @@ import 'package:two_are_one/features/views/Interested/widgets/interested_tab_bar
 import 'package:two_are_one/features/views/Interested/widgets/skeleton_user_card.dart';
 import 'package:two_are_one/features/views/Interested/widgets/user_list_tile.dart';
 import '../../../core/constants/app_colors.dart';
-import '../../../core/widgets/profile_bottom_sheet.dart';
 import '../../../core/routes/routes.dart';
 import '../../../data/models/interested_model.dart';
 import '../../../data/viewmodels/interested_view_model.dart';
@@ -95,27 +97,19 @@ class _InterestedUserViewState extends State<_InterestedUserView> {
           backgroundColor: AppColors.white,
           body: SafeArea(
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 40),
+              padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 20.h),
               child: Column(
                 children: [
-                  Row(
-                    children: [
-                      Back_Button(
-                        onTap: () {
-                          Navigator.pop(context);
-                        },
-                      ),
-                      const SizedBox(width: 64),
-                      Text(
-                        'Interested',
-                        style: TextStyle(
-                          fontSize: 24,
-                          fontFamily: 'Poltawski Nowy',
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                    ],
+                  AppHeaderWidget(
+                    title: 'Interested',
+                    isTrailing: false,
+                    titleStyle: GoogleFonts.poltawskiNowy(
+                      fontSize: 24,
+                      fontWeight: FontWeight.w500,
+                      color: Colors.black,
+                    ),
                   ),
+
                   const SizedBox(height: 30),
                   InterestedTabBar(
                     activeTab: vm.activeTab,

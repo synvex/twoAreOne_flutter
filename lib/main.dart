@@ -73,9 +73,9 @@ class MyApp extends StatelessWidget {
           '/blocked_screen': (context) => const BlockedUserScreen(),
           'visited_screen': (context) => const VisitedUserScreen(),
           SettingsRoutes.privacyPolicy: (context) =>
-          const PrivacyPolicyScreen(),
+              const PrivacyPolicyScreen(),
           SettingsRoutes.termsOfUse: (context) =>
-          const TermsAndConditionsScreen(),
+              const TermsAndConditionsScreen(),
         },
         onGenerateRoute: (settings) {
           final args = settings.arguments is Map
@@ -84,8 +84,8 @@ class MyApp extends StatelessWidget {
           DateTime asDateTime(dynamic v) => v is DateTime
               ? v
               : (v is int
-              ? DateTime.fromMillisecondsSinceEpoch(v)
-              : DateTime.now().add(const Duration(seconds: 60)));
+                    ? DateTime.fromMillisecondsSinceEpoch(v)
+                    : DateTime.now().add(const Duration(seconds: 60)));
           switch (settings.name) {
             case SettingsRoutes.resetPassword:
               return MaterialPageRoute(
@@ -151,7 +151,7 @@ Widget _screenFromCache(Map<String, String?> cached) {
     sexuality: cached['sexuality'] ?? "",
   );
 
-  if (complete) return const MainBarScreen();
+  if (complete) return const CustomNavBar();
 
   switch (screenType) {
     case "1":
@@ -165,8 +165,8 @@ Widget _screenFromCache(Map<String, String?> cached) {
 }
 
 Future<Map<String, String?>> _readCachedUserInfo(
-    SharedPreferences prefs,
-    ) async {
+  SharedPreferences prefs,
+) async {
   return {
     'complete_question': prefs.getString('cached_complete_question'),
     'screen_type': prefs.getString('cached_screen_type'),
@@ -176,10 +176,9 @@ Future<Map<String, String?>> _readCachedUserInfo(
 }
 
 Future<void> _writeCachedUserInfo(
-    SharedPreferences prefs,
-    Map<String, dynamic> data,
-    ) async
-{
+  SharedPreferences prefs,
+  Map<String, dynamic> data,
+) async {
   await prefs.setString(
     'cached_complete_question',
     data['complete_question']?.toString() ?? "",
@@ -224,8 +223,4 @@ Future<Widget> getInitialScreen() async {
 
   // No cache and no successful response yet — safest fallback.
   return const LoginScreen();
-
 }
-
-}
-
