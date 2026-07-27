@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:shimmer/shimmer.dart';
+import 'package:two_are_one/core/constants/app_colors.dart';
 import 'package:two_are_one/core/widgets/containers.dart';
 import 'package:two_are_one/core/widgets/divider.dart';
 import 'package:two_are_one/core/widgets/image.dart';
@@ -320,7 +322,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 10.0,
               ), // Replicates hitSlop (top, bottom, left, right)
               child: SizedBox(
-                width: 36,
+                width: 36.w,
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment
@@ -329,28 +331,28 @@ class _HomeScreenState extends State<HomeScreen> {
                       MainAxisSize.min, // Wraps content tightly like a View
                   children: [
                     Container(
-                      width: 22,
-                      height: 2,
+                      width: 22.w,
+                      height: 2.h,
                       decoration: BoxDecoration(
-                        color: const Color(0xFF333333),
+                        color: AppColors.drawer,
+                        borderRadius: BorderRadius.circular(1),
+                      ),
+                    ),
+                    SizedBox(height: 5.h), // Replicates gap: 5
+                    Container(
+                      width: 15.w,
+                      height: 2.h,
+                      decoration: BoxDecoration(
+                        color: AppColors.drawer,
                         borderRadius: BorderRadius.circular(1),
                       ),
                     ),
                     const SizedBox(height: 5), // Replicates gap: 5
                     Container(
-                      width: 15,
-                      height: 2,
+                      width: 22.w,
+                      height: 2.h,
                       decoration: BoxDecoration(
-                        color: const Color(0xFF333333),
-                        borderRadius: BorderRadius.circular(1),
-                      ),
-                    ),
-                    const SizedBox(height: 5), // Replicates gap: 5
-                    Container(
-                      width: 22,
-                      height: 2,
-                      decoration: BoxDecoration(
-                        color: const Color(0xFF333333),
+                        color: AppColors.drawer,
                         borderRadius: BorderRadius.circular(1),
                       ),
                     ),
@@ -385,11 +387,11 @@ class _HomeScreenState extends State<HomeScreen> {
               border: Border.all(color: Colors.black45),
               child: Images(
                 imageStr: "assets/svg_images/search.svg",
-                height: 20,
+                height: 20.h,
               ),
             ),
           ),
-          const SizedBox(width: 10),
+          SizedBox(width: 10.w),
           GestureDetector(
             onTap: () {},
             child: Containers(
@@ -409,7 +411,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
                 child: Images(
                   imageStr: "assets/svg_images/notification.svg",
-                  height: 20,
+                  height: 20.h,
                 ),
               ),
             ),
@@ -431,7 +433,7 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
       ),
       child: ClipRRect(
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(20.sp),
         child: Stack(
           children: [
             Positioned(
@@ -473,8 +475,8 @@ class _HomeScreenState extends State<HomeScreen> {
                           _profileImageUrl != null &&
                                   _profileImageUrl!.isNotEmpty
                               ? Container(
-                                  width: 58,
-                                  height: 58,
+                                  width: 58.w,
+                                  height: 58.h,
                                   decoration: BoxDecoration(
                                     shape: BoxShape.circle,
                                     border: Border.all(
@@ -505,7 +507,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           ),
                         ],
                       ),
-                      const SizedBox(width: 14), // RN: gap:14
+                      SizedBox(width: 14.w), // RN: gap:14
                       // ── Name, email, online pill ─────────────────────────────
                       Expanded(
                         child: Column(
@@ -516,8 +518,8 @@ class _HomeScreenState extends State<HomeScreen> {
                               _userName,
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
-                              style: const TextStyle(
-                                fontSize: 16,
+                              style: TextStyle(
+                                fontSize: 16.sp,
                                 fontWeight: FontWeight.bold,
                                 color: Colors.white,
                                 letterSpacing: 0.2,
@@ -655,7 +657,7 @@ class _HomeScreenState extends State<HomeScreen> {
         children: [
           // const SizedBox(height: 50),
           Container(
-            height: 120,
+            height: 120.h,
             decoration: const BoxDecoration(
               gradient: LinearGradient(
                 colors: [Color(0xFF477CB6), Color(0xFFDD276F)],
@@ -667,8 +669,8 @@ class _HomeScreenState extends State<HomeScreen> {
                 children: [
                   Images(
                     imageStr: "assets/images/two_are_one.png",
-                    height: 35,
-                    width: 180,
+                    height: 35.h,
+                    width: 180.w,
                   ),
                   Spacer(),
                 ],

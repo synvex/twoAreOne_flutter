@@ -3,6 +3,8 @@ import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:two_are_one/core/constants/app_colors.dart';
 import 'package:two_are_one/core/widgets/back_button.dart';
 import 'package:two_are_one/core/widgets/image.dart';
 import 'package:two_are_one/data/services/auth_service.dart';
@@ -145,11 +147,14 @@ class _NoVerificationState extends State<NoVerification> {
               children: [
                 Back_Button(onTap: () => Navigator.of(context).pop()),
                 SizedBox(height: 40.h),
-                const Texts(
-                  text: "Can we get your number?",
-                  size: 24,
-                  fontWeight: FontWeight.w600,
+                Text(
+                  "Can we get your number?",
+                  style: GoogleFonts.poppins(
+                    fontWeight: FontWeight.w600,
+                    fontSize: 24.sp,
+                  ),
                 ),
+
                 SizedBox(height: 30.h),
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.end,
@@ -228,29 +233,33 @@ class _NoVerificationState extends State<NoVerification> {
           backgroundColor: Colors.white,
           surfaceTintColor: Colors.white,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(24),
+            borderRadius: BorderRadius.circular(24.r),
           ),
           content: SingleChildScrollView(
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
                 const Images(imageStr: "assets/svg_images/error.svg"),
-                const SizedBox(height: 10),
-                const Texts(
-                  text: "Oops, Failed!",
-                  colorHexValue: 0xFFdf605f,
-                  size: 22,
-                  fontWeight: FontWeight.bold,
+                SizedBox(height: 10.h),
+                Text(
+                  "Oops, Failed!",
+                  style: GoogleFonts.poppins(
+                    fontSize: 22.sp,
+                    fontWeight: FontWeight.bold,
+                    color: AppColors.failedcolor,
+                  ),
                 ),
-                const SizedBox(height: 15),
-                const Texts(
-                  textAlign: TextAlign.center,
-                  text:
-                      "This Number is already linked to another account. Please use a different phone number",
-                  size: 14,
-                  colorHexValue: 0xFF4D4D4D,
+
+                SizedBox(height: 15.h),
+                Text(
+                  "This Number is already linked to another account. Please use a different phone number",
+                  style: GoogleFonts.inter(
+                    fontSize: 13.sp,
+                    color: AppColors.verifactiontext,
+                  ),
                 ),
-                const SizedBox(height: 25),
+
+                SizedBox(height: 25.sp),
                 MainButtonWidget(
                   height: 50,
                   text: "Close",
