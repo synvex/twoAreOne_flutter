@@ -2,6 +2,8 @@ import 'dart:async';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:two_are_one/core/constants/app_colors.dart';
 import 'package:two_are_one/core/widgets/image.dart';
 import 'package:two_are_one/core/widgets/texts.dart';
 import 'package:two_are_one/data/services/auth_service.dart';
@@ -148,7 +150,7 @@ class _NoOtpVerificationState extends State<NoOtpVerification> {
                   opacityValue: 0.15,
                   radius: BorderRadius.circular(70.r),
                   wHeight: 470.h,
-                  wWidth: screenWidth / 1.15,
+                  wWidth: screenWidth / 1.15.w,
                   child: Column(
                     children: [
                       SizedBox(height: 25.h),
@@ -167,22 +169,28 @@ class _NoOtpVerificationState extends State<NoOtpVerification> {
                         ),
                       ),
                       SizedBox(height: 15.h),
-                      const Texts(
-                        text: "OTP VERIFICATION",
-                        size: 24,
-                        fontWeight: FontWeight.w600,
+                      Text(
+                        "OTP VERIFICATION",
+                        style: GoogleFonts.poppins(
+                          fontSize: 26.sp,
+                          fontWeight: FontWeight.w600,
+                        ),
                       ),
+
                       SizedBox(height: 15.h),
-                      const Texts(
-                        text: "We've sent a 6 digit OTP to your",
-                        colorHexValue: 0xFF727272,
-                        size: 13,
-                        fontWeight: FontWeight.w500,
+                      Text(
+                        "We've sent a 6 digit OTP to your",
+                        style: GoogleFonts.inter(
+                          fontSize: 13.sp,
+                          fontWeight: FontWeight.w500,
+                          color: AppColors.forgettext,
+                        ),
                       ),
+
                       Texts(
                         text: widget.phoneNumber,
                         colorHexValue: 0xFF000000,
-                        size: 13,
+                        size: 13.sp,
                         fontWeight: FontWeight.w500,
                       ),
                       const Texts(
@@ -215,18 +223,22 @@ class _NoOtpVerificationState extends State<NoOtpVerification> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          const Texts(
-                            text: "Didn't receive OTP ?",
-                            colorHexValue: 0xFF727272,
-                            size: 13,
+                          Text(
+                            "Didn't receive OTP ?",
+                            style: GoogleFonts.poppins(
+                              fontSize: 13.sp,
+                              color: AppColors.forgettext,
+                            ),
                           ),
+
                           InkWell(
                             onTap: _canResend ? _resendOtp : null,
-                            child: const Texts(
-                              text: " Send OTP",
-                              fontWeight: FontWeight.w500,
-                              colorHexValue: 0xFF77153C,
-                              size: 13,
+                            child: Text(
+                              " Send OTP",
+                              style: GoogleFonts.poppins(
+                                fontSize: 13.sp,
+                                color: AppColors.mehroon,
+                              ),
                             ),
                           ),
                         ],
@@ -258,16 +270,22 @@ class _NoOtpVerificationState extends State<NoOtpVerification> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const Texts(
-                      text: "Already have an account? ",
-                      colorHexValue: 0xFF77153C,
+                    Text(
+                      "Already have an account? ",
+                      style: GoogleFonts.poppins(
+                        fontSize: 13.sp,
+                        color: AppColors.mehroon,
+                      ),
                     ),
+
                     GestureDetector(
                       onTap: () {},
-                      child: const Texts(
-                        text: "Login",
-                        fontWeight: FontWeight.bold,
-                        colorHexValue: 0xFF000000,
+                      child: Text(
+                        "Login",
+                        style: GoogleFonts.poppins(
+                          fontWeight: FontWeight.bold,
+                          color: AppColors.black,
+                        ),
                       ),
                     ),
                   ],

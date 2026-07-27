@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:two_are_one/core/constants/app_colors.dart';
 import 'package:two_are_one/core/widgets/back_button.dart';
 import 'package:two_are_one/core/widgets/my_icons.dart';
 import 'package:two_are_one/core/widgets/textfield.dart';
@@ -196,26 +198,30 @@ class _ForgetPasswordState extends State<ForgetPassword> {
                       Containers(
                         wHeight: 70.h,
                         wWidth: 70.h,
+
                         hexValue: 0xFFC8A0B0,
                         shape: BoxShape.circle,
                         child: MyIcons(iconData: Icons.mail_outlined, size: 30),
                       ),
                       SizedBox(height: 20.h),
-                      Texts(
-                        text: "Forget Password ?",
-                        size: 26,
-                        fontWeight: FontWeight.w600,
-                        colorHexValue: 0xFF000000,
-                        edgeInsets: EdgeInsets.only(bottom: 10),
+                      Text(
+                        "Forget Password ?",
+                        style: GoogleFonts.inter(
+                          fontSize: 26.sp,
+                          fontWeight: FontWeight.w600,
+                          color: AppColors.black,
+                        ),
                       ),
-                      Texts(
+                      Text(
+                        " Don’t worry, it happens to all of us. Just\nenter your"
+                        " email address and we’ll send you\na one-time code to help you get back in",
+                        style: GoogleFonts.inter(
+                          fontSize: 13.sp,
+                          fontWeight: FontWeight(500),
+                        ),
                         textAlign: TextAlign.center,
-                        size: 13,
-                        colorHexValue: 0xFF727272,
-                        text:
-                            " Don’t worry, it happens to all of us. Just\nenter your"
-                            " email address and we’ll send you\na one-time code to help you get back in",
                       ),
+
                       SizedBox(height: 50.h),
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 20.0),
