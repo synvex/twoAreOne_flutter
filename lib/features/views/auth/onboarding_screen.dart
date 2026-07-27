@@ -129,8 +129,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                   ),
                 ),
                 // 2. Page Indicators
-                const SizedBox(height: 20),
-                Image.asset(AppImages.appLogo, height: 52, width: 214),
+                SizedBox(height: 20.h),
+                Image.asset(AppImages.appLogo, height: 52.h, width: 214.w),
                 SizedBox(height: 25.h),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -147,8 +147,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                           textAlign: TextAlign.center,
                           style: GoogleFonts.poppins(
                             color: AppColors.black,
-                            fontSize: 10,
-                            fontWeight: FontWeight.w400,
+                            fontSize: 10.sp,
+                            fontWeight: FontWeight.w300,
                           ),
                         ),
                       ],
@@ -165,8 +165,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                           textAlign: TextAlign.center,
                           style: GoogleFonts.poppins(
                             color: AppColors.black,
-                            fontSize: 10,
-                            fontWeight: FontWeight.w400,
+                            fontSize: 10.sp,
+                            fontWeight: FontWeight.w300,
                           ),
                         ),
                       ],
@@ -183,8 +183,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                           textAlign: TextAlign.center,
                           style: GoogleFonts.poppins(
                             color: AppColors.black,
-                            fontSize: 10,
-                            fontWeight: FontWeight.w400,
+                            fontSize: 10.sp,
+                            fontWeight: FontWeight.w300,
                           ),
                         ),
                       ],
@@ -205,7 +205,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                     // Navigator.pushNamed(context, '/signup');
                   },
                 ),
-                const SizedBox(height: 8),
+                SizedBox(height: 4.h),
                 MainButtonWidget(
                   hex: AppColors.black.value,
                   text: "Sign In",
@@ -218,7 +218,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                     );
                   },
                 ),
-                SizedBox(height: 50),
+                SizedBox(height: 20.h),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.center,
@@ -226,8 +226,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                     Text(
                       "By tapping ",
                       style: GoogleFonts.poppins(
-                        fontWeight: FontWeight.w400,
-                        fontSize: 13,
+                        fontWeight: FontWeight.w300,
+                        fontSize: 11.sp,
                         color: Colors.black,
                       ),
                     ),
@@ -237,15 +237,14 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                         style: GoogleFonts.poppins(
                           color: AppColors.mehroon,
                           fontWeight: FontWeight.w600,
-                          fontSize: 13,
                         ),
                       ),
                     ),
                     Text(
                       "or ",
                       style: GoogleFonts.poppins(
-                        fontWeight: FontWeight.w400,
-                        fontSize: 13,
+                        fontWeight: FontWeight.w300,
+                        fontSize: 11.sp,
                         color: Colors.black,
                       ),
                     ),
@@ -255,15 +254,14 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                         style: GoogleFonts.poppins(
                           color: AppColors.mehroon,
                           fontWeight: FontWeight.w600,
-                          fontSize: 13,
                         ),
                       ),
                     ),
                     Text(
                       " you agree",
                       style: GoogleFonts.poppins(
-                        fontWeight: FontWeight.w400,
-                        fontSize: 13,
+                        fontWeight: FontWeight.w300,
+                        fontSize: 11.sp,
                         color: Colors.black,
                       ),
                     ),
@@ -276,8 +274,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                     Text(
                       "to our ",
                       style: GoogleFonts.poppins(
-                        fontWeight: FontWeight.w400,
-                        fontSize: 13,
+                        fontWeight: FontWeight.w300,
+                        fontSize: 11.sp,
                         color: Colors.black,
                       ),
                     ),
@@ -287,7 +285,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                         border: Border(
                           bottom: BorderSide(
                             color: AppColors.black,
-                            width: 1.5,
+                            width: 1.5.w,
                           ),
                         ),
                       ),
@@ -295,15 +293,16 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                         "Terms.",
                         style: GoogleFonts.poppins(
                           color: AppColors.black,
-                          fontSize: 13,
+                          fontWeight: FontWeight.w600,
+                          fontSize: 11.sp,
                         ),
                       ),
                     ),
                     Text(
                       "Learn how we process your data  ",
                       style: GoogleFonts.poppins(
-                        fontWeight: FontWeight.w400,
-                        fontSize: 13,
+                        fontWeight: FontWeight.w300,
+                        fontSize: 11.sp,
                         color: Colors.black,
                       ),
                     ),
@@ -314,7 +313,11 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                   children: [
                     Text(
                       "our",
-                      style: GoogleFonts.poppins(color: Colors.black),
+                      style: GoogleFonts.poppins(
+                        color: Colors.black,
+                        fontWeight: FontWeight.w300,
+                        fontSize: 11.sp,
+                      ),
                     ),
                     InkWell(
                       child: Container(
@@ -329,9 +332,9 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                         child: Text(
                           " Privacy Policy",
                           style: GoogleFonts.poppins(
-                            color: AppColors.mehroon,
+                            color: AppColors.black,
                             fontWeight: FontWeight.w600,
-                            fontSize: 13,
+                            fontSize: 11.sp,
                           ),
                         ),
                       ),

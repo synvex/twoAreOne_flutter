@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:two_are_one/core/constants/app_colors.dart';
 import 'package:two_are_one/core/widgets/app_header_widget.dart';
 import 'package:two_are_one/core/widgets/back_button.dart';
 import 'package:two_are_one/core/widgets/header.dart';
@@ -263,7 +264,7 @@ class _LoginScreenState extends State<LoginScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              SizedBox(height: 40.h),
+              SizedBox(height: 20.h),
               AppHeaderWidget(isLeading: true, isTrailing: false),
               SizedBox(height: 37.h),
               Images(
@@ -275,7 +276,7 @@ class _LoginScreenState extends State<LoginScreen> {
               Text(
                 "Welcome Back",
                 style: GoogleFonts.poppins(
-                  color: Color(0xFF4D4D4D),
+                  color: AppColors.black,
                   fontSize: 20.sp,
                   fontWeight: FontWeight.w500,
                 ),
@@ -288,7 +289,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   fontSize: 14.sp,
                   fontWeight: FontWeight.w300,
 
-                  color: Color(0xFF333333),
+                  color: AppColors.primaryText,
                 ),
               ),
 
@@ -370,6 +371,7 @@ class _LoginScreenState extends State<LoginScreen> {
               Row(
                 children: [
                   const Spacer(),
+
                   TxtButton(
                     fontWeight: FontWeight.w500,
 
@@ -401,6 +403,53 @@ class _LoginScreenState extends State<LoginScreen> {
                     colors: [Color(0xFF77153C), Color(0xFFDD276F)],
                   ),
                 ),
+              ),
+              SizedBox(height: 30.h),
+              // Divider
+              Row(
+                children: [
+                  const Expanded(
+                    child: Images(imageStr: "assets/images/left_polygon.svg"),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 10.w),
+                    child: Text(
+                      "Or Login with",
+                      style: GoogleFonts.inter(
+                        color: AppColors.black,
+                        fontSize: 12.sp,
+                        fontWeight: FontWeight.w300,
+                      ),
+                    ),
+                  ),
+                  const Expanded(
+                    child: Images(imageStr: 'assets/images/right_polygon.svg'),
+                  ),
+                ],
+              ),
+              SizedBox(height: 30.h),
+              // Social Icons
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  InkWell(
+                    onTap: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => MainScreen()),
+                    ),
+                    child: Images(
+                      imageStr: "assets/images/apple_img.png",
+                      height: 42.h,
+                      width: 42.h,
+                    ),
+                  ),
+                  SizedBox(width: 17.w),
+                  Images(
+                    imageStr: "assets/images/google_img.png",
+                    height: 42.h,
+                    width: 42.w,
+                  ),
+                ],
               ),
               SizedBox(height: 60.h),
             ],

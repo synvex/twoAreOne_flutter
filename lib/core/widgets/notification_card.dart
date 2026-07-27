@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:two_are_one/data/models/notification_items.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:two_are_one/core/utils/date_time_formater.dart';
+import 'package:two_are_one/data/models/notification_model.dart';
 
 import '../constants/app_colors.dart';
 
 class NotificationCard extends StatelessWidget {
-  final NotificationItem item;
+  final NotificationModel item;
   final VoidCallback? onAccept;
   final VoidCallback? onDecline;
 
@@ -15,23 +17,20 @@ class NotificationCard extends StatelessWidget {
     this.onAccept,
     this.onDecline,
   });
+  bool _isOnline(NotificationModel item) {
+    return item.userInfo.currentActive == "1" ||
+        item.userInfo.isActualLogin == "1" ||
+        item.userInfo.isMakeOnlines == "1";
+  }
 
   @override
   Widget build(BuildContext context) {
-    final bool isDark = item.showActions;
-    final Color cardColor = isDark ? AppColors.black : AppColors.lightGray;
-    final Color titleColor = isDark ? AppColors.white : AppColors.primaryText;
-    final Color subTextColor = isDark ? AppColors.grey1 : AppColors.grey2;
-    final Color dotColor = item.isOnline
-        ? AppColors.green
-        : (isDark ? AppColors.grey1 : AppColors.grayColor);
-
     return Container(
       width: double.infinity,
       margin: EdgeInsets.only(bottom: 12.h),
       padding: EdgeInsets.all(12.w),
       decoration: BoxDecoration(
-        color: cardColor,
+        color: AppColors.lightGray,
         borderRadius: BorderRadius.circular(16.r),
       ),
       child: Column(
@@ -46,7 +45,7 @@ class NotificationCard extends StatelessWidget {
                   height: 48.r,
                   color: AppColors.grey1,
                   child: Image.network(
-                    item.avatarUrl,
+                    item.userInfo.profileImgUrl.toString(),
                     fit: BoxFit.cover,
                     loadingBuilder: (context, child, progress) {
                       if (progress == null) return child;
@@ -70,19 +69,40 @@ class NotificationCard extends StatelessWidget {
                       text: TextSpan(
                         children: [
                           TextSpan(
-                            text: '@${item.username}',
-                            style: TextStyle(
-                              fontSize: 15.sp,
-                              fontWeight: FontWeight.w700,
-                              color: titleColor,
+                            text: '@${item.userInfo.fullName}',
+                            style: GoogleFonts.inter(
+                              fontSize: 14.sp,
+                              fontWeight: FontWeight.w500,
+                              color: AppColors.black,
                             ),
                           ),
                           TextSpan(
-                            text: '  ${item.action}',
-                            style: TextStyle(
+                            text: item.msgType == 'views'
+                                ? ' Viewed your profile'
+                                : item.msgType == 'likes'
+                                ? ' Liked your profile'
+                                : item.msgType == 'favourites'
+                                ? ' Added you to favourites'
+                                : item.msgType == 'match'
+                                ? ' You have a new match'
+                                : item.msgType == 'super_like'
+                                ? ' Super liked your profile'
+                                : item.msgType == 'comment'
+                                ? ' Commented on your post'
+                                : item.msgType == 'follow'
+                                ? ' Started following you'
+                                : item.msgType == 'gift'
+                                ? ' Sent you a gift'
+                                : item.msgType == 'visit'
+                                ? ' Visited your profile'
+                                : item.msgType == 'unmatch'
+                                ? ' Unmatched with you'
+                                : ' Sent you a message',
+
+                            style: GoogleFonts.inter(
                               fontSize: 14.sp,
                               fontWeight: FontWeight.w400,
-                              color: subTextColor,
+                              color: AppColors.primaryText,
                             ),
                           ),
                         ],
@@ -90,8 +110,12 @@ class NotificationCard extends StatelessWidget {
                     ),
                     SizedBox(height: 6.h),
                     Text(
-                      item.date,
-                      style: TextStyle(fontSize: 12.sp, color: subTextColor),
+                      DateTimeFormatter.onlyDate(item.datetime),
+                      style: GoogleFonts.inter(
+                        fontSize: 14.sp,
+                        fontWeight: FontWeight.w300,
+                        color: AppColors.primaryText,
+                      ),
                     ),
                   ],
                 ),
@@ -105,83 +129,26 @@ class NotificationCard extends StatelessWidget {
                     width: 9.w,
                     height: 9.w,
                     decoration: BoxDecoration(
-                      color: dotColor,
+                      color: _isOnline(item)
+                          ? AppColors.green
+                          : AppColors.grayColor,
                       shape: BoxShape.circle,
                     ),
                   ),
                   SizedBox(height: 26.h),
                   Text(
-                    item.timeAgo,
-                    style: TextStyle(fontSize: 11.sp, color: subTextColor),
+                    DateTimeFormatter.chatTime(item.datetime),
+                    style: GoogleFonts.poppins(
+                      fontSize: 10.sp,
+                      fontWeight: FontWeight.w500,
+                      color: AppColors.primaryText,
+                    ),
                   ),
                 ],
               ),
             ],
           ),
-          if (item.showActions) ...[
-            SizedBox(height: 14.h),
-            Row(
-              children: [
-                Expanded(
-                  child: _ActionButton(
-                    label: 'Decline',
-                    color: AppColors.darkGrey,
-                    textColor: AppColors.white,
-                    onTap: onDecline,
-                  ),
-                ),
-                SizedBox(width: 12.w),
-                Expanded(
-                  child: _ActionButton(
-                    label: 'Accept',
-                    color: AppColors.mehroon,
-                    textColor: AppColors.white,
-                    onTap: onAccept,
-                  ),
-                ),
-              ],
-            ),
-          ],
         ],
-      ),
-    );
-  }
-}
-
-class _ActionButton extends StatelessWidget {
-  final String label;
-  final Color color;
-  final Color textColor;
-  final VoidCallback? onTap;
-
-  const _ActionButton({
-    required this.label,
-    required this.color,
-    required this.textColor,
-    this.onTap,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Material(
-      color: color,
-      borderRadius: BorderRadius.circular(24.r),
-      child: InkWell(
-        borderRadius: BorderRadius.circular(24.r),
-        onTap: onTap,
-        child: Padding(
-          padding: EdgeInsets.symmetric(vertical: 10.h),
-          child: Center(
-            child: Text(
-              label,
-              style: TextStyle(
-                fontSize: 14.sp,
-                fontWeight: FontWeight.w600,
-                color: textColor,
-              ),
-            ),
-          ),
-        ),
       ),
     );
   }

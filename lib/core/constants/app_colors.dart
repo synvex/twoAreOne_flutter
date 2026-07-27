@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 class AppColors {
   AppColors._();
+
   static const Color background = Colors.white;
   static const Color headerBackground = Colors.white;
   static const Color primaryText = Color(0xFF333333);
@@ -28,6 +29,11 @@ class AppColors {
   static const Color red = Color(0xFFF75555);
   static const Color skeletonBase = Color(0xFFD4D4D4);
   static const Color skeletonCardBg = Color(0xFFF5F5F5);
+  static const Color forgetbackground = Color(0xFFC8A0B0);
+  static const Color forgettext = Color(0xFF727272);
+  static const Color failedcolor = Color(0xFFdf605f);
+  static const Color verifactiontext = Color(0xFF4D4D4D);
+  static const Color drawer = Color(0xFF333333);
 
   //saqib ticket 01
   static const Color gradientFirst = Color(0xFFDD276F);
