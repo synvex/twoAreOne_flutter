@@ -294,8 +294,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   GestureDetector(
                     onTap: _openMenu,
                     child: Containers(
-                      wHeight: 50,
-                      wWidth: 50,
+                      wHeight: 40.h,
+                      wWidth: 40.w,
                       hexValue: 0xFFFFFFFF,
                       alignment: Alignment.center,
                       shape: BoxShape.circle,

@@ -51,7 +51,7 @@ class _TermsView extends StatelessWidget {
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 16.w),
               child: AppHeaderWidget(
-                title: 'Privacy Policy',
+                title: 'Terms & Conditions',
                 isTrailing: false,
               ),
             ),

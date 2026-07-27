@@ -1,9 +1,12 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:two_are_one/core/widgets/app_header_widget.dart';
 import 'package:two_are_one/core/widgets/image.dart';
 import 'package:two_are_one/features//views/bottom_nav/profile_screen.dart';
+import 'package:two_are_one/features/views/bottom_nav/custom_nav_bar.dart';
 import 'package:video_player/video_player.dart';
 import 'package:two_are_one/core/widgets/back_button.dart';
 import 'package:two_are_one/core/widgets/main_button_widget.dart';
@@ -652,7 +655,20 @@ class _EditProfileScreenState extends State<EditProfileScreen>
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              _buildHeader(),
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 20.h),
+                child: AppHeaderWidget(
+                  title: "Edit Profile",
+                  isTrailing: false,
+                  onLeadingTap: () => Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => CustomNavBar(initialIndex: 3),
+                    ),
+                  ),
+                ),
+              ),
+              // _buildHeader(),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 25),
                 child: Column(
@@ -867,7 +883,7 @@ class _EditProfileScreenState extends State<EditProfileScreen>
 
   Widget _buildHeader() {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+      padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
       child: Row(
         children: [
           Back_Button(

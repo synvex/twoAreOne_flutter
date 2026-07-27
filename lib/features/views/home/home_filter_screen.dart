@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:two_are_one/core/widgets/app_header_widget.dart';
 import 'package:two_are_one/core/widgets/back_button.dart';
 import 'package:two_are_one/core/widgets/image.dart';
 import 'package:two_are_one/core/widgets/texts.dart';
@@ -194,15 +195,7 @@ class _HomeFilterScreenState extends State<HomeFilterScreen> {
           padding: const EdgeInsets.all(20.0),
           child: Column(
             children: [
-              Align(
-                alignment: AlignmentGeometry.topLeft,
-                child: Back_Button(
-                  onTap: () => Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => CustomNavBar()),
-                  ),
-                ),
-              ),
+              AppHeaderWidget(isTrailing: false),
               const SizedBox(height: 35),
               _buildSearchRow(),
               const SizedBox(height: 20),

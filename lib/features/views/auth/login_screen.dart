@@ -13,6 +13,7 @@ import 'package:two_are_one/data/services/Api_Helper/api_manager.dart';
 import 'package:two_are_one/data/services/auth_service.dart';
 import 'package:two_are_one/core/widgets/main_button_widget.dart';
 import 'package:two_are_one/core/widgets/failed.dart';
+import 'package:two_are_one/features/views/auth/onboarding.dart';
 import 'package:two_are_one/features/views/bottom_nav/custom_nav_bar.dart';
 import 'package:two_are_one/features/views/auth/forget_password.dart';
 
@@ -262,7 +263,14 @@ class _LoginScreenState extends State<LoginScreen> {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               SizedBox(height: 20.h),
-              AppHeaderWidget(isLeading: true, isTrailing: false),
+              AppHeaderWidget(
+                onLeadingTap: () => Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (context) => OnboardingScreen()),
+                ),
+                isLeading: true,
+                isTrailing: false,
+              ),
               SizedBox(height: 37.h),
               Images(
                 imageStr: 'assets/images/two_are_one.png',
