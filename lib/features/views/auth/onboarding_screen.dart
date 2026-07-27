@@ -254,7 +254,6 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                         style: GoogleFonts.poppins(
                           color: AppColors.mehroon,
                           fontWeight: FontWeight.w600,
-                          fontSize: 11.sp,
                         ),
                       ),
                     ),

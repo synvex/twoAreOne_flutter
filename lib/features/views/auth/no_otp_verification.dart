@@ -6,7 +6,7 @@ import 'package:two_are_one/core/widgets/image.dart';
 import 'package:two_are_one/core/widgets/texts.dart';
 import 'package:two_are_one/data/services/auth_service.dart';
 import 'package:two_are_one/core/widgets/textfield.dart';
-import 'package:two_are_one/features/views/auth/sign_up.dart';
+import 'package:two_are_one/features/views/auth/sign_up_screen.dart';
 import 'package:two_are_one/core/widgets/main_button_widget.dart';
 import 'package:two_are_one/core/widgets/containers.dart';
 
@@ -95,7 +95,8 @@ class _NoOtpVerificationState extends State<NoOtpVerification> {
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
-          builder: (context) => SignUpPage(verifiedPhoneNo: widget.phoneNumber),
+          builder: (context) =>
+              SignUpScreen(verifiedPhoneNo: widget.phoneNumber),
         ),
       );
     } on FirebaseAuthException catch (e) {

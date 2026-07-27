@@ -13,15 +13,15 @@ import 'package:two_are_one/features//views/main/location_selector.dart';
 import 'package:two_are_one/core/widgets/failed.dart';
 import 'email_otp_verification.dart';
 
-class SignUpPage extends StatefulWidget {
+class SignUpScreen extends StatefulWidget {
   final String verifiedPhoneNo;
-  const SignUpPage({super.key, required this.verifiedPhoneNo});
+  const SignUpScreen({super.key, required this.verifiedPhoneNo});
 
   @override
-  State<SignUpPage> createState() => _SignUpPageState();
+  State<SignUpScreen> createState() => _SignUpScreenState();
 }
 
-class _SignUpPageState extends State<SignUpPage> {
+class _SignUpScreenState extends State<SignUpScreen> {
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _ageController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
