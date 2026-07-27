@@ -6,8 +6,6 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:two_are_one/core/constants/app_colors.dart';
 import 'package:two_are_one/core/widgets/app_header_widget.dart';
-import 'package:two_are_one/core/widgets/back_button.dart';
-import 'package:two_are_one/core/widgets/header.dart';
 import 'package:two_are_one/core/widgets/image.dart';
 import 'package:two_are_one/core/widgets/textfield.dart';
 import 'package:two_are_one/core/widgets/texts.dart';
@@ -17,7 +15,6 @@ import 'package:two_are_one/core/widgets/main_button_widget.dart';
 import 'package:two_are_one/core/widgets/failed.dart';
 import 'package:two_are_one/features/views/bottom_nav/custom_nav_bar.dart';
 import 'package:two_are_one/features/views/auth/forget_password.dart';
-import 'package:two_are_one/features/views/main/main_screen.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -368,26 +365,24 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                 ),
               // Checkbox and Forget Password Row
-              Row(
-                children: [
-                  const Spacer(),
-
-                  TxtButton(
-                    fontWeight: FontWeight.w500,
-
-                    text: "Forgot the Password?",
-                    sizeTxt: 12,
-                    colorHex: 0xFF000000,
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const ForgetPassword(email: ''),
-                        ),
-                      );
-                    },
+              Align(
+                alignment: Alignment.centerRight,
+                child: GestureDetector(
+                  onTap: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const ForgetPassword(email: ''),
+                    ),
                   ),
-                ],
+                  child: Text(
+                    "Forgot the Password?",
+                    style: GoogleFonts.inter(
+                      color: AppColors.primaryText,
+                      fontSize: 12.sp,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ),
               ),
               SizedBox(height: 20.h),
               // Login Button
@@ -404,54 +399,6 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                 ),
               ),
-              SizedBox(height: 30.h),
-              // Divider
-              Row(
-                children: [
-                  const Expanded(
-                    child: Images(imageStr: "assets/images/left_polygon.svg"),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 10.w),
-                    child: Text(
-                      "Or Login with",
-                      style: GoogleFonts.inter(
-                        color: AppColors.black,
-                        fontSize: 12.sp,
-                        fontWeight: FontWeight.w300,
-                      ),
-                    ),
-                  ),
-                  const Expanded(
-                    child: Images(imageStr: 'assets/images/right_polygon.svg'),
-                  ),
-                ],
-              ),
-              SizedBox(height: 30.h),
-              // Social Icons
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  InkWell(
-                    onTap: () => Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => MainScreen()),
-                    ),
-                    child: Images(
-                      imageStr: "assets/images/apple_img.png",
-                      height: 42.h,
-                      width: 42.h,
-                    ),
-                  ),
-                  SizedBox(width: 17.w),
-                  Images(
-                    imageStr: "assets/images/google_img.png",
-                    height: 42.h,
-                    width: 42.w,
-                  ),
-                ],
-              ),
-              SizedBox(height: 60.h),
             ],
           ),
         ),
