@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:two_are_one/core/constants/app_icons.dart';
 import 'package:two_are_one/core/widgets/containers.dart';
 import 'package:two_are_one/core/widgets/image.dart';
 import 'package:two_are_one/core/widgets/my_icons.dart';
@@ -33,12 +36,14 @@ class _FavouriteScreenState extends State<FavouriteScreen> {
     _scrollController.addListener(_onScroll);
     _getData(page: 1, refresh: true);
   }
+
   @override
   void dispose() {
     _scrollController.removeListener(_onScroll);
     _scrollController.dispose();
     super.dispose();
   }
+
   void _onScroll() {
     if (_scrollController.position.pixels >=
         _scrollController.position.maxScrollExtent - 200) {
@@ -123,16 +128,21 @@ class _FavouriteScreenState extends State<FavouriteScreen> {
 
   void _onMenuPress(FilterMatchModel item, int user_id) {
     setState(() => _selectedItem = item);
-    showCustomBottomSheet(context,
-        onViewProfile: () {
-      Navigator.push(
-            context, MaterialPageRoute(
-        settings:  RouteSettings(arguments: item),
-        builder: (context) =>  ProfileDetailsScreen(userId:user_id,)
-      ));  },
-        onBlockProfile: () {
-      // _blockUser()
-    });
+    showCustomBottomSheet(
+      context,
+      onViewProfile: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            settings: RouteSettings(arguments: item),
+            builder: (context) => ProfileDetailsScreen(userId: user_id),
+          ),
+        );
+      },
+      onBlockProfile: () {
+        // _blockUser()
+      },
+    );
   }
 
   Widget _buildEmptyState() {
@@ -338,9 +348,9 @@ class _FavouriteScreenState extends State<FavouriteScreen> {
             Expanded(
               child: _loading && _data.isEmpty
                   ? ListView.builder(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 20,
-                        vertical: 10,
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 20.w,
+                        vertical: 10.h,
                       ),
                       itemCount: 4,
                       itemBuilder: (context, index) => _buildSkeletonCard(),
@@ -382,7 +392,14 @@ class _FavouriteScreenState extends State<FavouriteScreen> {
       padding: const EdgeInsets.fromLTRB(25, 25, 25, 10),
       child: Row(
         children: [
-          Texts(text: "Favorites", size: 24, fontWeight: FontWeight.w600),
+          Text(
+            'Favorites',
+            style: GoogleFonts.poppins(
+              fontWeight: FontWeight.w500,
+              fontSize: 24.sp,
+            ),
+          ),
+          // Texts(text: "Favorites", size: 24, sty),
           Spacer(),
           GestureDetector(
             onTap: _onNotificationPress,
@@ -396,10 +413,7 @@ class _FavouriteScreenState extends State<FavouriteScreen> {
                 bottom: 10,
               ),
               border: Border.all(color: Colors.grey, style: BorderStyle.solid),
-              child: Images(
-                imageStr: "assets/svg_images/notification.svg",
-                height: 30,
-              ),
+              child: Images(imageStr: AppIcons.notification, height: 24.h),
             ),
           ),
         ],

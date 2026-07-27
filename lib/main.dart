@@ -151,7 +151,7 @@ Widget _screenFromCache(Map<String, String?> cached) {
     sexuality: cached['sexuality'] ?? "",
   );
 
-  if (complete) return const MainBarScreen();
+  if (complete) return const CustomNavBar();
 
   switch (screenType) {
     case "1":

@@ -36,12 +36,11 @@ class _HomeFilterScreenState extends State<HomeFilterScreen> {
 
   Map<String, dynamic> filterParams = {
     "gender": "men",
-    "age_range": "",       // Apply ke baad ye "18,45" format mein aayega
-    "distance_range": "",  // Apply ke baad ye "0,500" format mein aayega
+    "age_range": "", // Apply ke baad ye "18,45" format mein aayega
+    "distance_range": "", // Apply ke baad ye "0,500" format mein aayega
     "country": "",
     "city": "",
   };
-
 
   void _onSearchChanged(String query) {
     if (_debounce?.isActive ?? false) _debounce!.cancel();
@@ -51,11 +50,12 @@ class _HomeFilterScreenState extends State<HomeFilterScreen> {
       } else {
         setState(() {
           users = [];
-          _hasError = false;  // ✅ clear error on empty search
+          _hasError = false; // ✅ clear error on empty search
         });
       }
     });
   }
+
   // 2. Fetch Profiles (Matches getMatchedProfiles API Logic)
   Future<void> _fetchFilteredProfiles({String? searchTerm}) async {
     setState(() {
@@ -65,7 +65,9 @@ class _HomeFilterScreenState extends State<HomeFilterScreen> {
 
     final body = {
       "filter": "true",
-      "sexual_preference": filterParams["gender"] == "women" ? "Female" : "Male",
+      "sexual_preference": filterParams["gender"] == "women"
+          ? "Female"
+          : "Male",
       "age_range": filterParams["age_range"],
       "distance_range": filterParams["distance_range"],
       "country": filterParams["country"],
@@ -100,7 +102,8 @@ class _HomeFilterScreenState extends State<HomeFilterScreen> {
       setState(() {
         final index = users.indexWhere((u) => u.id == user.id);
         if (index != -1) {
-          users[index] = FilterMatchModel(  // replace object, don't mutate
+          users[index] = FilterMatchModel(
+            // replace object, don't mutate
             id: user.id,
             name: user.name,
             age: user.age,
@@ -109,7 +112,7 @@ class _HomeFilterScreenState extends State<HomeFilterScreen> {
             matchPercent: user.matchPercent,
             imagePath: user.imagePath,
             isOnline: user.isOnline,
-            isFavorite: !user.isFavorite,   // ✅ toggled
+            isFavorite: !user.isFavorite, // ✅ toggled
             isInterested: user.isInterested,
           );
         }
@@ -120,7 +123,10 @@ class _HomeFilterScreenState extends State<HomeFilterScreen> {
 
   void _onLikePress(FilterMatchModel user) async {
     setState(() => _heartLoading.add(user.id));
-    final success = await _homeService.toggleInterest(user.id, user.isInterested);
+    final success = await _homeService.toggleInterest(
+      user.id,
+      user.isInterested,
+    );
     if (success && mounted) {
       setState(() {
         final index = users.indexWhere((u) => u.id == user.id);
@@ -142,6 +148,7 @@ class _HomeFilterScreenState extends State<HomeFilterScreen> {
     }
     setState(() => _heartLoading.remove(user.id));
   }
+
   void _onBlockPress(int id) async {
     setState(() => _blockLoading.add(id));
     final success = await _homeService.blockUser(id);
@@ -157,7 +164,9 @@ class _HomeFilterScreenState extends State<HomeFilterScreen> {
     if (_chatCooldowns.containsKey(userId)) {
       final diff = now.difference(_chatCooldowns[userId]!);
       if (diff.inSeconds < 30) {
-        _showToast("Please wait ${30 - diff.inSeconds}s to send another invite");
+        _showToast(
+          "Please wait ${30 - diff.inSeconds}s to send another invite",
+        );
         return;
       }
     }
@@ -175,6 +184,7 @@ class _HomeFilterScreenState extends State<HomeFilterScreen> {
     _searchController.dispose();
     super.dispose();
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -185,10 +195,14 @@ class _HomeFilterScreenState extends State<HomeFilterScreen> {
           child: Column(
             children: [
               Align(
-                  alignment: AlignmentGeometry.topLeft,
-                  child: Back_Button(
-                      onTap: () => Navigator.push(
-                          context, MaterialPageRoute(builder: (context) => MainBarScreen())))),
+                alignment: AlignmentGeometry.topLeft,
+                child: Back_Button(
+                  onTap: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => CustomNavBar()),
+                  ),
+                ),
+              ),
               const SizedBox(height: 35),
               _buildSearchRow(),
               const SizedBox(height: 20),
@@ -216,9 +230,8 @@ class _HomeFilterScreenState extends State<HomeFilterScreen> {
             hexValue: 0xFFFFFFFF,
             wHeight: 60,
             padding: const EdgeInsets.symmetric(horizontal: 12),
-              radius: BorderRadius.circular(66),
-              border: Border.all(
-                  color: Colors.grey.shade500, width: 0.5),
+            radius: BorderRadius.circular(66),
+            border: Border.all(color: Colors.grey.shade500, width: 0.5),
             child: Row(
               children: [
                 const Images(imageStr: "assets/svg_images/search.svg"),
@@ -241,7 +254,7 @@ class _HomeFilterScreenState extends State<HomeFilterScreen> {
         const SizedBox(width: 15),
         GestureDetector(
           onTap: () => _showFilterSheet(),
-          child: const Images(imageStr: "assets/svg_images/filter.svg")
+          child: const Images(imageStr: "assets/svg_images/filter.svg"),
         ),
       ],
     );
@@ -268,11 +281,13 @@ class _HomeFilterScreenState extends State<HomeFilterScreen> {
           onHeart: () => _onLikePress(user),
           onDislike: () => _onBlockPress(user.id),
           onRequestSend: () => _handleSilentChat(user),
-          onPress: () => Navigator.pushNamed(context, '/profile_detail', arguments: user),
+          onPress: () =>
+              Navigator.pushNamed(context, '/profile_detail', arguments: user),
         );
       },
     );
   }
+
   // State Builders ... (keep your existing Loading/Empty/Error state widgets)
   void _showFilterSheet() {
     showModalBottomSheet(
@@ -289,6 +304,7 @@ class _HomeFilterScreenState extends State<HomeFilterScreen> {
       ),
     );
   }
+
   void _resetFilters() {
     setState(() {
       filterParams = {
@@ -298,7 +314,7 @@ class _HomeFilterScreenState extends State<HomeFilterScreen> {
         "country": "",
         "city": "",
       };
-      _hasError= false;
+      _hasError = false;
       users = [];
       _searchController.clear();
     });
@@ -308,12 +324,19 @@ class _HomeFilterScreenState extends State<HomeFilterScreen> {
     child: Column(
       children: [
         Align(
-            alignment: AlignmentGeometry.topCenter,
-            child: CircularProgressIndicator(color: Color(0xFF77153C))),
+          alignment: AlignmentGeometry.topCenter,
+          child: CircularProgressIndicator(color: Color(0xFF77153C)),
+        ),
         SizedBox(height: 12),
         Align(
-            alignment: AlignmentGeometry.topLeft,
-            child: Texts(text: "Searching profiles...", size: 14,colorHexValue: 0xFF9E9E9E,fontWeight: FontWeight.w300, )),
+          alignment: AlignmentGeometry.topLeft,
+          child: Texts(
+            text: "Searching profiles...",
+            size: 14,
+            colorHexValue: 0xFF9E9E9E,
+            fontWeight: FontWeight.w300,
+          ),
+        ),
       ],
     ),
   );
@@ -322,11 +345,21 @@ class _HomeFilterScreenState extends State<HomeFilterScreen> {
     child: Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        const Text("Something went wrong", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.red)),
+        const Text(
+          "Something went wrong",
+          style: TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+            color: Colors.red,
+          ),
+        ),
         const SizedBox(height: 12),
         ElevatedButton(
-          onPressed: () => _fetchFilteredProfiles(searchTerm: _searchController.text),
-          style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF77153C)),
+          onPressed: () =>
+              _fetchFilteredProfiles(searchTerm: _searchController.text),
+          style: ElevatedButton.styleFrom(
+            backgroundColor: const Color(0xFF77153C),
+          ),
           child: const Text("Try Again", style: TextStyle(color: Colors.white)),
         ),
       ],
@@ -337,9 +370,20 @@ class _HomeFilterScreenState extends State<HomeFilterScreen> {
     child: Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        Text("No matches found", style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500, color: Color(0xFF333333))),
+        Text(
+          "No matches found",
+          style: TextStyle(
+            fontSize: 20,
+            fontWeight: FontWeight.w500,
+            color: Color(0xFF333333),
+          ),
+        ),
         SizedBox(height: 8),
-        Text("Try changing your search or filters", style: TextStyle(fontSize: 14, color: Colors.black), textAlign: TextAlign.center),
+        Text(
+          "Try changing your search or filters",
+          style: TextStyle(fontSize: 14, color: Colors.black),
+          textAlign: TextAlign.center,
+        ),
       ],
     ),
   );

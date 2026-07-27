@@ -112,7 +112,7 @@ class _LoginScreenState extends State<LoginScreen> {
         // Navigate and clear navigation stack
         Navigator.pushAndRemoveUntil(
           context,
-          MaterialPageRoute(builder: (context) => const MainBarScreen()),
+          MaterialPageRoute(builder: (context) => const CustomNavBar()),
           (route) => false,
         );
       } else {

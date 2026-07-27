@@ -1,10 +1,13 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:two_are_one/core/widgets/containers.dart';
 import 'package:two_are_one/core/widgets/divider.dart';
+import 'package:two_are_one/core/widgets/header.dart';
 import 'package:two_are_one/core/widgets/image.dart';
 import 'package:two_are_one/core/widgets/my_icons.dart';
 import 'package:two_are_one/core/widgets/texts.dart';
@@ -270,10 +273,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-        backgroundColor: Colors.white,
-        body: Padding(
+    return Scaffold(
+      backgroundColor: Colors.white,
+      body: SafeArea(
+        child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 20),
           child: Column(
             children: [
@@ -281,11 +284,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  const Texts(
-                    text: "Profile",
-                    fontWeight: FontWeight.w600,
-                    size: 24,
-                    colorHexValue: 0xFF000000,
+                  Text(
+                    'Profile',
+                    style: GoogleFonts.poppins(
+                      fontWeight: FontWeight.w500,
+                      fontSize: 24.sp,
+                    ),
                   ),
                   GestureDetector(
                     onTap: _openMenu,
@@ -437,8 +441,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   Widget _buildCardContent() {
     final profile = _profile;
-    final avatarUrl = _avatarOverrideUrl ?? _fullUrl(
-        profile?.profilePicture);
+    final avatarUrl = _avatarOverrideUrl ?? _fullUrl(profile?.profilePicture);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
