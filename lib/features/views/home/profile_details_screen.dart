@@ -301,7 +301,6 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
 
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: AppBar(title: Text(widget.userId.toString()),),
       body: SafeArea(
         child: Column(
           children: [

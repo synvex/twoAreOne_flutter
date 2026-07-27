@@ -436,269 +436,272 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      body: SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.only(top: 30, left: 20, right: 20),
-          child: Column(
-            children: [
-              // Header -------------------------------------------------------
-              Images(
-                imageStr: 'assets/images/two_are_one.png',
-                height: 55,
-                width: 218,
-              ),
-              const Texts(
-                text:
-                    "Increase Your Matches By Uploading\nYour Photos And Videos",
-                textAlign: TextAlign.center,
-                size: 12,
-                fontWeight: FontWeight.w400,
-              ),
-              const SizedBox(height: 25),
-              Center(
-                child: Stack(
-                  children: [
-                    Containers(
-                      wHeight: 120,
-                      wWidth: 120,
-                      padding: const EdgeInsets.all(2),
-                      border: Border.all(
-                        color: const Color(0xFFB0778E),
-                        width: 2,
+    return PopScope(
+      canPop: false, // Prevents back navigation
+      onPopInvoked: (didPop) {
+        if (didPop) return;},
+      child: Scaffold(
+        backgroundColor: Colors.white,
+        body: SafeArea(
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.only(top: 30, left: 20, right: 20),
+            child: Column(
+              children: [
+                // Header -------------------------------------------------------
+                Images(
+                  imageStr: 'assets/images/two_are_one.png',
+                  height: 55,
+                  width: 218,
+                ),
+                const Texts(
+                  text:
+                      "Increase Your Matches By Uploading\nYour Photos And Videos",
+                  textAlign: TextAlign.center,
+                  size: 12,
+                  fontWeight: FontWeight.w400,
+                ),
+                const SizedBox(height: 25),
+                Center(
+                  child: Stack(
+                    children: [
+                      Containers(
+                        wHeight: 120,
+                        wWidth: 120,
+                        padding: const EdgeInsets.all(2),
+                        border: Border.all(
+                          color: const Color(0xFFB0778E),
+                          width: 2,
+                        ),
+                        hexValue: 0xFFFFFFFF,
+                        opacityValue: 0,
+                        radius: BorderRadius.circular(100),
+                        alignment: Alignment.center,
+                        child: ClipOval(
+                          child: _profileImage != null
+                              ? Image.file(
+                                  _profileImage!,
+                                  fit: BoxFit.cover,
+                                  width: 120,
+                                  height: 120,
+                                )
+                              : const Icon(Icons.person_outline_sharp, size: 80),
+                        ),
                       ),
-                      hexValue: 0xFFFFFFFF,
-                      opacityValue: 0,
-                      radius: BorderRadius.circular(100),
-                      alignment: Alignment.center,
-                      child: ClipOval(
-                        child: _profileImage != null
-                            ? Image.file(
-                                _profileImage!,
-                                fit: BoxFit.cover,
-                                width: 120,
-                                height: 120,
-                              )
-                            : const Icon(Icons.person_outline_sharp, size: 80),
-                      ),
-                    ),
-                    Positioned(
-                      bottom: 11,
-                      right: 9,
-                      child: GestureDetector(
-                        onTap: () => _pickMedia(0),
-                        child: Containers(
-                          hexValue: 0xFFFFFFFF,
-                          radius: BorderRadius.circular(17),
-                          child: MyIcons(
-                            iconData: Icons.add,
-                            size: 18,
-                            color: Colors.black,
+                      Positioned(
+                        bottom: 11,
+                        right: 9,
+                        child: GestureDetector(
+                          onTap: () => _pickMedia(0),
+                          child: Containers(
+                            hexValue: 0xFFFFFFFF,
+                            radius: BorderRadius.circular(17),
+                            child: MyIcons(
+                              iconData: Icons.add,
+                              size: 18,
+                              color: Colors.black,
+                            ),
                           ),
                         ),
                       ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 10),
+                const Texts(
+                  text: "Profile Picture",
+                  size: 20,
+                  fontWeight: FontWeight.w600,
+                ),
+                const SizedBox(height: 15),
+                CustomDropdownField(
+                  label: "Height",
+                  imageStr: "assets/svg_images/height.svg",
+                  value: _selectedHeight,
+                  errorText: _heightError ? "Height is required" : null,
+                  items: _heightOptions,
+                  onChanged: (String? value) {
+                    setState(() {
+                      _selectedHeight = value;
+                      _heightError = false;
+                    });
+                  },
+                ),
+                // Weight dropdown ---------------------------------------------
+                CustomDropdownField(
+                  label: "Weight",
+                  value: _selectedWeight,
+                  imageStr: "assets/svg_images/weight.svg",
+                  items: _weightOptions,
+                  errorText: _weightError ? "Weight is required" : null,
+                  onChanged: (String? value) {
+                    setState(() {
+                      _selectedWeight = value;
+                      _weightError = false;
+                    });
+                  },
+                ),
+                // Work field ---------------------------------------------------
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: Texts(
+                    edgeInsets: const EdgeInsets.only(bottom: 10),
+                    text: "Work",
+                    size: 22,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+                TextField(
+                  controller: _workController, // FIX: wired controller
+                  onChanged: (_) {
+                    setState(() => _workError = false);
+                  },
+                  style: const TextStyle(fontSize: 14),
+                  decoration: InputDecoration(
+                    border: OutlineInputBorder(
+                      borderSide: BorderSide.none,
+                      borderRadius: BorderRadius.circular(50),
+                    ),
+                    contentPadding: const EdgeInsets.symmetric(
+                      vertical: 15,
+                      horizontal: 10,
+                    ),
+                    filled: true,
+                    fillColor: const Color(0xFFF3F3F3),
+                    hintText: "Write about your work",
+                    hintStyle: const TextStyle(fontSize: 12),
+                  ),
+                ),
+                if (_workError)
+                  const Padding(
+                    padding: EdgeInsets.only(left: 16, top: 4),
+                    child: Align(
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        "Work is required",
+                        style: TextStyle(color: Colors.red, fontSize: 12),
+                      ),
+                    ),
+                  ),
+                // Bio field ----------------------------------------------------
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: Texts(
+                    edgeInsets: const EdgeInsets.only(top: 5, bottom: 10),
+                    text: "Bio",
+                    size: 22,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+                Containers(
+                  wHeight: 150,
+                  hexValue: 0xFFF3F3F3,
+                  radius: BorderRadius.circular(20),
+                  alignment: Alignment.topCenter,
+                  child: TextField(
+                    controller: _bioController, // FIX: wired controller
+                    maxLength: 250,
+                    maxLines: 4,
+                    onChanged: (_) =>
+                        setState(() => _bioError = false), // clear on type
+                    style: const TextStyle(
+                      fontSize: 15,
+                      fontWeight: FontWeight.w400,
+                      color: Color(0xFF484848),
+                    ),
+                    decoration: const InputDecoration(
+                      counterStyle: TextStyle(color: Color(0xFF77153C)),
+                      border: InputBorder.none,
+                      contentPadding: EdgeInsets.symmetric(
+                        vertical: 10,
+                        horizontal: 15,
+                      ),
+                      hintText:
+                          "Tell us something about yourself in 250 characters or less",
+                      hintStyle: TextStyle(fontSize: 12),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 20),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    _mediaActionButton(
+                      "Add Photos",
+                      "assets/svg_images/add_photo.svg",
+                      () => _pickMedia(1),
+                    ),
+                    Spacer(),
+                    _mediaActionButton(
+                      "Add Videos",
+                      "assets/svg_images/add_video.svg",
+                      () => _pickMedia(2),
                     ),
                   ],
                 ),
-              ),
-              const SizedBox(height: 10),
-              const Texts(
-                text: "Profile Picture",
-                size: 20,
-                fontWeight: FontWeight.w600,
-              ),
-              const SizedBox(height: 15),
-              CustomDropdownField(
-                label: "Height",
-                imageStr: "assets/svg_images/height.svg",
-                value: _selectedHeight,
-                errorText: _heightError ? "Height is required" : null,
-                items: _heightOptions,
-                onChanged: (String? value) {
-                  setState(() {
-                    _selectedHeight = value;
-                    _heightError = false;
-                  });
-                },
-              ),
-              // Weight dropdown ---------------------------------------------
-              CustomDropdownField(
-                label: "Weight",
-                value: _selectedWeight,
-                imageStr: "assets/svg_images/weight.svg",
-                items: _weightOptions,
-                errorText: _weightError ? "Weight is required" : null,
-                onChanged: (String? value) {
-                  setState(() {
-                    _selectedWeight = value;
-                    _weightError = false;
-                  });
-                },
-              ),
-              // Work field ---------------------------------------------------
-              Align(
-                alignment: Alignment.centerLeft,
-                child: Texts(
-                  edgeInsets: const EdgeInsets.only(bottom: 10),
-                  text: "Work",
-                  size: 22,
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-              TextField(
-                controller: _workController, // FIX: wired controller
-                onChanged: (_) {
-                  setState(() => _workError = false);
-                },
-                style: const TextStyle(fontSize: 14),
-                decoration: InputDecoration(
-                  border: OutlineInputBorder(
-                    borderSide: BorderSide.none,
-                    borderRadius: BorderRadius.circular(50),
-                  ),
-                  contentPadding: const EdgeInsets.symmetric(
-                    vertical: 15,
-                    horizontal: 10,
-                  ),
-                  filled: true,
-                  fillColor: const Color(0xFFF3F3F3),
-                  hintText: "Write about your work",
-                  hintStyle: const TextStyle(fontSize: 12),
-                ),
-              ),
-              if (_workError)
-                const Padding(
-                  padding: EdgeInsets.only(left: 16, top: 4),
-                  child: Align(
+                if (_additionalImages.isNotEmpty) ...[
+                  const SizedBox(height: 15),
+                  const Align(
                     alignment: Alignment.centerLeft,
-                    child: Text(
-                      "Work is required",
-                      style: TextStyle(color: Colors.red, fontSize: 12),
+                    child: Texts(
+                      text: "Selected Images",
+                      fontWeight: FontWeight.bold,
+                      size: 18,
                     ),
                   ),
-                ),
-              // Bio field ----------------------------------------------------
-              Align(
-                alignment: Alignment.centerLeft,
-                child: Texts(
-                  edgeInsets: const EdgeInsets.only(top: 5, bottom: 10),
-                  text: "Bio",
-                  size: 22,
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-              Containers(
-                wHeight: 150,
-                hexValue: 0xFFF3F3F3,
-                radius: BorderRadius.circular(20),
-                alignment: Alignment.topCenter,
-                child: TextField(
-                  controller: _bioController, // FIX: wired controller
-                  maxLength: 250,
-                  maxLines: 4,
-                  onChanged: (_) =>
-                      setState(() => _bioError = false), // clear on type
-                  style: const TextStyle(
-                    fontSize: 15,
-                    fontWeight: FontWeight.w400,
-                    color: Color(0xFF484848),
-                  ),
-                  decoration: const InputDecoration(
-                    counterStyle: TextStyle(color: Color(0xFF77153C)),
-                    border: InputBorder.none,
-                    contentPadding: EdgeInsets.symmetric(
-                      vertical: 10,
-                      horizontal: 15,
-                    ),
-                    hintText:
-                        "Tell us something about yourself in 250 characters or less",
-                    hintStyle: TextStyle(fontSize: 12),
-                  ),
-                ),
-              ),
-              const SizedBox(height: 20),
-              // Add Photos / Videos buttons ----------------------------------
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  _mediaActionButton(
-                    "Add Photos",
-                    "assets/svg_images/add_photo.svg",
-                    () => _pickMedia(1),
-                  ),
-                  Spacer(),
-                  _mediaActionButton(
-                    "Add Videos",
-                    "assets/svg_images/add_video.svg",
-                    () => _pickMedia(2),
+                  const SizedBox(height: 10),
+                  Wrap(
+                    spacing: 10,
+                    runSpacing: 10,
+                    children: _additionalImages.asMap().entries.map((entry) {
+                      return _buildMediaPreview(
+                        entry.value,
+                        () =>
+                            setState(() => _additionalImages.removeAt(entry.key)),
+                        isVideo: false,
+                      );
+                    }).toList(),
                   ),
                 ],
-              ),
-              // Image previews -----------------------------------------------
-              if (_additionalImages.isNotEmpty) ...[
-                const SizedBox(height: 15),
-                const Align(
-                  alignment: Alignment.centerLeft,
-                  child: Texts(
-                    text: "Selected Images",
-                    fontWeight: FontWeight.bold,
-                    size: 18,
+                // Video previews -----------------------------------------------
+                if (_additionalVideos.isNotEmpty) ...[
+                  const SizedBox(height: 20),
+                  const Align(
+                    alignment: Alignment.centerLeft,
+                    child: Texts(
+                      text: "Selected Videos",
+                      fontWeight: FontWeight.bold,
+                      size: 18,
+                    ),
                   ),
-                ),
-                const SizedBox(height: 10),
-                Wrap(
-                  spacing: 10,
-                  runSpacing: 10,
-                  children: _additionalImages.asMap().entries.map((entry) {
-                    return _buildMediaPreview(
-                      entry.value,
-                      () =>
-                          setState(() => _additionalImages.removeAt(entry.key)),
-                      isVideo: false,
-                    );
-                  }).toList(),
-                ),
-              ],
-              // Video previews -----------------------------------------------
-              if (_additionalVideos.isNotEmpty) ...[
-                const SizedBox(height: 20),
-                const Align(
-                  alignment: Alignment.centerLeft,
-                  child: Texts(
-                    text: "Selected Videos",
-                    fontWeight: FontWeight.bold,
-                    size: 18,
-                  ),
-                ),
-                const SizedBox(height: 10),
-                Column(
-                  children: _additionalVideos.asMap().entries.map((entry) {
-                    return Padding(
-                      padding: const EdgeInsets.only(bottom: 10),
-                      child: _buildMediaPreview(
-                        entry.value,
-                        () => setState(
-                          () => _additionalVideos.removeAt(entry.key),
+                  const SizedBox(height: 10),
+                  Column(
+                    children: _additionalVideos.asMap().entries.map((entry) {
+                      return Padding(
+                        padding: const EdgeInsets.only(bottom: 10),
+                        child: _buildMediaPreview(
+                          entry.value,
+                          () => setState(
+                            () => _additionalVideos.removeAt(entry.key),
+                          ),
+                          isVideo: true,
                         ),
-                        isVideo: true,
-                      ),
-                    );
-                  }).toList(),
+                      );
+                    }).toList(),
+                  ),
+                ],
+                const SizedBox(height: 40),
+                // Next button --------------------------------------------------
+                MainButtonWidget(
+                  text: "Next",
+                  isLoading: _isLoading,
+                  onTap: _isLoading ? null : _onNextTapped,
+                  gradient: const LinearGradient(
+                    colors: [Color(0xFF77153C), Color(0xFFDD276F)],
+                  ),
                 ),
+                const SizedBox(height: 80),
               ],
-              const SizedBox(height: 40),
-              // Next button --------------------------------------------------
-              MainButtonWidget(
-                text: "Next",
-                isLoading: _isLoading,
-                onTap: _isLoading ? null : _onNextTapped,
-                gradient: const LinearGradient(
-                  colors: [Color(0xFF77153C), Color(0xFFDD276F)],
-                ),
-              ),
-              const SizedBox(height: 80),
-            ],
+            ),
           ),
         ),
       ),
