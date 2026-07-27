@@ -402,51 +402,6 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                 ),
               ),
-              SizedBox(height: 30.h),
-              // Divider
-              Row(
-                children: [
-                  const Expanded(
-                    child: Images(imageStr: "assets/images/left_polygon.svg"),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 10.w),
-                    child: const Texts(
-                      text: "Or Login with",
-                      colorHexValue: 0xFF000000,
-                      size: 12,
-                      fontWeight: FontWeight.w300,
-                    ),
-                  ),
-                  const Expanded(
-                    child: Images(imageStr: 'assets/images/right_polygon.svg'),
-                  ),
-                ],
-              ),
-              SizedBox(height: 30.h),
-              // Social Icons
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  InkWell(
-                    onTap: () => Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => MainScreen()),
-                    ),
-                    child: Images(
-                      imageStr: "assets/images/apple_img.png",
-                      height: 42.h,
-                      width: 42.h,
-                    ),
-                  ),
-                  SizedBox(width: 17.w),
-                  Images(
-                    imageStr: "assets/images/google_img.png",
-                    height: 42.h,
-                    width: 42.w,
-                  ),
-                ],
-              ),
               SizedBox(height: 60.h),
             ],
           ),

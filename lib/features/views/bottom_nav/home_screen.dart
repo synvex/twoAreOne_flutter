@@ -7,19 +7,20 @@ import 'package:two_are_one/core/widgets/texts.dart';
 import 'package:two_are_one/core/widgets/top_toast.dart';
 import 'package:two_are_one/data/models/user_match_model.dart';
 import 'package:two_are_one/data/services/home_service.dart';
+import 'package:two_are_one/features/views/Interested/interrested_user_screen.dart';
+import 'package:two_are_one/features/views/chat/message_screen.dart';
+import 'package:two_are_one/features/views/favourites/favourites_screen.dart';
 import 'package:two_are_one/features/views/home/home_filter_screen.dart';
 import 'package:two_are_one/features/views/home/profile_card.dart';
 import 'package:two_are_one/features/views/notification/notification_screen.dart';
-
+import 'package:two_are_one/features/views/visted_screen.dart';
 const String kUploadImagesBase = "https://www.twoareone.love/uploads/";
-
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
 }
-
 class _HomeScreenState extends State<HomeScreen> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   final HomeService _homeService = HomeService();
@@ -45,14 +46,11 @@ class _HomeScreenState extends State<HomeScreen> {
     _loadUserInfo(); // ✅ load real name/email/counts
     _fetchProfiles(refresh: true);
   }
-
   @override
   void dispose() {
     _scrollController.dispose();
     super.dispose();
   }
-
-  // lib/features/home/home_screen.dart -> _loadUserInfo method
   Future<void> _loadUserInfo() async {
     final res = await _homeService.getUserInfo();
     if (res['success'] == true && mounted) {
@@ -82,7 +80,6 @@ class _HomeScreenState extends State<HomeScreen> {
       });
     }
   }
-
   void _onScroll() {
     if (_scrollController.position.pixels >=
         _scrollController.position.maxScrollExtent - 200) {
@@ -91,7 +88,6 @@ class _HomeScreenState extends State<HomeScreen> {
       }
     }
   }
-
   Future<void> _fetchProfiles({bool refresh = false}) async {
     if (refresh) {
       setState(() {
@@ -148,7 +144,6 @@ class _HomeScreenState extends State<HomeScreen> {
       });
     }
   }
-
   void _handleFavorite(FilterMatchModel user) async {
     setState(() => _loadingStars.add(user.id));
     final success = await _homeService.toggleFavorite(user.id, user.isFavorite);
@@ -164,7 +159,6 @@ class _HomeScreenState extends State<HomeScreen> {
     }
     setState(() => _loadingStars.remove(user.id));
   }
-
   void _handleInterest(FilterMatchModel user) async {
     setState(() => _loadingHearts.add(user.id));
     final success = await _homeService.toggleInterest(
@@ -183,7 +177,6 @@ class _HomeScreenState extends State<HomeScreen> {
     }
     setState(() => _loadingHearts.remove(user.id));
   }
-
   void _handleBlock(FilterMatchModel user) async {
     setState(() => _loadingBlocks.add(user.id));
     final success = await _homeService.blockUser(user.id);
@@ -206,7 +199,6 @@ class _HomeScreenState extends State<HomeScreen> {
     }
     setState(() => _loadingBlocks.remove(user.id));
   }
-
   final Map<String, DateTime> _chatCooldowns = {};
   void _handleSilentChat(FilterMatchModel user) {
     final userId = user.id.toString();
@@ -231,7 +223,6 @@ class _HomeScreenState extends State<HomeScreen> {
       type: ToastType.success,
     );
   }
-
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -305,7 +296,6 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
     );
   }
-
   Widget _buildHeader() {
     return Padding(
       padding: const EdgeInsets.fromLTRB(25, 45, 25, 18),
@@ -359,10 +349,6 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ),
           ),
-          // GestureDetector(
-          //   onTap: () => _scaffoldKey.currentState?.openDrawer(),
-          //   child: const Icon(Icons.menu, size: 30),
-          // ),
           const Spacer(),
           Images(imageStr: "assets/images/two_are_one.png", height: 35),
           const Spacer(),
@@ -418,7 +404,6 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
     );
   }
-
   Widget _buildActionBanner() {
     return Container(
       decoration: BoxDecoration(
@@ -524,9 +509,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                 height: 1.2,
                               ),
                             ),
-
                             const SizedBox(height: 3),
-
                             // Email
                             Text(
                               _userEmail,
@@ -542,9 +525,6 @@ class _HomeScreenState extends State<HomeScreen> {
 
                             const SizedBox(height: 7),
 
-                            // ── "Online now" pill ─────────────────────────────
-                            // RN: alignSelf:'flex-start', bg rgba(255,255,255,0.18)
-                            // border rgba(255,255,255,0.28), borderRadius:20
                             Containers(
                               padding: const EdgeInsets.symmetric(
                                 horizontal: 10,
@@ -598,12 +578,6 @@ class _HomeScreenState extends State<HomeScreen> {
                         Expanded(
                           child: _buildStat(_favCount.toString(), "FAVOURITES"),
                         ),
-                        // RN: width:1, height:32, rgba(255,255,255,0.2)
-                        // Containers(
-                        //   wWidth: 1,
-                        //   wHeight: 32,
-                        //   hexValue: 0x33FFFFFF,
-                        // ),
                         CustomDivider(),
                         // INTERESTED
                         Expanded(
@@ -612,11 +586,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             "INTERESTED",
                           ),
                         ),
-                        // Containers(
-                        //   wWidth: 1,
-                        //   wHeight: 32,
-                        //   hexValue: 0x33FFFFFF,
-                        // ),
+
                         CustomDivider(),
                         // BLOCKS
                         Expanded(
@@ -633,7 +603,6 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
     );
   }
-
   Widget _buildStat(String count, String label) {
     return Column(
       children: [
@@ -647,7 +616,6 @@ class _HomeScreenState extends State<HomeScreen> {
       ],
     );
   }
-
   Widget _buildDrawer() {
     return Drawer(
       backgroundColor: Colors.white,
@@ -685,17 +653,21 @@ class _HomeScreenState extends State<HomeScreen> {
             accountName: Text(_userName),
             accountEmail: Text(_userEmail),
           ),
-          _drawerItem("Matches", isSelected: true),
-          _drawerItem("Messages"),
-          _drawerItem("Interested"),
-          _drawerItem("Visited You"),
-          _drawerItem("Favorites"),
+          _drawerItem("Matches", isSelected: true, onTap: () => Navigator.push(context, MaterialPageRoute(
+            builder: (context) => HomeScreen(),))),
+          _drawerItem("Messages", onTap: () => Navigator.push(context, MaterialPageRoute(
+            builder: (context) => MessageScreen(),))),
+          _drawerItem("Interested", onTap: () => Navigator.push(context, MaterialPageRoute(
+            builder: (context) => InterestedUserScreen(),))),
+          _drawerItem("Visited You", onTap: () => Navigator.push(context, MaterialPageRoute(
+            builder: (context) => VisitedUserScreen(),))),
+          _drawerItem("Favorites", onTap: () => Navigator.push(context, MaterialPageRoute(
+            builder: (context) => FavouriteUserScreen(),))),
         ],
       ),
     );
   }
-
-  Widget _drawerItem(String title, {bool isSelected = false}) {
+  Widget _drawerItem(String title, {bool isSelected = false, required VoidCallback onTap}) {
     return ListTile(
       tileColor: isSelected
           ? const Color(0xFFDD276F).withValues(alpha: 0.1)
@@ -707,10 +679,9 @@ class _HomeScreenState extends State<HomeScreen> {
           fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
         ),
       ),
-      onTap: () => Navigator.pop(context),
+      onTap: onTap,
     );
   }
-
   Widget _buildSectionDivider(String title) {
     return Row(
       children: [
@@ -728,8 +699,6 @@ class _HomeScreenState extends State<HomeScreen> {
       ],
     );
   }
-
-  // Placeholder for a single card
   Widget _buildShimmerCard() {
     return Shimmer.fromColors(
       baseColor: Colors.grey[300]!,
@@ -750,7 +719,6 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
     );
   }
-
   Widget _buildSkeletonGrid() {
     return ListView(
       padding: const EdgeInsets.symmetric(horizontal: 20),

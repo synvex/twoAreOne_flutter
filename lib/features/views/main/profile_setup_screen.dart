@@ -113,8 +113,10 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
     setState(() => _isLoading = false);
 
     if (result['success'] == true) {
+
       // 3. Save locally for the HomeScreen Banner
       final prefs = await SharedPreferences.getInstance();
+      await prefs.setString('cached_screen_type', '2'); // Move to Questionnaire stage
       await prefs.setString('profile_height', _selectedHeight!);
       await prefs.setString('profile_work', _workController.text.trim());
       await prefs.setString('profile_bio', _bioController.text.trim());

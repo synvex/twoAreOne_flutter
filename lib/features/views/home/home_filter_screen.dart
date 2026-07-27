@@ -41,13 +41,7 @@ class _HomeFilterScreenState extends State<HomeFilterScreen> {
     "country": "",
     "city": "",
   };
-  // Map<String, dynamic> filterParams = {
-  //   "gender": "men",
-  //   "age_range": "",
-  //   "distance_range": "",
-  //   "country": "",
-  //   "city": "",
-  // };
+
 
   void _onSearchChanged(String query) {
     if (_debounce?.isActive ?? false) _debounce!.cancel();
@@ -187,7 +181,7 @@ class _HomeFilterScreenState extends State<HomeFilterScreen> {
       backgroundColor: Colors.white,
       body: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.all(22.0),
+          padding: const EdgeInsets.all(20.0),
           child: Column(
             children: [
               Align(
@@ -255,11 +249,11 @@ class _HomeFilterScreenState extends State<HomeFilterScreen> {
 
   Widget _buildUserGrid() {
     return GridView.builder(
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+      // padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 9),
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 2,
-        crossAxisSpacing: 15,
-        mainAxisSpacing: 15,
+        crossAxisSpacing: 12,
+        mainAxisSpacing: 12,
         childAspectRatio: 0.72,
       ),
       itemCount: users.length,

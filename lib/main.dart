@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:two_are_one/core/constants/app_colors.dart';
 import 'package:two_are_one/data/services/Api_Helper/api_manager.dart';
 import 'package:two_are_one/data/services/home_service.dart';
 import 'package:two_are_one/data/viewmodels/chat_viewmodel.dart';
@@ -19,7 +18,12 @@ import 'package:two_are_one/features/views/profile/edit_profile_screen.dart';
 import 'core/routes/routes.dart';
 import 'data/models/user_profile_model.dart';
 import 'features/views/Blocked/blocked_screen.dart';
-import 'features/views/auth/onboarding_screen.dart';
+import 'features/views/Settings/add_new_email_screen.dart';
+import 'features/views/Settings/change_email_otp_screen.dart';
+import 'features/views/Settings/change_otp_screen.dart';
+import 'features/views/Settings/change_phone_screen.dart';
+import 'features/views/Settings/reset_password_screen.dart';
+import 'features/views/auth/onboarding.dart';
 import 'features/views/others/privacy.dart';
 import 'features/views/others/terms_and_conditions_screen.dart';
 import 'features/views/visted_screen.dart';
@@ -50,12 +54,11 @@ class MyApp extends StatelessWidget {
       child: MaterialApp(
         title: 'Two Are One',
         debugShowCheckedModeBanner: false,
-        navigatorKey:
-            navigatorKey, // Global key so ApiManager can show dialogs/navigate
+        navigatorKey: navigatorKey,
+        // Global key so ApiManager can show dialogs/navigate
         theme: ThemeData(
           colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
           useMaterial3: true,
-          scaffoldBackgroundColor: AppColors.background,
         ),
         routes: {
           '/settings_screen': (context) => const SettingsScreen(),
@@ -66,9 +69,58 @@ class MyApp extends StatelessWidget {
           '/blocked_screen': (context) => const BlockedUserScreen(),
           'visited_screen': (context) => const VisitedUserScreen(),
           SettingsRoutes.privacyPolicy: (context) =>
-              const PrivacyPolicyScreen(),
+          const PrivacyPolicyScreen(),
           SettingsRoutes.termsOfUse: (context) =>
-              const TermsAndConditionsScreen(),
+          const TermsAndConditionsScreen(),
+        },
+        onGenerateRoute: (settings) {
+          final args = settings.arguments is Map
+              ? settings.arguments as Map
+              : const {};
+          DateTime asDateTime(dynamic v) => v is DateTime
+              ? v
+              : (v is int
+              ? DateTime.fromMillisecondsSinceEpoch(v)
+              : DateTime.now().add(const Duration(seconds: 60)));
+          switch (settings.name) {
+            case SettingsRoutes.resetPassword:
+              return MaterialPageRoute(
+                settings: settings,
+                builder: (_) => const ResetPasswordScreen(),
+              );
+            case SettingsRoutes.addNewEmail:
+              return MaterialPageRoute(
+                settings: settings,
+                builder: (_) => const AddNewEmailScreen(),
+              );
+            case AppRoutes.changePhoneScreen:
+              return MaterialPageRoute(
+                settings: settings,
+                builder: (_) => const ChangePhoneScreen(),
+              );
+            case SettingsRoutes.changeOtp:
+            case AppRoutes.changeOtpScreen:
+              return MaterialPageRoute(
+                settings: settings,
+                builder: (_) => ChangeOtpScreen(
+                  phone: args['phone']?.toString() ?? '',
+                  isCurrent: args['isCurrent'] as bool? ?? false,
+                  endTime: asDateTime(args['endTime']),
+                ),
+              );
+            case SettingsRoutes.changeEmailOtp:
+            case AppRoutes.changeEmailOtpScreen:
+              return MaterialPageRoute(
+                settings: settings,
+                builder: (_) => ChangeEmailOtpScreen(
+                  email: args['email']?.toString() ?? '',
+                  isCurrent: args['isCurrent'] as bool? ?? false,
+                  endTime: asDateTime(args['endTime']),
+                ),
+              );
+            default:
+              return null; // unknown routes still fall through to "Coming soon" — unchanged behavior
+          }
         },
         home: FutureBuilder<Widget>(
           future: getInitialScreen(),
@@ -88,7 +140,7 @@ class MyApp extends StatelessWidget {
 
 Widget _screenFromCache(Map<String, String?> cached) {
   final complete = cached['complete_question'] == "true";
-  final screenType = cached['screen_type'] ?? "0";
+  final screenType = cached['screen_type'];
 
   final skeletonModel = UserProfileModel(
     gender: cached['gender'] ?? "",
@@ -98,20 +150,19 @@ Widget _screenFromCache(Map<String, String?> cached) {
   if (complete) return const MainBarScreen();
 
   switch (screenType) {
-    case "0":
-      return const MainScreen();
     case "1":
       return ProfileSetupScreen(profileModel: skeletonModel);
     case "2":
       return QuestionnaireScreen(profileModel: skeletonModel);
+    case "0":
     default:
       return const MainScreen();
   }
 }
 
 Future<Map<String, String?>> _readCachedUserInfo(
-  SharedPreferences prefs,
-) async {
+    SharedPreferences prefs,
+    ) async {
   return {
     'complete_question': prefs.getString('cached_complete_question'),
     'screen_type': prefs.getString('cached_screen_type'),
@@ -121,9 +172,10 @@ Future<Map<String, String?>> _readCachedUserInfo(
 }
 
 Future<void> _writeCachedUserInfo(
-  SharedPreferences prefs,
-  Map<String, dynamic> data,
-) async {
+    SharedPreferences prefs,
+    Map<String, dynamic> data,
+    ) async
+{
   await prefs.setString(
     'cached_complete_question',
     data['complete_question']?.toString() ?? "",

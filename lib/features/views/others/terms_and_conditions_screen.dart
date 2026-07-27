@@ -51,10 +51,12 @@ class _TermsView extends StatelessWidget {
         message: viewModel.error?.message ?? 'Error loading content.',
         onRetry: () => viewModel.load(),
       )
-          : SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
-        child: Html(data: viewModel.data?.pagesContent ?? ''),
-      ),
+          : SafeArea(
+            child: SingleChildScrollView(
+                    padding: const EdgeInsets.all(16),
+                    child: Html(data: viewModel.data?.pagesContent ?? ''),
+                  ),
+          ),
     );
   }
 }

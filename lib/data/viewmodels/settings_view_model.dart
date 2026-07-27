@@ -1,37 +1,6 @@
-// lib/features/viewmodels/settings_view_model.dart
-//
-// ViewModel for SettingsScreen (strict MVVM: this class owns ALL state and
-// business logic; the View only reads from it and calls its methods).
-//
-// Built on `ChangeNotifier` (part of the Flutter SDK, no extra package
-// needed) so the View can rebuild with a plain `AnimatedBuilder` /
-// `ListenableBuilder`.
-//
-// Maps 1:1 onto the RN screen's local state
-// (`Screens/AppScreens/SettingsScreen/index.js`):
-//
-//   RN useState                Flutter field
-//   ------------------------------------------------
-//   loader                      logoutLoading
-//   showLogoutModal             showLogoutModal
-//   phoneVisible                showPhoneConfirm
-//   deleteLoader                deleteLoading
-//   phoneLoader                 phoneLoading
-//   showDeleteModal             showDeleteModal
-//   emailVisible                showEmailConfirm
-//   emailLoader                 emailLoading
-//   on (notification toggle)    notificationsOn
-//
-// Navigation and Firebase phone-verification results are surfaced to the
-// View via callback parameters passed into the relevant method (rather
-// than the ViewModel importing BuildContext/Navigator), keeping this class
-// UI-framework-free and easily testable.
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:two_are_one/features/views/Settings/change_email_otp_screen.dart';
-
 import '../../data/models/user_info.dart';
 import '../../data/services/setting.dart';
 import '../../data/services/auth_service.dart';
@@ -50,9 +19,6 @@ class SettingsViewModel extends ChangeNotifier {
   bool isLoadingUser = true;
   SettingsUserInfo user = const SettingsUserInfo();
 
-  // ── Notification toggle ─────────────────────────────────────────────
-  // RN never persists this anywhere (no API call in the RN source) —
-  // it's purely local UI state, replicated exactly here.
   bool notificationsOn = false;
 
   // ── Logout ───────────────────────────────────────────────────────────
@@ -92,8 +58,6 @@ class SettingsViewModel extends ChangeNotifier {
     notificationsOn = value;
     notifyListeners();
   }
-
-  // ── Logout flow ───────────────────────────────────────────────────────
   void openLogoutModal() {
     showLogoutModal = true;
     notifyListeners();
@@ -128,7 +92,6 @@ class SettingsViewModel extends ChangeNotifier {
     }
   }
 
-  // ── Delete account flow ─────────────────────────────────────────────
   void openDeleteModal() {
     showDeleteModal = true;
     notifyListeners();
@@ -140,7 +103,6 @@ class SettingsViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  /// RN: `handleDeleteAccount`.
   Future<void> confirmDeleteAccount({
     required VoidCallback onSuccess,
     required ValueChanged<String> onError,
@@ -174,7 +136,7 @@ class SettingsViewModel extends ChangeNotifier {
   }
 
   Future<void> confirmPhoneChange({
-    required void Function(String verificationId, String phone, int endTime)
+    required void Function(String verificationId, String phone, DateTime endTime)
     onCodeSent,
     required ValueChanged<String> onError,
   }) async
@@ -195,7 +157,8 @@ class SettingsViewModel extends ChangeNotifier {
           phoneLoading = false;
           showPhoneConfirm = false;
           notifyListeners();
-          final endTime = DateTime.now().millisecondsSinceEpoch + 60000;
+          // final endTime = DateTime.now().millisecondsSinceEpoch + 60000;
+          final endTime = DateTime.now().add(const Duration(seconds: 60));
           onCodeSent(verificationId, phone, endTime);
         },
         onVerificationFailed: (e) {
@@ -224,7 +187,7 @@ class SettingsViewModel extends ChangeNotifier {
 
   /// RN: `onEmailContinuePress`.
   Future<void> confirmEmailChange({
-    required void Function(String email, int endTime) onSent,
+    required void Function(String email, DateTime endTime) onSent,
     required ValueChanged<String> onError,
   }) async
   {
@@ -238,7 +201,8 @@ class SettingsViewModel extends ChangeNotifier {
       emailLoading = false;
       showEmailConfirm = false;
       notifyListeners();
-      final endTime = DateTime.now().millisecondsSinceEpoch + 60000;
+      // final endTime = DateTime.now().millisecondsSinceEpoch + 60000;
+      final endTime = DateTime.now().add(const Duration(seconds: 60));
       onSent(user.email, endTime);
     } else {
       emailLoading = false;

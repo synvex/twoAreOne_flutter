@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:two_are_one/features//views/main/main_screen_card.dart';
 import 'package:two_are_one/features//views/main/profile_setup_screen.dart';
 import 'package:two_are_one/core/widgets/main_button_widget.dart';
@@ -73,6 +74,11 @@ class _MainScreenState extends State<MainScreen> {
     setState(() => _isLoading = false);
 
     if (result['success'] == true) {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString('cached_screen_type', '1');
+      await prefs.setString('cached_gender', pref.gender);
+      await prefs.setString('cached_sexuality', pref.lookingFor);
+
       // Build the profile model and carry it forward to the next screen.
       final profileModel = UserProfileModel(
         gender: pref.gender,

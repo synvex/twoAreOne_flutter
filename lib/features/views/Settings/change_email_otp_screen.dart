@@ -2,18 +2,14 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:provider/provider.dart';
 import 'package:two_are_one/core/Error/api_error.dart';
 import 'package:two_are_one/features/views/Settings/widgets/custom_alert.dart';
-
 import '../../../core/constants/app_colors.dart';
-import '../../../core/constants/app_icons.dart';
 import '../../../core/routes/routes.dart';
 import '../../../core/widgets/back_button_header.dart';
 import '../../../core/widgets/custom_button.dart';
 import '../../../data/api_endpoints.dart';
 import '../../../data/repo/settings_Api_services.dart';
-import '../../../data/viewmodels/setting_auth_view_model.dart';
 
 class ChangeEmailOtpScreen extends StatefulWidget {
   final String email;
@@ -70,12 +66,13 @@ class _ChangeEmailOtpScreenState extends State<ChangeEmailOtpScreen> {
       if (widget.isCurrent) {
         await ApiService.request(ApiEndpoints.currentEmailVerifyOtp, {'otp': _code});
         if (!mounted) return;
-        Navigator.of(context).pushReplacementNamed(AuthRoutes.verifiedScreen);
+        // Navigator.of(context).pushReplacementNamed(AuthRoutes.verifiedScreen);
+        Navigator.of(context).pushReplacementNamed(SettingsRoutes.addNewEmail);
       } else {
         await ApiService.request(ApiEndpoints.updateEmailVerifyOtp, {'new_email': widget.email, 'otp': _code});
         if (!mounted) return;
-        final authVm = context.read<AuthViewModel>();
-        authVm.setRefreshProfile(!authVm.refreshProfile);
+        // final authVm = context.read<AuthViewModel>();
+        // authVm.setRefreshProfile(!authVm.refreshProfile);
         await CustomAlert.showMessage(context, title: 'Success', message: 'Your email address has been changed');
         if (mounted) {
           Navigator.of(context).popUntil((r) => r.settings.name ==

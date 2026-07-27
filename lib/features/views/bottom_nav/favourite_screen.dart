@@ -33,14 +33,12 @@ class _FavouriteScreenState extends State<FavouriteScreen> {
     _scrollController.addListener(_onScroll);
     _getData(page: 1, refresh: true);
   }
-
   @override
   void dispose() {
     _scrollController.removeListener(_onScroll);
     _scrollController.dispose();
     super.dispose();
   }
-
   void _onScroll() {
     if (_scrollController.position.pixels >=
         _scrollController.position.maxScrollExtent - 200) {
@@ -52,7 +50,6 @@ class _FavouriteScreenState extends State<FavouriteScreen> {
     if (!refresh) {
       setState(() => _loading = true);
     }
-
     try {
       final result = await _favServices.getFavouritedList(
         page: page,
@@ -113,29 +110,6 @@ class _FavouriteScreenState extends State<FavouriteScreen> {
     }
   }
 
-  Future<void> _blockUser() async {
-    if (_selectedItem == null) return;
-    setState(() => _blockUserLoading = true);
-
-    try {
-      // NOTE: "Block Profile" ka endpoint aapke shared Favourite Postman
-      // collection mein nahi hai — ye alag "User Actions" collection mein
-      // hoga. Apni BlockService (ya jo bhi service ho) yahan call karein.
-      // Filhal placeholder chhoda hai:
-      // await _blockService.blockUser(profileUserId: _selectedItem!.id.toString());
-      if (!mounted) return;
-      setState(() {
-        _data.removeWhere((e) => e.id == _selectedItem!.id);
-        _blockUserLoading = false;
-      });
-      Navigator.pop(context); // bottom sheet band karein
-    } catch (e) {
-      if (!mounted) return;
-      setState(() => _blockUserLoading = false);
-      _showError(e.toString());
-    }
-  }
-
   void _showError(String message) {
     ScaffoldMessenger.of(
       context,
@@ -146,90 +120,21 @@ class _FavouriteScreenState extends State<FavouriteScreen> {
     // TODO: Apni notification screen route yahan navigate karein
     // Navigator.pushNamed(context, NotificationScreen.routeName);
   }
-  void _onMenuPress(FilterMatchModel item) {
+
+  void _onMenuPress(FilterMatchModel item, int user_id) {
     setState(() => _selectedItem = item);
     showCustomBottomSheet(context,
-        onViewProfile: () {Navigator.push(context, MaterialPageRoute(builder: (context) =>
-          ProfileDetailsScreen()));  },
+        onViewProfile: () {
+      Navigator.push(
+            context, MaterialPageRoute(
+        settings:  RouteSettings(arguments: item),
+        builder: (context) =>  ProfileDetailsScreen(userId:user_id,)
+      ));  },
         onBlockProfile: () {
       // _blockUser()
     });
   }
 
-  void _showBottomSheet() {
-    showModalBottomSheet(
-      context: context,
-      backgroundColor: Colors.white,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-      ),
-      builder: (context) {
-        return StatefulBuilder(
-          builder: (context, setModalState) {
-            return SafeArea(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(vertical: 20),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    MenuItem(
-                      imgStr: 'assets/svg_images/Favorite/viewProfile.svg',
-                      label: "View Profile",
-                      onPress: () {
-                        Navigator.pop(context);
-                        // Navigate logic here
-                      },
-                    ),
-                    MenuItem(
-                      imgStr: 'assets/svg_images/Favorite/blockProfile.svg',
-                      label: "Block Profile",
-                      iconLoading: false, // pass state here
-                      onPress: () {
-                        // Block logic
-                      },
-                    ),
-                  ],
-                ),
-              ),
-            );
-          },
-        );
-      },
-    );
-  }
-
-  // ── Header (RN ke Header() jaisa) ────────────────────────────────────────
-  // Widget _buildHeader() {
-  //   return Padding(
-  //     padding: const EdgeInsets.fromLTRB(20, 16, 20, 8),
-  //     child: Row(
-  //       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-  //       children: [
-  //         const Text(
-  //           "Favorites",
-  //           style: TextStyle(
-  //             fontSize: 28,
-  //             fontWeight: FontWeight.bold,
-  //             color: Colors.black,
-  //           ),
-  //         ),
-  //         GestureDetector(
-  //           onTap: _onNotificationPress,
-  //           child: Container(
-  //             width: 44,
-  //             height: 44,
-  //             decoration: BoxDecoration(
-  //               shape: BoxShape.circle,
-  //               border: Border.all(color: Colors.black, width: 1.2),
-  //             ),
-  //             child: const Icon(Icons.notifications_none, color: Colors.black),
-  //           ),
-  //         ),
-  //       ],
-  //     ),
-  //   );
-  // }
-  // ── Empty State (RN ke EmptyList jaisa) ──────────────────────────────────
   Widget _buildEmptyState() {
     return Center(
       child: Padding(
@@ -260,7 +165,6 @@ class _FavouriteScreenState extends State<FavouriteScreen> {
     );
   }
 
-  // ── Skeleton Card (RN ke renderSkeletonItem jaisa) ───────────────────────
   Widget _buildSkeletonCard() {
     return Container(
       margin: const EdgeInsets.only(bottom: 20),
@@ -327,7 +231,7 @@ class _FavouriteScreenState extends State<FavouriteScreen> {
               top: 12,
               right: 12,
               child: GestureDetector(
-                onTap: () => _onMenuPress(person),
+                onTap: () => _onMenuPress(person, person.id),
                 child: const MyIcons(
                   iconData: Icons.more_horiz_outlined,
                   size: 40,
