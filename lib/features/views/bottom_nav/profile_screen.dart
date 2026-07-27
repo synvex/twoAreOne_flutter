@@ -190,104 +190,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
-  void _openOptionsSheet() {
-    showModalBottomSheet(
-      context: context,
-      backgroundColor: Colors.white,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(48)),
-      ),
-      builder: (sheetContext) => SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              _sheetItem(
-                icon: Icons.edit_outlined,
-                label: "Edit Profile",
-                onTap: () async {
-                  Navigator.pop(sheetContext);
-                  // RN refreshes profile/stats every time this screen regains
-                  // focus (useFocusEffect + redux `refreshProfile` flag). Editing
-                  // the profile is the one navigation that can change that data,
-                  // so re-fetch as soon as we're back from it.
-                  await Navigator.pushNamed(context, '/edit_profile');
-                  if (mounted) _getUserInfo();
-                },
-              ),
-              const SizedBox(height: 10),
-              _sheetItem(
-                icon: Icons.delete_outline,
-                label: "Delete account",
-                labelColor: const Color(0xFFD00000),
-                onTap: () {
-                  Navigator.pop(sheetContext);
-                  Future.delayed(const Duration(milliseconds: 300), () {
-                    if (mounted) _showDeleteDialog();
-                  });
-                },
-              ),
-              const SizedBox(height: 10),
-              _sheetItem(
-                icon: Icons.logout,
-                label: "Logout",
-                onTap: () {
-                  Navigator.pop(sheetContext);
-                  Future.delayed(const Duration(milliseconds: 300), () {
-                    if (mounted) _showLogoutDialog();
-                  });
-                },
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _sheetItem({
-    required IconData icon,
-    required String label,
-    required VoidCallback onTap,
-    Color? labelColor,
-  }) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        height: 70,
-        padding: const EdgeInsets.symmetric(horizontal: 16),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(100),
-          border: Border.all(color: const Color(0x80B9B9B9)),
-        ),
-        child: Row(
-          children: [
-            Container(
-              width: 55,
-              height: 55,
-              decoration: const BoxDecoration(
-                color: Color(0xFFD9D9D9),
-                shape: BoxShape.circle,
-              ),
-              alignment: Alignment.center,
-              child: Icon(icon, color: labelColor ?? Colors.black87),
-            ),
-            const SizedBox(width: 12),
-            Text(
-              label,
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w500,
-                color: labelColor ?? Colors.black,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
   void _openMenu() {
     showModalBottomSheet(
       context: context,
@@ -376,7 +278,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
           child: Column(
             children: [
               const SizedBox(height: 12),
-              // ── Header ─────────────────────────────────────────────────
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -536,7 +437,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   Widget _buildCardContent() {
     final profile = _profile;
-    final avatarUrl = _avatarOverrideUrl ?? _fullUrl(profile?.profilePicture);
+    final avatarUrl = _avatarOverrideUrl ?? _fullUrl(
+        profile?.profilePicture);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,

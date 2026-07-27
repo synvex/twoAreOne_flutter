@@ -2,18 +2,14 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:provider/provider.dart';
 import 'package:two_are_one/features/views/Settings/widgets/custom_alert.dart';
-
 import '../../../core/Error/api_error.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/routes/routes.dart';
 import '../../../core/widgets/back_button_header.dart';
 import '../../../core/widgets/custom_button.dart';
-import '../../../core/widgets/font.dart';
 import '../../../data/api_endpoints.dart';
 import '../../../data/repo/settings_Api_services.dart';
-import '../../../data/viewmodels/setting_auth_view_model.dart';
 
 class ChangeOtpScreen extends StatefulWidget {
   final String phone;
@@ -76,8 +72,8 @@ class _ChangeOtpScreenState extends State<ChangeOtpScreen> {
       if (!widget.isCurrent) {
         await ApiService.request(ApiEndpoints.updateUserPhone, {'new_phone_no': widget.phone});
         if (!mounted) return;
-        final authVm = context.read<AuthViewModel>();
-        authVm.setRefreshProfile(!authVm.refreshProfile);
+        // final authVm = context.read<AuthViewModel>();
+        // authVm.setRefreshProfile(!authVm.refreshProfile);
         await CustomAlert.showMessage(context, title: 'Success', message: 'Your phone number has been changed');
         if (mounted) {
           Navigator.of(context).popUntil((r) => r.settings.name == AppRoutes.settingScreen || r.isFirst);

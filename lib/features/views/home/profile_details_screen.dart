@@ -19,7 +19,8 @@ const Color kMehroon = Color(0xFF77153C);
 const Color kMehroonLight = Color(0xFFDD276F);
 
 class ProfileDetailsScreen extends StatefulWidget {
-  const ProfileDetailsScreen({super.key});
+  final int? userId;
+  const ProfileDetailsScreen({super.key, this.userId});
 
   @override
   State<ProfileDetailsScreen> createState() => _ProfileDetailsScreenState();
@@ -132,27 +133,10 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
     _getUserDetails();
   }
 
-  // void didChangeDependencies() {
-  //   super.didChangeDependencies();
-  //   if (_didInit) return;
-  //   _didInit = true;
-  //
-  //   final args = ModalRoute.of(context)?.settings.arguments;
-  //   if (args is FilterMatchModel) {
-  //     _cardUser = args;
-  //   } else if (args is Map) {
-  //     final u = args['user'];
-  //     if (u is FilterMatchModel) _cardUser = u;
-  //     _blocked = args['blocked'] == true;
-  //   }
-  //
-  //   _visitedUser();
-  //   _getUserDetails();
-  // }
   int? get _userId => _details?.userId ?? _cardUser?.id;
   // ── API ──────────────────────────────────────────────────────────────
   Future<void> _visitedUser() async {
-    final id = _cardUser?.id;
+    final id = _cardUser?.id ?? widget.userId;
     debugPrint("VISITED: cardUser id = $id, blocked = $_blocked");
     if (id == null) {
       debugPrint("VISITED: skipped, no id");
@@ -164,7 +148,7 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
   }
 
   Future<void> _getUserDetails() async {
-    final id = _cardUser?.id;
+    final id = _cardUser?.id?? widget.userId;
     if (id == null) {
       setState(() => _loading = false);
       return;
@@ -317,6 +301,7 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
 
     return Scaffold(
       backgroundColor: Colors.white,
+      appBar: AppBar(title: Text(widget.userId.toString()),),
       body: SafeArea(
         child: Column(
           children: [

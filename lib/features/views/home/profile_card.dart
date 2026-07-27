@@ -68,184 +68,187 @@ class ProfileCard extends StatelessWidget {
 
     return GestureDetector(
       onTap: onPress,
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(30),
-        child: Stack(
-          children: [
-            // Background Image
-            Positioned.fill(
-              child: isValidUrl
-                  ? Image.network(
-                      imageUrl,
-                      fit: BoxFit.cover,
-                      errorBuilder: (context, error, stackTrace) =>
-                          _buildPlaceholder(),
-                      loadingBuilder: (context, child, loadingProgress) {
-                        if (loadingProgress == null) return child;
-                        return const Center(
-                          child: CircularProgressIndicator(strokeWidth: 2),
-                        );
-                      },
-                    )
-                  : _buildPlaceholder(),
-            ),
-            // Online Indicator
-            Positioned(
-              top: 15,
-              right: 15,
-              child: user.isOnline
-                  ? Containers(
-                      wWidth: 12,
-                      wHeight: 12,
-                      hexValue: 0xFF2E7D32,
-                      shape: BoxShape.circle,
-                      border: Border.all(color: Colors.white, width: 2),
-                    )
-                  : const SizedBox.shrink(),
-            ),
-            // Bottom Info & Icons
-            Positioned(
-              bottom: 0,
-              left: 0,
-              right: 0,
-              child: ClipRRect(
-                child: Container(
-                  padding: const EdgeInsets.all(12),
-                  color: Colors.black.withValues(
-                    alpha: 0.3,
-                  ), // Increased opacity for readability
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      // Name and Age Row
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Flexible(
-                            child: Text(
-                              user.name,
-                              style: TextStyle(
-                                fontSize: 15,
-                                overflow: TextOverflow.ellipsis,
-                                color: Color(0xFFFFFFFF),
-                                fontWeight: FontWeight.bold,
+      child: Card(
+        elevation: 2,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(30),
+        ),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(30),
+          child: Stack(
+            children: [
+              // Background Image
+              Positioned.fill(
+                child: isValidUrl
+                    ? Image.network(
+                        imageUrl,
+                        fit: BoxFit.cover,
+                        errorBuilder: (context, error, stackTrace) =>
+                            _buildPlaceholder(),
+                        loadingBuilder: (context, child, loadingProgress) {
+                          if (loadingProgress == null) return child;
+                          return const Center(
+                            child: CircularProgressIndicator(strokeWidth: 2),
+                          );
+                        },
+                      )
+                    : _buildPlaceholder(),
+              ),
+              // Online Indicator
+              Positioned(
+                top: 15,
+                right: 15,
+                child: user.isOnline
+                    ? Containers(
+                        wWidth: 12,
+                        wHeight: 12,
+                        hexValue: 0xFF2E7D32,
+                        shape: BoxShape.circle,
+                        border: Border.all(color: Colors.white, width: 2),
+                      )
+                    : const SizedBox.shrink(),
+              ),
+              // Bottom Info & Icons
+              Positioned(
+                bottom: 0,
+                left: 0,
+                right: 0,
+                child: ClipRRect(
+                  child: Container(
+                    padding: const EdgeInsets.all(12),
+                    color: Colors.black.withValues(
+                      alpha: 0.3,
+                    ), // Increased opacity for readability
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // Name and Age Row
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Flexible(
+                              child: Text(
+                                user.name,
+                                style: TextStyle(
+                                  fontSize: 15,
+                                  overflow: TextOverflow.ellipsis,
+                                  color: Color(0xFFFFFFFF),
+                                  fontWeight: FontWeight.bold,
+                                ),
                               ),
                             ),
-                          ),
-                          Texts(
-                            text: "Age ${user.age}",
-                            size: 11,
-                            colorHexValue: 0xFFFFFFFF,
-                          ),
-                        ],
-                      ),
-                      // Location and Match Row
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Flexible(
-                            child: Texts(
-                              text: user.location,
+                            Texts(
+                              text: "Age ${user.age}",
+                              size: 11,
+                              colorHexValue: 0xFFFFFFFF,
+                            ),
+                          ],
+                        ),
+                        // Location and Match Row
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Flexible(
+                              child: Texts(
+                                text: user.location,
+                                size: 9,
+                                colorHexValue: 0xFFFFFFFF,
+                              ),
+                            ),
+                            Texts(
+                              text: user.matchPercent,
                               size: 9,
                               colorHexValue: 0xFFFFFFFF,
                             ),
-                          ),
-                          Texts(
-                            text: user.matchPercent,
-                            size: 9,
-                            colorHexValue: 0xFFFFFFFF,
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 10),
-                      // Action Icons Row
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
-                        children: [
-                          // 1. Heart (Interested) - Toggle between filled and border
-                          _smallIcon(
-                            onHeart,
-                            Images(
-                              imageStr: user.isInterested
-                                  ? "assets/svg_images/fiiled_like.svg"
-                                  : "assets/svg_images/heart_unfill.svg",
+                          ],
+                        ),
+                        const SizedBox(height: 10),
+                        // Action Icons Row
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          children: [
+                            // 1. Heart (Interested) - Toggle between filled and border
+                            _smallIcon(
+                              onHeart,
+                              Images(
+                                imageStr: user.isInterested
+                                    ? "assets/svg_images/fiiled_like.svg"
+                                    : "assets/svg_images/heart_unfill.svg",
+                              ),
+                              _buildGradientIcon(
+                                user.isInterested
+                                    ? "assets/svg_images/fiiled_like.svg"
+                                    : "assets/svg_images/heart_unfill.svg",
+                                user.isInterested,
+                              ),
                             ),
-                            _buildGradientIcon(
-                              user.isInterested
-                                  ? "assets/svg_images/fiiled_like.svg"
-                                  : "assets/svg_images/heart_unfill.svg",
-                              user.isInterested,
+                            // 2. Star (Favorite) - Toggle between filled and border
+                            _smallIcon(
+                              onStar,
+                              Images(
+                                imageStr: user.isFavorite
+                                    ? "assets/svg_images/filled_star.svg"
+                                    : "assets/svg_images/unfill_star.svg",
+                                width: 16,
+                                height: 16,
+                              ),
+                              _buildGradientIcon(
+                                user.isFavorite
+                                    ? "assets/svg_images/filled_star.svg"
+                                    : "assets/svg_images/unfill_star.svg",
+                                user.isFavorite,
+                              ),
                             ),
-                          ),
-                          // 2. Star (Favorite) - Toggle between filled and border
-                          _smallIcon(
-                            onStar,
-                            Images(
-                              imageStr: user.isFavorite
-                                  ? "assets/svg_images/filled_star.svg"
-                                  : "assets/svg_images/unfill_star.svg",
-                              width: 16,
-                              height: 16,
+                            // 3.  Block
+                            _smallIcon(
+                              onDislike,
+                              Images(
+                                imageStr: user.isDislike
+                                    ? "assets/svg_images/block.svg"
+                                    : "assets/svg_images/block.svg",
+                                width: 16,
+                                height: 16,
+                              ),
+                              _buildGradientIcon(
+                                user.isDislike
+                                    ? "assets/svg_images/block.svg"
+                                    : "assets/svg_images/block.svg",
+                                false,
+                                fallbackColor: Colors.redAccent,
+                              ),
                             ),
-                            _buildGradientIcon(
-                              user.isFavorite
-                                  ? "assets/svg_images/filled_star.svg"
-                                  : "assets/svg_images/unfill_star.svg",
-                              user.isFavorite,
+                            //Friend request send
+                            _smallIcon(
+                              onRequestSend,
+                              Images(
+                                imageStr: "assets/svg_images/interested.svg",
+                              ),
+                              _buildGradientIcon(
+                                user.isInterested
+                                    ? "assets/svg_images/interested"
+                                    : "assets/svg_images/interested.svg",
+                                false,
+                                fallbackColor: Colors.redAccent,
+                              ),
+                              // _buildGradientIcon(Icons.chat_bubble_outline, false)
                             ),
-                          ),
-                          // 3.  Block
-                          _smallIcon(
-                            onDislike,
-                            Images(
-                              imageStr: user.isDislike
-                                  ? "assets/svg_images/block.svg"
-                                  : "assets/svg_images/block.svg",
-                              width: 16,
-                              height: 16,
-                            ),
-                            _buildGradientIcon(
-                              user.isDislike
-                                  ? "assets/svg_images/block.svg"
-                                  : "assets/svg_images/block.svg",
-                              false,
-                              fallbackColor: Colors.redAccent,
-                            ),
-                          ),
-                          //Friend request send
-                          _smallIcon(
-                            onRequestSend,
-                            Images(
-                              imageStr: "assets/svg_images/interested.svg",
-                            ),
-                            _buildGradientIcon(
-                              user.isInterested
-                                  ? "assets/svg_images/interested"
-                                  : "assets/svg_images/interested.svg",
-                              false,
-                              fallbackColor: Colors.redAccent,
-                            ),
-                            // _buildGradientIcon(Icons.chat_bubble_outline, false)
-                          ),
-                        ],
-                      ),
-                    ],
+                          ],
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
   }
 
   Widget _buildPlaceholder() {
-    return PlaceholderImage(height: 180, width: 140, size: 22);
-    // return Images(imageStr: 'assets/images/failed.png');
+    return PlaceholderImage(height: 135, width: 140, size: 22);
   }
-
-  // Simplified _smallIcon without the CircularProgressIndicator
   Widget _smallIcon(
     VoidCallback? onTap,
     Images iconWidget,

@@ -8,7 +8,8 @@ class AppRoutes {
   static const String termsAndConditions = '/terms-and-conditions';
   static const String profileDetail = '/profile_detail';
   static const String interestedUser = '/interested-user';
-  static const settingScreen = 'Settings';
+  // static const settingScreen = 'Settings'
+  static const settingScreen = '/settings_screen';
   static const changeEmailOtpScreen = 'ChangeEmailOtpScreen';
   static const changeOtpScreen = 'Change Otp Screen';
   static const changePhoneScreen = 'Change Phone';
@@ -23,7 +24,7 @@ class SettingsRoutes {
   static const String termsOfUse = '/terms_of_use';
   static const String resetPassword = '/reset_password';
   static const String changeOtp = '/change_otp';
-
+  static const String addNewEmail = '/add_new_email';
   static const String changeEmailOtp = '/change_email_otp';
 }
 /// Port of `NAVIGATION_SCREENS` from `src/Navigator/utils.js`.

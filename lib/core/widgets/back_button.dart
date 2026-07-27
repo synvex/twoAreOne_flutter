@@ -11,19 +11,19 @@ class Back_Button extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Containers(
-        wWidth: 50,
-        wHeight: 50,
+        wWidth: 48,
+        wHeight: 48,
         alignment: Alignment.center,
         shape: BoxShape.circle,
         hexValue: 0xFFFFFFFF,
         border: Border.all(
-          color: const Color(0xFF786C65).withValues(alpha: 0.6),
+          color: const Color(0xFF786C65).withValues(alpha: 0.4),
           width: 1,
         ),
-        child: const Images(
-          height: 30,
-          width: 30,
-          color: Color(0xFF786C65),
+        child: Images(
+          height: 25,
+          width: 25,
+          color: const Color(0xFF786C65).withValues(alpha: 0.7),
           imageStr: "assets/svg_images/backButton.svg",
         ),
       ),

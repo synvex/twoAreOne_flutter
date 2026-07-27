@@ -40,7 +40,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
     Object? arguments,
   }) async {
     try {
+
       await Navigator.of(context).pushNamed(routeName, arguments: arguments);
+      if (mounted) _vm.loadUserInfo();
     } catch (_) {
       if (mounted) {
         TopToast.show(context, title: "Coming soon", type: ToastType.info);
