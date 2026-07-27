@@ -14,8 +14,35 @@ class ChatViewModel extends ChangeNotifier {
 
   // ids (temp negative ids) of messages currently being sent
   final Set<int> sendingMessageIds = {};
+  final ScrollController scrollController = ScrollController();
 
   int _tempIdCounter = -1;
+
+  bool isKeyboardVisible = false;
+
+  void onKeyboardChanged(bool visible, FocusNode messageFocusNode) {
+    if (isKeyboardVisible == visible) return;
+
+    isKeyboardVisible = visible;
+
+    if (!visible && messageFocusNode.hasFocus) {
+      messageFocusNode.unfocus();
+    }
+
+    notifyListeners();
+  }
+
+  void scrollToBottom() {
+    if (!scrollController.hasClients) return;
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      scrollController.animateTo(
+        scrollController.position.maxScrollExtent,
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeOut,
+      );
+    });
+  }
 
   void searchChatMembers(String query) {
     if (query.trim().isEmpty) {
@@ -51,6 +78,9 @@ class ChatViewModel extends ChangeNotifier {
       debugPrint("Chat Members Error: $e");
     } finally {
       isLoading = false;
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        scrollToBottom();
+      });
       notifyListeners();
     }
   }

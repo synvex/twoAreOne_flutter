@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:two_are_one/features//views/main/main_screen_card.dart';
 import 'package:two_are_one/features//views/main/profile_setup_screen.dart';
-import 'package:two_are_one/core/widgets/buttons.dart';
+import 'package:two_are_one/core/widgets/main_button_widget.dart';
 import 'package:two_are_one/core/widgets/selection_card.dart';
 import 'package:two_are_one/core/widgets/texts.dart';
 import 'package:two_are_one/data/models/user_profile_model.dart';
@@ -21,9 +21,9 @@ class _MainScreenState extends State<MainScreen> {
   final AuthService _authService = AuthService();
 
   final List<UserPreference> _preferences = const [
-    UserPreference(gender: "male",   lookingFor: "female"),
+    UserPreference(gender: "male", lookingFor: "female"),
     UserPreference(gender: "female", lookingFor: "male"),
-    UserPreference(gender: "male",   lookingFor: "male"),
+    UserPreference(gender: "male", lookingFor: "male"),
     UserPreference(gender: "female", lookingFor: "female"),
   ];
 
@@ -65,7 +65,7 @@ class _MainScreenState extends State<MainScreen> {
     final pref = _preferences[_selectedIndex];
 
     final result = await _authService.updateIntroduce(
-      genderId:    pref.gender,
+      genderId: pref.gender,
       sexualityId: pref.lookingFor,
     );
 
@@ -75,16 +75,14 @@ class _MainScreenState extends State<MainScreen> {
     if (result['success'] == true) {
       // Build the profile model and carry it forward to the next screen.
       final profileModel = UserProfileModel(
-        gender:    pref.gender,
+        gender: pref.gender,
         sexuality: pref.lookingFor,
       );
 
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
-          builder: (_) => ProfileSetupScreen(
-            profileModel: profileModel,
-          ),
+          builder: (_) => ProfileSetupScreen(profileModel: profileModel),
         ),
       );
     } else {
@@ -132,7 +130,7 @@ class _MainScreenState extends State<MainScreen> {
                   const SizedBox(height: 15),
                   const Texts(
                     text:
-                    "Share your preferences so we can connect\nyou with the right people",
+                        "Share your preferences so we can connect\nyou with the right people",
                     size: 12,
                     textAlign: TextAlign.center,
                     fontWeight: FontWeight.w300,
@@ -165,7 +163,7 @@ class _MainScreenState extends State<MainScreen> {
                     );
                   }),
                   const SizedBox(height: 30),
-                  Buttons(
+                  MainButtonWidget(
                     text: "Next",
                     isLoading: _isLoading,
                     onTap: (_selectedIndex == -1 || _isLoading)
@@ -191,5 +189,3 @@ class UserPreference {
   final String lookingFor;
   const UserPreference({required this.gender, required this.lookingFor});
 }
-
-

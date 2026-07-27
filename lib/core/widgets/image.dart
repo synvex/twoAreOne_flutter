@@ -22,8 +22,9 @@ class Images extends StatelessWidget {
         imageStr,
         height: height,
         width: width,
-        colorFilter: color != null ? ColorFilter.mode(
-            color!, BlendMode.srcIn) : null,
+        colorFilter: color != null
+            ? ColorFilter.mode(color!, BlendMode.srcIn)
+            : null,
         fit: BoxFit.contain,
       );
     } else {
@@ -47,10 +48,16 @@ class Avatar extends StatelessWidget {
   final String imageStr;
   final Color? color;
 
-  const Avatar(
-      {super.key, this.top, this.bottom,
-        this.left, this.right, required this.size,
-        required this.imageStr, this.color, });
+  const Avatar({
+    super.key,
+    this.top,
+    this.bottom,
+    this.left,
+    this.right,
+    required this.size,
+    required this.imageStr,
+    this.color,
+  });
   @override
   Widget build(BuildContext context) {
     return Positioned(
@@ -64,9 +71,7 @@ class Avatar extends StatelessWidget {
         decoration: BoxDecoration(
           color: color,
           shape: BoxShape.circle,
-          image: DecorationImage(
-              image: AssetImage(imageStr),
-              ),
+          image: DecorationImage(image: AssetImage(imageStr)),
         ),
       ),
     );

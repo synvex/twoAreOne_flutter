@@ -6,8 +6,8 @@ import 'package:two_are_one/core/widgets/image.dart';
 import 'package:two_are_one/core/widgets/texts.dart';
 import 'package:two_are_one/data/services/auth_service.dart';
 import 'package:two_are_one/core/widgets/textfield.dart';
-import 'package:two_are_one/features/views/auth/sign_up.dart';
-import 'package:two_are_one/core/widgets/buttons.dart';
+import 'package:two_are_one/features/views/auth/sign_up_screen.dart';
+import 'package:two_are_one/core/widgets/main_button_widget.dart';
 import 'package:two_are_one/core/widgets/containers.dart';
 
 class NoOtpVerification extends StatefulWidget {
@@ -95,7 +95,8 @@ class _NoOtpVerificationState extends State<NoOtpVerification> {
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
-          builder: (context) => SignUpPage(verifiedPhoneNo: widget.phoneNumber),
+          builder: (context) =>
+              SignUpScreen(verifiedPhoneNo: widget.phoneNumber),
         ),
       );
     } on FirebaseAuthException catch (e) {
@@ -244,14 +245,14 @@ class _NoOtpVerificationState extends State<NoOtpVerification> {
                   //     ? const CircularProgressIndicator(
                   //         color: Color(0xFF77153C),
                   //       )
-                  child : Buttons(
-                          text: "Verify",
-                          onTap: _verifyOtp,
-                          isLoading: _isLoading,
-                          gradient: const LinearGradient(
-                            colors: [Color(0xFF77153C), Color(0xFFDD276F)],
-                          ),
-                        ),
+                  child: MainButtonWidget(
+                    text: "Verify",
+                    onTap: _verifyOtp,
+                    isLoading: _isLoading,
+                    gradient: const LinearGradient(
+                      colors: [Color(0xFF77153C), Color(0xFFDD276F)],
+                    ),
+                  ),
                 ),
                 SizedBox(height: 20.h),
                 Row(

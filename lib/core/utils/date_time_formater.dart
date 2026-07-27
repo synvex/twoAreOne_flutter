@@ -1,6 +1,7 @@
 import 'package:intl/intl.dart';
 
 class DateTimeFormatter {
+  /// Chat format
   static String chatTime(String dateTime) {
     try {
       final DateTime messageTime = DateTime.parse(dateTime);
@@ -26,23 +27,43 @@ class DateTimeFormatter {
 
       // Less than 7 days
       if (difference.inDays < 7) {
-        return DateFormat('EEEE').format(messageTime); // Friday
+        return DateFormat('EEEE').format(messageTime);
       }
 
       // Less than 30 days
       if (difference.inDays < 30) {
-        return "${difference.inDays} weeks ago";
+        return "${difference.inDays ~/ 7} week${difference.inDays ~/ 7 > 1 ? 's' : ''} ago";
       }
 
       // Less than 1 year
       if (difference.inDays < 365) {
         return DateFormat('MMMM d').format(messageTime);
-        // June 10
       }
 
       // Older than 1 year
       return DateFormat('MMM d, yyyy').format(messageTime);
-      // Jun 10, 2026
+    } catch (e) {
+      return "";
+    }
+  }
+
+  /// Returns only the date
+  /// Example: Jul 27, 2026
+  static String onlyDate(String dateTime) {
+    try {
+      final DateTime date = DateTime.parse(dateTime);
+      return DateFormat('MMM d, yyyy').format(date);
+    } catch (e) {
+      return "";
+    }
+  }
+
+  /// Returns only the time
+  /// Example: 9:23 AM
+  static String onlyTime(String dateTime) {
+    try {
+      final DateTime date = DateTime.parse(dateTime);
+      return DateFormat('h:mm a').format(date);
     } catch (e) {
       return "";
     }

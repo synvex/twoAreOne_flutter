@@ -28,4 +28,11 @@ class AppColors {
   static const Color red = Color(0xFFF75555);
   static const Color skeletonBase = Color(0xFFD4D4D4);
   static const Color skeletonCardBg = Color(0xFFF5F5F5);
+
+  //saqib ticket 01
+  static const Color gradientFirst = Color(0xFFDD276F);
+  static const Color gradientSecond = Color(0xFF477CB6);
+
+  // onboarding screen
+  static const Color onboardingCircleBlue = Color(0xFF7EA3CC);
 }
