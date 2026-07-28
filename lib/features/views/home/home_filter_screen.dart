@@ -1,6 +1,10 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+// <<<<<<< saqlain-02
+import 'package:provider/provider.dart';
+// =======
 import 'package:two_are_one/core/widgets/app_header_widget.dart';
+// >>>>>>> refector
 import 'package:two_are_one/core/widgets/back_button.dart';
 import 'package:two_are_one/core/widgets/image.dart';
 import 'package:two_are_one/core/widgets/texts.dart';
@@ -9,6 +13,8 @@ import 'package:two_are_one/features//views/home/profile_card.dart';
 import 'package:two_are_one/data/models/user_match_model.dart';
 import 'package:two_are_one/data/services/home_service.dart'; // Ensure this matches your Service file
 import 'package:two_are_one/core/widgets/containers.dart';
+import '../../../core/widgets/top_toast.dart';
+import '../../../data/repo/socket_service.dart';
 import 'filer_sheet.dart';
 
 class HomeFilterScreen extends StatefulWidget {
@@ -25,12 +31,9 @@ class _HomeFilterScreenState extends State<HomeFilterScreen> {
 
   bool _isLoading = false;
   bool _hasError = false;
-  // States for individual card loaders (Matching React states)
   final Set<int> _starLoading = {};
   final Set<int> _heartLoading = {};
   final Set<int> _blockLoading = {};
-
-  // Cooldown map for chat invites
   final Map<String, DateTime> _chatCooldowns = {};
 
   List<FilterMatchModel> users = [];
@@ -159,25 +162,65 @@ class _HomeFilterScreenState extends State<HomeFilterScreen> {
     setState(() => _blockLoading.remove(id));
   }
 
+  // void _handleSilentChat(FilterMatchModel user) {
+  //   final userId = user.id.toString();
+  //   final now = DateTime.now();
+  //   if (_chatCooldowns.containsKey(userId)) {
+  //     final diff = now.difference(_chatCooldowns[userId]!);
+  //     if (diff.inSeconds < 30) {
+  //       _showToast("Please wait ${30 - diff.inSeconds}s to send another invite");
+  //       return;
+  //     }
+  //   }
+  //   _chatCooldowns[userId] = now;
+  //   _showToast("Invite sent to ${user.name}!");
+  // }
+
   void _handleSilentChat(FilterMatchModel user) {
     final userId = user.id.toString();
     final now = DateTime.now();
     if (_chatCooldowns.containsKey(userId)) {
       final diff = now.difference(_chatCooldowns[userId]!);
       if (diff.inSeconds < 30) {
+// <<<<<<< saqlain-02
+        final secondsLeft = 30 - diff.inSeconds;
+        TopToast.show(context,
+            title: "Please wait",
+            message: "You can send another invite in ${secondsLeft}s",
+            type: ToastType.info);
+// =======
         _showToast(
           "Please wait ${30 - diff.inSeconds}s to send another invite",
         );
+// >>>>>>> refector
         return;
       }
     }
-    _chatCooldowns[userId] = now;
-    _showToast("Invite sent to ${user.name}!");
+    final sent = context.read<SocketService>().sendMessage({
+      'action': 'send_message',
+      'to': user.id,
+      'text': "Let's Get To Know Each Other",
+    });
+    if (sent) {
+      _chatCooldowns[userId] = now;
+      TopToast.show(context,
+          title: "Invite sent!",
+          message: "Your message has been delivered.",
+          type: ToastType.success);
+    } else {
+      TopToast.show(context,
+          title: "Couldn't send invite",
+          message: "Please check your connection and try again.",
+          type: ToastType.error);
+    }
+  }
+  void _showToast(String msg, {ToastType type = ToastType.info}) {
+    TopToast.show(context, title: msg, type: type);
   }
 
-  void _showToast(String msg) {
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(msg)));
-  }
+  // void _showToast(String msg) {
+  //   ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(msg)));
+  // }
 
   @override
   void dispose() {

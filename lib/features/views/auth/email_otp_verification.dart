@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -10,6 +9,7 @@ import 'package:two_are_one/core/widgets/textfield.dart';
 import 'package:two_are_one/core/widgets/texts.dart';
 import 'package:two_are_one/data/services/auth_service.dart';
 import 'package:two_are_one/core/widgets/containers.dart';
+import '../../../core/routes/flow_router.dart';
 import '../main/main_screen.dart';
 import 'login_screen.dart';
 import 'new_password.dart';
@@ -128,16 +128,34 @@ class _EmailOtpVerificationState extends State<EmailOtpVerification> {
           const SnackBar(content: Text("Account verified successfully!")),
         );
         if (widget.isFromForget) {
-          Navigator.pushReplacement(
+          Navigator.pushAndRemoveUntil(
             context,
-            MaterialPageRoute(builder: (context) => const NewPassword()),
+            MaterialPageRoute(
+                builder: (context) => NewPassword(email: widget.email)),
+                (route) => false,
           );
+          // Navigator.pushReplacement(
+          //   context,
+          //   MaterialPageRoute(builder: (context) =>
+          //   const NewPassword()),
+          // );
         } else {
-          Navigator.pushReplacement(
+          // SIGN UP FLOW: Resolve where the user left off (Gender, Profile, or Home)
+          final nextScreen = await OnboardingFlowRouter.resolveResumeScreen();
+          if (!mounted) return;
+          Navigator.pushAndRemoveUntil(
             context,
-            MaterialPageRoute(builder: (context) => const MainScreen()),
+            MaterialPageRoute(
+                builder: (context) => nextScreen),
+                (route) => false,
           );
         }
+        // else {
+        //   Navigator.pushReplacement(
+        //     context,
+        //     MaterialPageRoute(builder: (context) => const MainScreen()),
+        //   );
+        // }
       } else {
         if (!mounted) return;
         ScaffoldMessenger.of(context).showSnackBar(

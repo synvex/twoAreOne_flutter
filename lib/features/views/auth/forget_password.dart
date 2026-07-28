@@ -33,11 +33,9 @@ class _ForgetPasswordState extends State<ForgetPassword> {
     _emailController.dispose();
     super.dispose();
   }
-
   void _handleContinue() async {
     final email = _emailController.text.trim();
 
-    // 1. Validation (Matches RN validateInputs)
     if (email.isEmpty) {
       _showErrorDialog("Email is required");
       return;
@@ -50,24 +48,18 @@ class _ForgetPasswordState extends State<ForgetPassword> {
     setState(() => _isLoading = true);
 
     try {
-      // 2. API Call (Matches RN ApiManager.fetch)
-      final existenceCheck = await _authService.checkEmailExists(email: email);
-      if (existenceCheck['success'] == false) {
-        _showUserNotFoundDialog();
+      final result = await _authService.forgotPassword(email: email);
+      if (result['success']) {
+        if (!mounted) return;
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) =>
+                EmailOtpVerification(email: email, isFromForget: true),
+          ),
+        );
       } else {
-        final result = await _authService.forgotPassword(email: email);
-        if (result['success']) {
-          if (!mounted) return;
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(
-              builder: (context) =>
-                  EmailOtpVerification(email: email, isFromForget: true),
-            ),
-          );
-        } else {
-          _showErrorDialog(result['error'] ?? "Failed to send OTP");
-        }
+        _showErrorDialog(result['error'] ?? "Failed to send OTP");
       }
     } catch (e) {
       _showErrorDialog("An error occurred: $e");
@@ -75,6 +67,44 @@ class _ForgetPasswordState extends State<ForgetPassword> {
       if (mounted) setState(() => _isLoading = false);
     }
   }
+  // void _handleContinue() async {
+  //   final email = _emailController.text.trim();
+  //   if (email.isEmpty) {
+  //     _showErrorDialog("Email is required");
+  //     return;
+  //   }
+  //   if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(email)) {
+  //     _showErrorDialog("Email is invalid");
+  //     return;
+  //   }
+  //
+  //   setState(() => _isLoading = true);
+  //
+  //   try {
+  //     final existenceCheck = await _authService.checkEmailExists(email: email);
+  //     if (existenceCheck['success'] == false) {
+  //       _showUserNotFoundDialog();
+  //     } else {
+  //       final result = await _authService.forgotPassword(email: email);
+  //       if (result['success']) {
+  //         if (!mounted) return;
+  //         Navigator.pushReplacement(
+  //           context,
+  //           MaterialPageRoute(
+  //             builder: (context) =>
+  //                 EmailOtpVerification(email: email, isFromForget: true),
+  //           ),
+  //         );
+  //       } else {
+  //         _showErrorDialog(result['error'] ?? "Failed to send OTP");
+  //       }
+  //     }
+  //   } catch (e) {
+  //     _showErrorDialog("An error occurred: $e");
+  //   } finally {
+  //     if (mounted) setState(() => _isLoading = false);
+  //   }
+  // }
 
   void _showUserNotFoundDialog() {
     showDialog(

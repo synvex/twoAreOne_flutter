@@ -17,6 +17,8 @@ import 'package:two_are_one/features/views/auth/onboarding.dart';
 import 'package:two_are_one/features/views/bottom_nav/custom_nav_bar.dart';
 import 'package:two_are_one/features/views/auth/forget_password.dart';
 
+import '../../../core/routes/flow_router.dart';
+
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
 
@@ -85,8 +87,6 @@ class _LoginScreenState extends State<LoginScreen> {
       if (!mounted) return;
       if (result['success'] == true) {
         final userData = result['data']; // The nested 'data' object
-
-        // final token = result['data']?['api_token']?.toString() ?? '';
         final token =
             userData?['api_token']?.toString() ??
             userData?['token']?.toString() ??
@@ -109,12 +109,20 @@ class _LoginScreenState extends State<LoginScreen> {
           );
           print("✅ Token set successfully: $token");
         }
-        // SUCCESS
-        // Navigate and clear navigation stack
+        final nextScreen = await OnboardingFlowRouter.resolveResumeScreen();
+        if (!mounted) return;
         Navigator.pushAndRemoveUntil(
           context,
-          MaterialPageRoute(builder: (context) => const CustomNavBar()),
-          (route) => false,
+// <<<<<<< saqlain-02
+          MaterialPageRoute(builder: (context) => nextScreen),
+            (route) => false,
+          //     const MainBarScreen(
+          //       initialIndex: 0,)),
+          // (route) => false,
+// =======
+//           MaterialPageRoute(builder: (context) => const CustomNavBar()),
+//           (route) => false,
+// >>>>>>> refector
         );
       } else {
         // FAILURE - The alert/snackbar will now show the real error from PHP

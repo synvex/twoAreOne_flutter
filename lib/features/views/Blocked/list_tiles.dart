@@ -43,6 +43,7 @@ class UserTile extends StatelessWidget {
               overflow: TextOverflow.ellipsis,
             ),
           ),
+
           GestureDetector(
             onTap: onMenuTap,
             child: const Padding(

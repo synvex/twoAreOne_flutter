@@ -112,78 +112,83 @@ class _MainScreenState extends State<MainScreen> {
     final isLandscape =
         MediaQuery.of(context).orientation == Orientation.landscape;
 
-    return Scaffold(
-      backgroundColor: Colors.white,
-      body: SingleChildScrollView(
-        physics: isLandscape
-            ? const ScrollPhysics()
-            : const NeverScrollableScrollPhysics(),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            const SizedBox(height: 55),
-            const StackedUserCards(),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20.0),
-              child: Column(
-                children: [
-                  const SizedBox(height: 10),
-                  const Texts(
-                    text: "Preferences",
-                    size: 24,
-                    fontWeight: FontWeight.w600,
-                  ),
-                  const SizedBox(height: 15),
-                  const Texts(
-                    text:
-                        "Share your preferences so we can connect\nyou with the right people",
-                    size: 12,
-                    textAlign: TextAlign.center,
-                    fontWeight: FontWeight.w300,
-                  ),
-                  const SizedBox(height: 20),
-                  const Align(
-                    alignment: Alignment.centerLeft,
-                    child: Texts(
-                      text: "I am a",
-                      size: 16,
-                      fontWeight: FontWeight.w700,
-                      edgeInsets: EdgeInsets.only(left: 8),
+    return PopScope(
+canPop: false, // Prevents back navigation
+onPopInvoked: (didPop) {
+if (didPop) return;},
+      child: Scaffold(
+        backgroundColor: Colors.white,
+        body: SingleChildScrollView(
+          physics: isLandscape
+              ? const ScrollPhysics()
+              : const NeverScrollableScrollPhysics(),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              const SizedBox(height: 55),
+              const StackedUserCards(),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                child: Column(
+                  children: [
+                    const SizedBox(height: 10),
+                    const Texts(
+                      text: "Preferences",
+                      size: 24,
+                      fontWeight: FontWeight.w600,
                     ),
-                  ),
-                  const SizedBox(height: 12),
-                  ...List.generate(_options.length, (index) {
-                    final option = _options[index];
-                    return Padding(
-                      padding: const EdgeInsets.only(bottom: 10),
-                      child: SelectionCard(
-                        label: option['label'],
-                        isSelected: _selectedIndex == index,
-                        onTap: () => setState(() => _selectedIndex = index),
-                        activeColor: 0xFF77153C,
-                        leftCircleColor: option['leftColor'],
-                        rightCircleColor: option['rightColor'],
-                        leftIcon: option['leftIcon'],
-                        rightIcon: option['rightIcon'],
+                    const SizedBox(height: 15),
+                    const Texts(
+                      text:
+                          "Share your preferences so we can connect\nyou with the right people",
+                      size: 12,
+                      textAlign: TextAlign.center,
+                      fontWeight: FontWeight.w300,
+                    ),
+                    const SizedBox(height: 20),
+                    const Align(
+                      alignment: Alignment.centerLeft,
+                      child: Texts(
+                        text: "I am a",
+                        size: 16,
+                        fontWeight: FontWeight.w700,
+                        edgeInsets: EdgeInsets.only(left: 8),
                       ),
-                    );
-                  }),
-                  const SizedBox(height: 30),
-                  MainButtonWidget(
-                    text: "Next",
-                    isLoading: _isLoading,
-                    onTap: (_selectedIndex == -1 || _isLoading)
-                        ? null
-                        : _onNextTapped,
-                    gradient: const LinearGradient(
-                      colors: [Color(0xFF77153C), Color(0xFFDD276F)],
                     ),
-                  ),
-                  const SizedBox(height: 20),
-                ],
+                    const SizedBox(height: 12),
+                    ...List.generate(_options.length, (index) {
+                      final option = _options[index];
+                      return Padding(
+                        padding: const EdgeInsets.only(bottom: 10),
+                        child: SelectionCard(
+                          label: option['label'],
+                          isSelected: _selectedIndex == index,
+                          onTap: () => setState(() => _selectedIndex = index),
+                          activeColor: 0xFF77153C,
+                          leftCircleColor: option['leftColor'],
+                          rightCircleColor: option['rightColor'],
+                          leftIcon: option['leftIcon'],
+                          rightIcon: option['rightIcon'],
+                        ),
+                      );
+                    }),
+                    const SizedBox(height: 30),
+                    MainButtonWidget(
+                      text: "Next",
+                      isLoading: _isLoading,
+                      onTap: (_selectedIndex == -1 || _isLoading)
+                          ? null
+                          : _onNextTapped,
+                      gradient: const LinearGradient(
+                        colors: [Color(0xFF77153C), Color(0xFFDD276F)],
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+                  ],
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
