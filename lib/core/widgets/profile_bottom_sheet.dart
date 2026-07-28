@@ -30,7 +30,7 @@ class MenuBottomSheet extends StatelessWidget {
           // Grey Drag Handle (Small container curve)
           Positioned(
             top: 5,
-            left: MediaQuery.of(context).size.width / 2 - 27,
+            left: MediaQuery.of(context).size.width / 2 - 28,
             right: MediaQuery.of(context).size.width / 2 - 27,
             child: Container(
               width: 55,

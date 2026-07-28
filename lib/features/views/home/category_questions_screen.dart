@@ -7,6 +7,7 @@
 // question a given user has answered inside one category.
 
 import 'package:flutter/material.dart';
+import 'package:two_are_one/core/widgets/app_header_widget.dart';
 import 'package:two_are_one/core/widgets/texts.dart';
 import 'package:two_are_one/core/widgets/back_button.dart';
 import 'package:two_are_one/data/services/question_service.dart';
@@ -81,8 +82,6 @@ class _CategoryQuestionsScreenState extends State<CategoryQuestionsScreen> {
             EditSingleQuestionScreen(item: item, categoryId: widget.categoryId),
       ),
     );
-    // Mirrors RN's redux `refresh` trigger — re-fetch the list after a
-    // successful edit so the shown answer text stays in sync.
     debugPrint('EditSingleQuestionScreen returned: $changed');
     if (changed == true) _getData();
   }
@@ -96,23 +95,9 @@ class _CategoryQuestionsScreenState extends State<CategoryQuestionsScreen> {
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
+
             children: [
-              Row(
-                children: [
-                  Back_Button(onTap: () => Navigator.of(context).maybePop()),
-                  const SizedBox(width: 82, height: 100),
-                  Expanded(
-                    child: Texts(
-                      text: widget.categoryName,
-                      maxLines: 1,
-                      size: 20,
-                      fontWeight: FontWeight.w600,
-                      colorHexValue: 0xFF000000,
-                      // overflow: TextOverflow.ellipsis,
-                    ),
-                  ),
-                ],
-              ),
+              AppHeaderWidget( title: widget.categoryName,isTrailing: false,),
               Expanded(
                 child: _loading
                     ? const Center(
