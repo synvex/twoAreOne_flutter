@@ -196,70 +196,93 @@ class _MessageScreenState extends State<MessageScreen> {
                             physics: const AlwaysScrollableScrollPhysics(),
                             child: Column(
                               children: [
-                                ListView.builder(
-                                  itemCount: viewModel.chatSearch.isNotEmpty
-                                      ? viewModel.chatSearch.length
-                                      : viewModel.chatMembers.length,
-                                  shrinkWrap: true,
-                                  physics: const NeverScrollableScrollPhysics(),
-                                  itemBuilder: (context, index) {
-                                    final item = viewModel.chatSearch.isNotEmpty
-                                        ? viewModel.chatSearch[index]
-                                        : viewModel.chatMembers[index];
+                                Builder(
+                                  builder: (context) {
+                                    final rawList =
+                                        viewModel.chatSearch.isNotEmpty
+                                        ? viewModel.chatSearch
+                                        : viewModel.chatMembers;
 
-                                    return GestureDetector(
-                                      onTap: () => Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (context) => ChatScreen(
-                                            receiverId: int.parse(
-                                              item.userId.toString(),
+                                    // Sort by lastMessageTime, most recent first
+                                    final sortedList = List.of(rawList)
+                                      ..sort((a, b) {
+                                        final aTime =
+                                            DateTime.tryParse(
+                                              a.lastMessageTime.toString(),
+                                            ) ??
+                                            DateTime.fromMillisecondsSinceEpoch(
+                                              0,
+                                            );
+                                        final bTime =
+                                            DateTime.tryParse(
+                                              b.lastMessageTime.toString(),
+                                            ) ??
+                                            DateTime.fromMillisecondsSinceEpoch(
+                                              0,
+                                            );
+                                        return bTime.compareTo(
+                                          aTime,
+                                        ); // descending
+                                      });
+                                    return ListView.builder(
+                                      itemCount: sortedList.length,
+
+                                      shrinkWrap: true,
+                                      physics:
+                                          const NeverScrollableScrollPhysics(),
+                                      itemBuilder: (context, index) {
+                                        final item = sortedList[index];
+
+                                        return GestureDetector(
+                                          onTap: () => Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (context) => ChatScreen(
+                                                receiverId: int.parse(
+                                                  item.userId.toString(),
+                                                ),
+                                                name: item.fullName.toString(),
+                                                avatarUrl: item.profilePicture
+                                                    .toString(),
+                                                statusText:
+                                                    item.isOnline == true
+                                                    ? "Online"
+                                                    : "Offline",
+                                              ),
                                             ),
-                                            name: item.fullName.toString(),
-                                            avatarUrl: item.profilePicture
-                                                .toString(),
-                                            statusText: item.isOnline == true
-                                                ? "Online"
-                                                : "Offline",
                                           ),
-                                        ),
-                                      ),
-                                      child: Container(
-                                        height: 60.h,
-                                        margin: EdgeInsets.only(
-                                          left: 16.w,
-                                          right: 16.w,
-                                          top: 16.h,
-                                        ),
-                                        padding: EdgeInsets.symmetric(
-                                          horizontal: 16.w,
-                                          vertical: 8.h,
-                                        ),
-                                        decoration: BoxDecoration(
-                                          color: AppColors.lightGray,
-                                          borderRadius: BorderRadius.circular(
-                                            50.r,
-                                          ),
-                                        ),
-                                        child: Row(
-                                          children: [
-                                            ClipRRect(
+                                          child: Container(
+                                            height: 60.h,
+                                            margin: EdgeInsets.only(
+                                              left: 16.w,
+                                              right: 16.w,
+                                              top: 16.h,
+                                            ),
+                                            padding: EdgeInsets.symmetric(
+                                              horizontal: 16.w,
+                                              vertical: 8.h,
+                                            ),
+                                            decoration: BoxDecoration(
+                                              color: AppColors.lightGray,
                                               borderRadius:
                                                   BorderRadius.circular(50.r),
-                                              child: Image(
-                                                image: NetworkImage(
-                                                  item.profilePicture
-                                                      .toString(),
-                                                ),
-                                                width: 48.w,
-                                                height: 48.h,
-                                                fit: BoxFit.cover,
-                                                errorBuilder:
-                                                    (
-                                                      context,
-                                                      error,
-                                                      stackTrace,
-                                                    ) {
+                                            ),
+                                            child: Row(
+                                              children: [
+                                                ClipRRect(
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                        50.r,
+                                                      ),
+                                                  child: Image(
+                                                    image: NetworkImage(
+                                                      item.profilePicture
+                                                          .toString(),
+                                                    ),
+                                                    width: 48.w,
+                                                    height: 48.h,
+                                                    fit: BoxFit.cover,
+                                                    errorBuilder: (context, error, stackTrace) {
                                                       final bgColor =
                                                           RandomColorPickerUtil.getColor(
                                                             item.fullName
@@ -293,91 +316,108 @@ class _MessageScreenState extends State<MessageScreen> {
                                                         ),
                                                       );
                                                     },
-                                              ),
-                                            ),
+                                                  ),
+                                                ),
 
-                                            SizedBox(width: 10.w),
-                                            Column(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.start,
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              children: [
-                                                Row(
+                                                SizedBox(width: 10.w),
+                                                Column(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.start,
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
                                                   children: [
-                                                    Text(
-                                                      item.fullName.toString(),
-                                                      style: GoogleFonts.roboto(
-                                                        fontSize: 14,
-                                                        fontWeight:
-                                                            FontWeight.w500,
+                                                    Row(
+                                                      children: [
+                                                        Text(
+                                                          item.fullName
+                                                              .toString(),
+                                                          style:
+                                                              GoogleFonts.roboto(
+                                                                fontSize: 14,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w500,
+                                                              ),
+                                                        ),
+                                                        SizedBox(width: 10.w),
+                                                        if (context
+                                                            .watch<
+                                                              PresenceService
+                                                            >()
+                                                            .isOnline(
+                                                              item.userId,
+                                                            ))
+                                                          CircleAvatar(
+                                                            radius: 4.r,
+                                                            backgroundColor:
+                                                                AppColors.green,
+                                                          ),
+                                                      ],
+                                                    ),
+                                                    Spacer(),
+                                                    SizedBox(
+                                                      width: 150.w,
+                                                      child: Text(
+                                                        maxLines: 1,
+                                                        item.lastMessage
+                                                            .toString(),
+                                                        overflow: TextOverflow
+                                                            .ellipsis,
+                                                        style:
+                                                            GoogleFonts.roboto(
+                                                              fontSize: 12,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w500,
+                                                            ),
                                                       ),
                                                     ),
-                                                    SizedBox(width: 10.w),
-                                                    if (context
-                                                        .watch<
-                                                          PresenceService
-                                                        >()
-                                                        .isOnline(item.userId))
-                                                      CircleAvatar(
-                                                        radius: 4.r,
-                                                        backgroundColor:
-                                                            AppColors.green,
-                                                      ),
                                                   ],
                                                 ),
                                                 Spacer(),
-                                                SizedBox(
-                                                  width: 150.w,
-                                                  child: Text(
-                                                    maxLines: 1,
-                                                    item.lastMessage.toString(),
-                                                    overflow:
-                                                        TextOverflow.ellipsis,
-                                                    style: GoogleFonts.roboto(
-                                                      fontSize: 12,
-                                                      fontWeight:
-                                                          FontWeight.w500,
-                                                    ),
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                            Spacer(),
-                                            Column(
-                                              children: [
-                                                if ((item.unreadCount ?? 0) > 0)
-                                                  CircleAvatar(
-                                                    radius: 12.r,
-                                                    backgroundColor:
-                                                        AppColors.red,
-                                                    child: Text(
-                                                      (item.unreadCount ?? 0)
-                                                          .toString(),
+                                                Column(
+                                                  children: [
+                                                    if ((item.unreadCount ??
+                                                            0) >
+                                                        0)
+                                                      CircleAvatar(
+                                                        radius: 12.r,
+                                                        backgroundColor:
+                                                            AppColors.red,
+                                                        child: Text(
+                                                          (item.unreadCount ??
+                                                                  0)
+                                                              .toString(),
+                                                          style:
+                                                              GoogleFonts.inter(
+                                                                fontSize: 10,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w500,
+                                                                color: AppColors
+                                                                    .white,
+                                                              ),
+                                                        ),
+                                                      ),
+                                                    const Spacer(),
+                                                    Text(
+                                                      DateTimeFormatter.chatTime(
+                                                        item.lastMessageTime
+                                                            .toString(),
+                                                      ),
                                                       style: GoogleFonts.inter(
                                                         fontSize: 10,
                                                         fontWeight:
-                                                            FontWeight.w500,
-                                                        color: AppColors.white,
+                                                            FontWeight.w400,
                                                       ),
                                                     ),
-                                                  ),
-                                                const Spacer(),
-                                                Text(
-                                                  DateTimeFormatter.chatTime(
-                                                    item.lastMessageTime
-                                                        .toString(),
-                                                  ),
-                                                  style: GoogleFonts.inter(
-                                                    fontSize: 10,
-                                                    fontWeight: FontWeight.w400,
-                                                  ),
+                                                  ],
                                                 ),
                                               ],
                                             ),
-                                          ],
-                                        ),
-                                      ),
+                                          ),
+                                        );
+                                      },
                                     );
                                   },
                                 ),
