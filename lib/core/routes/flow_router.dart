@@ -8,7 +8,6 @@ import '../../features/views/main/profile_setup_screen.dart';
 import '../../features/views/main/question_screen.dart';
 
 class OnboardingFlowRouter {
-  /// Fetches the latest user status and returns the appropriate Widget to show.
   static Future<Widget> resolveResumeScreen() async {
     final prefs = await SharedPreferences.getInstance();
     final homeService = HomeService();

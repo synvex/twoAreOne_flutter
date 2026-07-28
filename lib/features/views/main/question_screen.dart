@@ -36,14 +36,12 @@ class _QuestionnaireScreenState extends State<QuestionnaireScreen>
     _lottieController = AnimationController(vsync: this);
     _fetchPage();
   }
-
   @override
   void dispose() {
     _lottieController.dispose();
     super.dispose();
   }
 
-  // Logic to calculate Lottie frame based on order_no (Matching RN useMemo)
   double get _progressValue {
     if (_orderNo == 0) return 0;
     const totalFrames = 11;
@@ -201,7 +199,6 @@ class _QuestionnaireScreenState extends State<QuestionnaireScreen>
   }
 
   void _navigateToCompletion() {
-    // Equivalent to dispatch(setScreen("3"))
     Navigator.pushReplacement(
       context,
       MaterialPageRoute(builder: (_) => const CustomNavBar()),
@@ -210,9 +207,6 @@ class _QuestionnaireScreenState extends State<QuestionnaireScreen>
 
   String _capitalize(String val) =>
       val.isEmpty ? "" : val[0].toUpperCase() + val.substring(1);
-
-  // String _capitalize(String val) =>
-  //     val.isEmpty ? "" : val[0].toUpperCase() + val.substring(1);
 
   @override
   Widget build(BuildContext context) {
@@ -249,7 +243,6 @@ class _QuestionnaireScreenState extends State<QuestionnaireScreen>
     }
     return PopScope(
       canPop: false,
-
       child: Scaffold(
         backgroundColor: Colors.white,
         body: SafeArea(
@@ -258,12 +251,11 @@ class _QuestionnaireScreenState extends State<QuestionnaireScreen>
               SingleChildScrollView(
                 padding: const EdgeInsets.only(
                   bottom: 120,
-                ), // Padding for fixed button
+                ),
                 child: Column(
                   children: [
                     const SizedBox(height: 100),
-
-                    // Progress Lottie (Matching RN progressWrapper)
+                    // Progress Lottie
                     Center(
                       child: Stack(
                         alignment: Alignment.center,
@@ -301,7 +293,6 @@ class _QuestionnaireScreenState extends State<QuestionnaireScreen>
                       colorHexValue: 0xB2000000,
                     ),
                     const SizedBox(height: 20),
-
                     // Question Box (Matching RN questionBox styles)
                     Containers(
                       radius: BorderRadius.circular(16),
@@ -394,24 +385,32 @@ class _QuestionnaireScreenState extends State<QuestionnaireScreen>
                   ],
                 ),
               ),
-
-              // Fixed Bottom Button
-              Positioned(
-                bottom: 30,
-                left: 20,
-                right: 20,
-                child: MainButtonWidget(
-                  text: 'Next',
-                  isLoading: _btnLoader,
-                  onTap: _handleNext,
-                  gradient: const LinearGradient(
-                    colors: [Color(0xFF77153C), Color(0xFFDD276F)],
-                  ),
-                ),
-              ),
+              // // Fixed Bottom Button
+              // Positioned(
+              //   bottom: 30,
+              //   left: 20,
+              //   right: 20,
+              //   child: MainButtonWidget(
+              //     text: 'Next',
+              //     isLoading: _btnLoader,
+              //     onTap: _handleNext,
+              //     gradient: const LinearGradient(
+              //       colors: [Color(0xFF77153C), Color(0xFFDD276F)],
+              //     ),
+              //   ),
+              // ),
             ],
           ),
         ),
+        floatingActionButton: MainButtonWidget(
+          text: 'Next',
+          isLoading: _btnLoader,
+          onTap: _handleNext,
+          gradient: const LinearGradient(
+            colors: [Color(0xFF77153C), Color(0xFFDD276F)],
+          ),
+        ),
+        floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       ),
     );
   }

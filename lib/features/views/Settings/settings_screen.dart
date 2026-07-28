@@ -40,7 +40,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
   Future<void> _navigateOrComingSoon(
     String routeName, {
     Object? arguments,
-  }) async {
+  }) async
+  {
     try {
       await Navigator.of(context).pushNamed(routeName, arguments: arguments);
       if (mounted) _vm.loadUserInfo();
@@ -50,12 +51,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
       }
     }
   }
-
-  void _goBack() {
-    Navigator.of(context).pop(true);
-  }
-
-  // ── Action handlers ──────────────────────────────────────────────────
 
   void _handleLogoutConfirm() {
     _vm.confirmLogout(

@@ -31,6 +31,7 @@ class MenuBottomSheet extends StatelessWidget {
           Positioned(
             top: 5,
             left: MediaQuery.of(context).size.width / 2 - 27,
+            right: MediaQuery.of(context).size.width / 2 - 27,
             child: Container(
               width: 55,
               height: 8,
@@ -40,7 +41,6 @@ class MenuBottomSheet extends StatelessWidget {
               ),
             ),
           ),
-
           // Actual Content
           Padding(
             padding: const EdgeInsets.fromLTRB(25, 80, 25, 0),
@@ -77,14 +77,13 @@ class MenuBottomSheet extends StatelessWidget {
       ),
     );
   }
-
-  // Aapka original _sheetItem logic (badlay bghair)
   Widget _sheetItem({
     required String iconImg,
     required String label,
     required VoidCallback onTap,
     Color? labelColor,
-  }) {
+  })
+  {
     return GestureDetector(
       onTap: onTap,
       child: Container(
@@ -142,7 +141,7 @@ class CurveBackgroundPainter extends CustomPainter {
     path.moveTo(45, 0);
     path.lineTo(w * 0.35, 0);
     path.cubicTo(w * 0.42, 0, w * 0.41, 36, w * 0.5, 36);
-    path.cubicTo(w * 0.59, 36, w * 0.56, 0, w * 0.65, 0);
+    path.cubicTo(w * 0.59, 36, w * 0.60, 0, w * 0.65, 0);
     path.lineTo(w - 45, 0);
     path.quadraticBezierTo(w, 0, w, 45);
     path.lineTo(w, h);
@@ -151,7 +150,8 @@ class CurveBackgroundPainter extends CustomPainter {
     path.quadraticBezierTo(0, 0, 45, 0);
     path.close();
 
-    canvas.drawPath(path.shift(const Offset(0, -2)), shadowPaint);
+    canvas.drawPath(path.shift(
+        const Offset(0, -2)), shadowPaint);
     canvas.drawPath(path, paint);
   }
 

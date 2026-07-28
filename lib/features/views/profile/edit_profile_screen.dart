@@ -5,10 +5,8 @@ import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:two_are_one/core/widgets/app_header_widget.dart';
 import 'package:two_are_one/core/widgets/image.dart';
-import 'package:two_are_one/features//views/bottom_nav/profile_screen.dart';
 import 'package:two_are_one/features/views/bottom_nav/custom_nav_bar.dart';
 import 'package:video_player/video_player.dart';
-import 'package:two_are_one/core/widgets/back_button.dart';
 import 'package:two_are_one/core/widgets/main_button_widget.dart';
 import 'package:two_are_one/core/widgets/texts.dart';
 import 'package:two_are_one/core/widgets/top_toast.dart';
@@ -27,7 +25,6 @@ const Color _kMehroon = Color(0xFF77153C);
 const Color _kCardBorder = Color(0xFFE3E3E3);
 const Color _kFieldBorder = Color(0xFFDCDCDC);
 const Color _kFieldText = Color(0xFF9B9B9B);
-const Color _kIconCircleBg = Color(0xFFD9D9D9);
 
 class _DropdownOption {
   final String label;
@@ -248,9 +245,6 @@ class _EditProfileScreenState extends State<EditProfileScreen>
     );
     return result ?? false;
   }
-
-  // ── profile picture (RN: handleProfileImage / uploadUserProfilePicture) ─
-
   Future<void> _uploadAvatar(File file) async {
     setState(() {
       _pickedAvatarFile = file; // optimistic preview, same as RN
@@ -271,9 +265,6 @@ class _EditProfileScreenState extends State<EditProfileScreen>
   }
 
   void _pickAvatar() {
-    // RN's edit screen reuses the single generic photo/video bottom sheet
-    // for the avatar too (mode:"image", type:"profile"), so labels are the
-    // generic "Camera"/"Upload Image".
     _openMediaSheet(
       isVideo: false,
       onCamera: () async {
@@ -401,7 +392,6 @@ class _EditProfileScreenState extends State<EditProfileScreen>
       );
     }
   }
-
   Future<void> _removeVideo() async {
     final video = _existingVideo;
     if (video == null) return;
@@ -420,7 +410,6 @@ class _EditProfileScreenState extends State<EditProfileScreen>
 
   void _pickVideo() {
     if (_existingVideo != null || _pickedVideoFile != null) {
-      // RN: Alert.alert("You can attach only one video")
       TopToast.show(
         context,
         title: "You can attach only one video",
@@ -446,7 +435,8 @@ class _EditProfileScreenState extends State<EditProfileScreen>
     required bool isVideo,
     required Future<void> Function() onCamera,
     required Future<void> Function() onGallery,
-  }) {
+  })
+  {
     showModalBottomSheet(
       context: context,
       backgroundColor: Colors.white,
@@ -581,46 +571,6 @@ class _EditProfileScreenState extends State<EditProfileScreen>
       );
     }
   }
-  //
-  // Future<void> _onUpdate() async {
-  //   if (!_validate()) return;
-  //
-  //   setState(() => _saving = true);
-  //   final payload = {
-  //     "bio": _bioController.text,
-  //     "full_name": _nameController.text,
-  //     "country": _pickedLocation?.country ?? _user?.country ?? '',
-  //     "state": _pickedLocation?.state ?? _user?.state ?? '',
-  //     "city": _pickedLocation?.city ?? _user?.city ?? '',
-  //     "gender": _selectedGender,
-  //     "height": _selectedHeight,
-  //     "age": _selectedAge,
-  //     "weight": _selectedWeight,
-  //     "work": _workController.text,
-  //   };
-  //   print("Payload: $payload");
-  //   final res = await _profileService.updateUserProfile(
-  //       payload);
-  //   debugPrint("Response: $res");
-  //   if (!mounted) return;
-  //   setState(() => _saving = false);
-  //   if (res['success'] == true) {
-  //     TopToast.show(
-  //       context,
-  //       title: "Success",
-  //       message: "User Information Updated Successfully",
-  //       type: ToastType.success,
-  //     );
-  //   } else {
-  //     TopToast.show(
-  //       context,
-  //       title: "Error",
-  //       message:
-  //       res['error']?.toString() ?? "Something went wrong while uploading",
-  //       type: ToastType.error,
-  //     );
-  //   }
-  // }
 
   void _onPressCategory(dynamic category) {
     final userId = _user?.id ?? 0;
@@ -645,7 +595,6 @@ class _EditProfileScreenState extends State<EditProfileScreen>
         body: Center(child: CircularProgressIndicator(color: _kMehroon)),
       );
     }
-
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
@@ -881,29 +830,6 @@ class _EditProfileScreenState extends State<EditProfileScreen>
     );
   }
 
-  Widget _buildHeader() {
-    return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
-      child: Row(
-        children: [
-          Back_Button(
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => ProfileScreen()),
-              );
-            },
-          ),
-          SizedBox(width: 110),
-          const Text(
-            "Edit Profile",
-            style: TextStyle(fontSize: 22, fontWeight: FontWeight.w600),
-          ),
-        ],
-      ),
-    );
-  }
-
   Widget _sectionCard({required String title, required Widget child}) {
     return Container(
       width: double.infinity,
@@ -948,7 +874,6 @@ class _EditProfileScreenState extends State<EditProfileScreen>
   );
   Widget _outlinedField({
     required TextEditingController controller,
-    // required String hint,
     required String icon,
     int? maxLength,
     TextInputType? keyboardType,
@@ -991,9 +916,7 @@ class _EditProfileScreenState extends State<EditProfileScreen>
           borderRadius: BorderRadius.circular(30),
         ),
       ),
-    );
-  }
-
+    );}
   Widget _buildAvatarSection() {
     final avatarUrl = _fullUrl(_user?.profilePicture);
     return Center(
@@ -1050,13 +973,13 @@ class _EditProfileScreenState extends State<EditProfileScreen>
       ),
     );
   }
-
   Widget _buildDropdown({
     required String hint,
     required String? value,
     required List<_DropdownOption> items,
     required ValueChanged<String?> onChanged,
-  }) {
+  })
+  {
     final safeValue = (value != null && items.any((o) => o.value == value))
         ? value
         : null;
@@ -1100,7 +1023,6 @@ class _EditProfileScreenState extends State<EditProfileScreen>
       ),
     );
   }
-
   Widget _buildUpdateButton() {
     return MainButtonWidget(
       text: "Update",
