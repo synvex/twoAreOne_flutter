@@ -320,7 +320,7 @@ class _MessageScreenState extends State<MessageScreen> {
                                                         >()
                                                         .isOnline(item.userId))
                                                       CircleAvatar(
-                                                        radius: 6.r,
+                                                        radius: 4.r,
                                                         backgroundColor:
                                                             AppColors.green,
                                                       ),
