@@ -238,12 +238,10 @@ Future<Widget> getInitialScreen() async {
 
   ApiManager.setUpRequestToken(token);
 
-// <<<<<<< saqlain-02
+  // <<<<<<< saqlain-02
   // Use the shared router instead of local logic
   return await OnboardingFlowRouter.resolveResumeScreen();
 }
-
-
 
 // import 'package:firebase_core/firebase_core.dart';
 // import 'package:flutter/material.dart';
@@ -478,27 +476,3 @@ Future<Widget> getInitialScreen() async {
 //
 //
 //
-// =======
-  final homeService = HomeService();
-  final res = await homeService.getUserInfo();
-
-  if (res['success'] == true) {
-    final data = res['data'] as Map<String, dynamic>;
-    await _writeCachedUserInfo(prefs, data);
-    return _screenFromCache(await _readCachedUserInfo(prefs));
-  }
-
-  if (res['isSessionExpired'] == true) {
-    await ApiManager.logout();
-    return const LoginScreen();
-  }
-
-  final cached = await _readCachedUserInfo(prefs);
-  if (cached['screen_type'] != null) {
-    return _screenFromCache(cached);
-  }
-
-  // No cache and no successful response yet — safest fallback.
-  return const LoginScreen();
-}
-// >>>>>>> refector

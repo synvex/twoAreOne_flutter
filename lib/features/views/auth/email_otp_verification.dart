@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:two_are_one/core/widgets/app_header_widget.dart';
 import 'package:two_are_one/core/widgets/back_button.dart';
 import 'package:two_are_one/core/widgets/main_button_widget.dart';
 import 'package:two_are_one/core/widgets/image.dart';
@@ -131,8 +132,9 @@ class _EmailOtpVerificationState extends State<EmailOtpVerification> {
           Navigator.pushAndRemoveUntil(
             context,
             MaterialPageRoute(
-                builder: (context) => NewPassword(email: widget.email)),
-                (route) => false,
+              builder: (context) => NewPassword(email: widget.email),
+            ),
+            (route) => false,
           );
           // Navigator.pushReplacement(
           //   context,
@@ -145,9 +147,8 @@ class _EmailOtpVerificationState extends State<EmailOtpVerification> {
           if (!mounted) return;
           Navigator.pushAndRemoveUntil(
             context,
-            MaterialPageRoute(
-                builder: (context) => nextScreen),
-                (route) => false,
+            MaterialPageRoute(builder: (context) => nextScreen),
+            (route) => false,
           );
         }
         // else {
@@ -188,12 +189,12 @@ class _EmailOtpVerificationState extends State<EmailOtpVerification> {
       resizeToAvoidBottomInset: false,
       body: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.only(right: 20, left: 20.0, top: 45),
+          padding: EdgeInsets.only(right: 20.w, left: 20.w, top: 20.h),
           child: SingleChildScrollView(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Back_Button(onTap: () => Navigator.pop(context)),
+                AppHeaderWidget(isTrailing: false),
                 Containers(
                   padding: EdgeInsets.only(top: 15),
                   margin: EdgeInsets.only(top: 15),
