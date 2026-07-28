@@ -112,28 +112,28 @@ class ChatService {
   // MARK MESSAGE READ
   // ============================================================
 
-  // Future<Map<String, dynamic>> markMessagesRead({
-  //   required int partnerId,
-  // }) async {
-  //   try {
-  //     final response = await _dio.post(
-  //       "$baseUrl/user/messages/mark_messages_read.php",
-  //       options: Options(headers: await _headers()),
-  //       data: {"partner_id": partnerId},
-  //     );
+  Future<Map<String, dynamic>> markMessagesRead({
+    required int partnerId,
+  }) async {
+    try {
+      final response = await _dio.post(
+        "$baseUrl/user/messages/mark_messages_read.php",
+        options: Options(headers: await _headers()),
+        data: {"partner_id": partnerId},
+      );
 
-  //     print(response);
+      print(response);
 
-  //     final data = response.data;
+      final data = response.data;
 
-  //     if (data is Map<String, dynamic>) {
-  //       return data;
-  //     }
+      if (data is Map<String, dynamic>) {
+        return data;
+      }
 
-  //     return {};
-  //   } catch (e) {
-  //     debugPrint("❌ markMessagesRead Error: $e");
-  //     rethrow;
-  //   }
-  // }
+      return {};
+    } catch (e) {
+      debugPrint("❌ markMessagesRead Error: $e");
+      rethrow;
+    }
+  }
 }

@@ -7,6 +7,7 @@ import 'package:two_are_one/core/constants/app_icons.dart';
 import 'package:two_are_one/core/utils/date_time_formater.dart';
 import 'package:two_are_one/core/utils/random_color_picker_util.dart';
 import 'package:two_are_one/core/utils/skelton_util.dart';
+import 'package:two_are_one/data/services/presense_service.dart';
 import 'package:two_are_one/data/viewmodels/chat_viewmodel.dart';
 import 'package:two_are_one/features/views/chat/chat_screen.dart';
 import 'package:provider/provider.dart';
@@ -237,7 +238,7 @@ class _MessageScreenState extends State<MessageScreen> {
                                         decoration: BoxDecoration(
                                           color: AppColors.lightGray,
                                           borderRadius: BorderRadius.circular(
-                                            50,
+                                            50.r,
                                           ),
                                         ),
                                         child: Row(
@@ -302,12 +303,28 @@ class _MessageScreenState extends State<MessageScreen> {
                                               crossAxisAlignment:
                                                   CrossAxisAlignment.start,
                                               children: [
-                                                Text(
-                                                  item.fullName.toString(),
-                                                  style: GoogleFonts.roboto(
-                                                    fontSize: 14,
-                                                    fontWeight: FontWeight.w500,
-                                                  ),
+                                                Row(
+                                                  children: [
+                                                    Text(
+                                                      item.fullName.toString(),
+                                                      style: GoogleFonts.roboto(
+                                                        fontSize: 14,
+                                                        fontWeight:
+                                                            FontWeight.w500,
+                                                      ),
+                                                    ),
+                                                    SizedBox(width: 10.w),
+                                                    if (context
+                                                        .watch<
+                                                          PresenceService
+                                                        >()
+                                                        .isOnline(item.userId))
+                                                      CircleAvatar(
+                                                        radius: 6.r,
+                                                        backgroundColor:
+                                                            AppColors.green,
+                                                      ),
+                                                  ],
                                                 ),
                                                 Spacer(),
                                                 SizedBox(
@@ -329,11 +346,21 @@ class _MessageScreenState extends State<MessageScreen> {
                                             Spacer(),
                                             Column(
                                               children: [
-                                                if (item.isOnline == true)
+                                                if ((item.unreadCount ?? 0) > 0)
                                                   CircleAvatar(
-                                                    radius: 6.r,
+                                                    radius: 12.r,
                                                     backgroundColor:
-                                                        AppColors.green,
+                                                        AppColors.red,
+                                                    child: Text(
+                                                      (item.unreadCount ?? 0)
+                                                          .toString(),
+                                                      style: GoogleFonts.inter(
+                                                        fontSize: 10,
+                                                        fontWeight:
+                                                            FontWeight.w500,
+                                                        color: AppColors.white,
+                                                      ),
+                                                    ),
                                                   ),
                                                 const Spacer(),
                                                 Text(

@@ -10,6 +10,7 @@ import 'package:two_are_one/core/constants/app_icons.dart';
 import 'package:two_are_one/core/utils/date_time_formater.dart';
 import 'package:two_are_one/core/utils/random_color_picker_util.dart';
 import 'package:two_are_one/data/models/chat_history_model.dart';
+import 'package:two_are_one/data/services/presense_service.dart';
 import 'package:two_are_one/data/viewmodels/chat_viewmodel.dart';
 
 /// Simple text-only chat message.
@@ -115,6 +116,10 @@ class _ChatScreenState extends State<ChatScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final isOnline = context.watch<PresenceService>().isOnline(
+      widget.receiverId,
+    );
+    final statusText = isOnline ? "Online" : "Offline";
     final chatViewModel = context.watch<ChatViewModel>();
 
     final keyboardVisible = MediaQuery.of(context).viewInsets.bottom > 0;
@@ -227,7 +232,7 @@ class _ChatScreenState extends State<ChatScreen> {
                               ),
                             ),
                             Text(
-                              widget.statusText,
+                              statusText,
                               style: GoogleFonts.inter(
                                 fontSize: 11.sp,
                                 color: AppColors.background,
