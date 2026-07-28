@@ -28,22 +28,24 @@ class _MessageScreenState extends State<MessageScreen> {
   void initState() {
     super.initState();
 
-    // Call API when screen opens
-    Future.microtask(() {
-      context.read<ChatViewModel>().getChatMembers();
-    });
+    _viewModel = context.read<ChatViewModel>();
+
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      _viewModel = context.read<ChatViewModel>();
       await _viewModel.getChatMembers();
       _viewModel.searchChatMembers(_searchController.text);
+
+      // Start live polling for the member list
+      if (mounted) {
+        _viewModel.startMembersPolling();
+      }
     });
   }
 
   @override
   void dispose() {
-    // TODO: implement dispose
-    super.dispose();
+    _viewModel.stopMembersPolling();
     _searchController.dispose();
+    super.dispose();
   }
 
   @override

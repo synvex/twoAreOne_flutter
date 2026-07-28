@@ -69,11 +69,18 @@ class _ChatScreenState extends State<ChatScreen> {
     Future.microtask(() async {
       await _loadCurrentUser();
       await context.read<ChatViewModel>().fetchedChatHistory(widget.receiverId);
+
+      // Start live polling for this conversation once initial history is loaded
+      if (mounted) {
+        context.read<ChatViewModel>().startHistoryPolling(widget.receiverId);
+      }
     });
   }
 
   @override
   void dispose() {
+    // Stop polling so it doesn't keep hitting the API after leaving the screen
+    context.read<ChatViewModel>().stopHistoryPolling();
     _messageController.dispose();
     super.dispose();
   }
@@ -283,6 +290,7 @@ class _ChatScreenState extends State<ChatScreen> {
                                       .contains(raw.id),
                                   msg: chatMsg,
                                   avatarUrl: widget.avatarUrl,
+                                  name: widget.name,
                                 ),
                               );
                             },
@@ -313,11 +321,13 @@ class _TextBubble extends StatelessWidget {
     required this.msg,
     required this.avatarUrl,
     required this.isSending,
+    required this.name,
   });
 
   final _ChatMessage msg;
   final String avatarUrl;
   final bool isSending;
+  final String name;
 
   @override
   Widget build(BuildContext context) {
@@ -386,7 +396,25 @@ class _TextBubble extends StatelessWidget {
             height: 32.h,
             width: 32.w,
             fit: BoxFit.cover,
-            errorBuilder: (_, __, ___) => const Icon(Icons.person),
+            errorBuilder: (_, __, ___) {
+              final bgColor = RandomColorPickerUtil.getColor(name.toString());
+              return CircleAvatar(
+                radius: 14.r,
+                backgroundColor: bgColor,
+                child: Center(
+                  child: Text(
+                    name.toString().trim().isNotEmpty
+                        ? name.toString().trim()[0].toUpperCase()
+                        : "?",
+                    style: GoogleFonts.inter(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w500,
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+              );
+            },
           ),
         ),
         SizedBox(width: 8.w),
