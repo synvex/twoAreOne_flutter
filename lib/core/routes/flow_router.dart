@@ -36,7 +36,9 @@ class OnboardingFlowRouter {
   }
 
   static Widget _getScreenFromData(Map<String, dynamic> data) {
-    final complete = data['complete_question'].toString() == "true" || data['complete_question'] == 1;
+    final complete =
+        data['complete_question'].toString() == "true" ||
+        data['complete_question'] == 1;
     final screenType = data['screen_type']?.toString();
 
     final skeletonModel = UserProfileModel(
@@ -66,10 +68,22 @@ class OnboardingFlowRouter {
     };
   }
 
-  static Future<void> _writeCachedUserInfo(SharedPreferences prefs, Map<String, dynamic> data) async {
-    await prefs.setString('cached_complete_question', data['complete_question']?.toString() ?? "");
-    await prefs.setString('cached_screen_type', data['screen_type']?.toString() ?? "0");
+  static Future<void> _writeCachedUserInfo(
+    SharedPreferences prefs,
+    Map<String, dynamic> data,
+  ) async {
+    await prefs.setString(
+      'cached_complete_question',
+      data['complete_question']?.toString() ?? "",
+    );
+    await prefs.setString(
+      'cached_screen_type',
+      data['screen_type']?.toString() ?? "0",
+    );
     await prefs.setString('cached_gender', data['gender']?.toString() ?? "");
-    await prefs.setString('cached_sexuality', data['sexuality']?.toString() ?? "");
+    await prefs.setString(
+      'cached_sexuality',
+      data['sexuality']?.toString() ?? "",
+    );
   }
 }

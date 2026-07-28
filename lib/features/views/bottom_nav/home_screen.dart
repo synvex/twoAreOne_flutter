@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:two_are_one/core/constants/app_colors.dart';
+import 'package:two_are_one/core/utils/skelton_util.dart';
 import 'package:two_are_one/core/widgets/containers.dart';
 import 'package:two_are_one/core/widgets/divider.dart';
 import 'package:two_are_one/core/widgets/image.dart';
