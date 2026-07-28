@@ -30,7 +30,6 @@ class _NotificationScreenState extends State<NotificationScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final _provider = Provider.of<NotificationViewModel>(context);
     return Scaffold(
       backgroundColor: AppColors.background,
       body: SafeArea(
@@ -48,30 +47,40 @@ class _NotificationScreenState extends State<NotificationScreen> {
 
               SizedBox(height: 35.h),
 
-              SingleChildScrollView(
-                child: Consumer<NotificationViewModel>(
-                  builder: (context, vm, child) {
-                    if (vm.isLoading) {
-                      return SkeletonEffect.chatList(itemCount: 8);
-                    }
+              Expanded(
+                child: RefreshIndicator(
+                  onRefresh: _onRefresh,
+                  color: AppColors.black,
+                  backgroundColor: AppColors.background,
+                  child: Consumer<NotificationViewModel>(
+                    builder: (context, vm, child) {
+                      if (vm.isLoading) {
+                        return SkeletonEffect.chatList(itemCount: 8);
+                      }
 
-                    if (vm.notificationList.isEmpty) {
-                      return const Center(
-                        child: Text("No notifications found"),
+                      if (vm.notificationList.isEmpty) {
+                        return SingleChildScrollView(
+                          physics: const AlwaysScrollableScrollPhysics(),
+                          child: SizedBox(
+                            height: MediaQuery.of(context).size.height * 0.6,
+                            child: const Center(
+                              child: Text("No notifications found"),
+                            ),
+                          ),
+                        );
+                      }
+
+                      return ListView.builder(
+                        physics: const AlwaysScrollableScrollPhysics(),
+                        itemCount: vm.notificationList.length,
+                        itemBuilder: (context, index) {
+                          final notification = vm.notificationList[index];
+
+                          return NotificationCard(item: notification);
+                        },
                       );
-                    }
-
-                    return ListView.builder(
-                      itemCount: vm.notificationList.length,
-                      shrinkWrap: true,
-                      physics: NeverScrollableScrollPhysics(),
-                      itemBuilder: (context, index) {
-                        final notification = vm.notificationList[index];
-
-                        return NotificationCard(item: notification);
-                      },
-                    );
-                  },
+                    },
+                  ),
                 ),
               ),
             ],
