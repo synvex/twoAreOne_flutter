@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -8,7 +7,6 @@ import 'package:two_are_one/core/constants/app_icons.dart';
 import 'package:two_are_one/core/utils/date_time_formater.dart';
 import 'package:two_are_one/core/utils/random_color_picker_util.dart';
 import 'package:two_are_one/core/utils/skelton_util.dart';
-import 'package:two_are_one/core/widgets/app_header_widget.dart';
 import 'package:two_are_one/data/viewmodels/chat_viewmodel.dart';
 import 'package:two_are_one/features/views/chat/chat_screen.dart';
 import 'package:provider/provider.dart';
@@ -167,6 +165,8 @@ class _MessageScreenState extends State<MessageScreen> {
                         )
                       : viewModel.chatMembers.isEmpty
                       ? RefreshIndicator(
+                          color: AppColors.black,
+                          backgroundColor: AppColors.background,
                           onRefresh: () async {
                             await viewModel.getChatMembers();
                             viewModel.searchChatMembers(_searchController.text);
@@ -185,6 +185,8 @@ class _MessageScreenState extends State<MessageScreen> {
                           ),
                         )
                       : RefreshIndicator(
+                          color: AppColors.black,
+                          backgroundColor: AppColors.background,
                           onRefresh: () async {
                             await viewModel.getChatMembers();
                             viewModel.searchChatMembers(_searchController.text);

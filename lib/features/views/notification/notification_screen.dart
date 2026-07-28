@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:two_are_one/core/constants/app_colors.dart';
-import 'package:two_are_one/core/constants/app_icons.dart';
+import 'package:two_are_one/core/utils/skelton_util.dart';
 import 'package:two_are_one/core/widgets/app_header_widget.dart';
 import 'package:two_are_one/core/widgets/notification_card.dart';
 import 'package:two_are_one/data/viewmodels/notification_view_model.dart';
@@ -43,9 +42,8 @@ class _NotificationScreenState extends State<NotificationScreen> {
 
               AppHeaderWidget(
                 isLeading: true,
-                isTrailing: true,
+                isTrailing: false,
                 title: "Notification",
-                onTrailingTap: () => _provider.fetchNotifications(),
               ),
 
               SizedBox(height: 35.h),
@@ -54,7 +52,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
                 child: Consumer<NotificationViewModel>(
                   builder: (context, vm, child) {
                     if (vm.isLoading) {
-                      return const Center(child: CircularProgressIndicator());
+                      return SkeletonEffect.chatList(itemCount: 8);
                     }
 
                     if (vm.notificationList.isEmpty) {
