@@ -7,6 +7,7 @@ import 'package:two_are_one/data/services/Api_Helper/api_manager.dart';
 import 'package:two_are_one/data/repo/socket_service.dart';
 import 'package:two_are_one/data/services/home_service.dart';
 import 'package:two_are_one/data/viewmodels/chat_viewmodel.dart';
+import 'package:two_are_one/data/viewmodels/notification_view_model.dart';
 import 'package:two_are_one/features/views/Interested/interrested_user_screen.dart';
 import 'package:two_are_one/features/views/Settings/settings_screen.dart';
 import 'package:two_are_one/features/views/auth/login_screen.dart';
@@ -40,6 +41,7 @@ void main() async {
     MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => ChatViewModel()),
+        ChangeNotifierProvider(create: (_) => NotificationViewModel()),
         // .value, not create: - this must be the same instance ApiManager
         // drives via SocketService.instance, so widgets that watch it
         // (e.g. online-status dots) see the real connection state.
@@ -238,12 +240,10 @@ Future<Widget> getInitialScreen() async {
 
   ApiManager.setUpRequestToken(token);
 
-// <<<<<<< saqlain-02
+  // <<<<<<< saqlain-02
   // Use the shared router instead of local logic
   return await OnboardingFlowRouter.resolveResumeScreen();
 }
-
-
 
 // import 'package:firebase_core/firebase_core.dart';
 // import 'package:flutter/material.dart';
@@ -478,27 +478,3 @@ Future<Widget> getInitialScreen() async {
 //
 //
 //
-// =======
-  final homeService = HomeService();
-  final res = await homeService.getUserInfo();
-
-  if (res['success'] == true) {
-    final data = res['data'] as Map<String, dynamic>;
-    await _writeCachedUserInfo(prefs, data);
-    return _screenFromCache(await _readCachedUserInfo(prefs));
-  }
-
-  if (res['isSessionExpired'] == true) {
-    await ApiManager.logout();
-    return const LoginScreen();
-  }
-
-  final cached = await _readCachedUserInfo(prefs);
-  if (cached['screen_type'] != null) {
-    return _screenFromCache(cached);
-  }
-
-  // No cache and no successful response yet — safest fallback.
-  return const LoginScreen();
-}
-// >>>>>>> refector

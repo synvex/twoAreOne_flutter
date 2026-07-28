@@ -7,6 +7,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:two_are_one/core/constants/app_colors.dart';
 import 'package:two_are_one/core/constants/app_icons.dart';
+import 'package:two_are_one/core/utils/random_color_picker_util.dart';
 import 'package:two_are_one/data/models/chat_history_model.dart';
 import 'package:two_are_one/data/viewmodels/chat_viewmodel.dart';
 
@@ -181,7 +182,28 @@ class _ChatScreenState extends State<ChatScreen> {
                             width: 60.w,
                             fit: BoxFit.cover,
                             errorBuilder: (_, __, ___) {
-                              return Icon(AppIcons.personIcon, size: 35.sp);
+                              final bgColor = RandomColorPickerUtil.getColor(
+                                widget.name.toString(),
+                              );
+                              return CircleAvatar(
+                                radius: 24.r,
+                                backgroundColor: bgColor,
+                                child: Center(
+                                  child: Text(
+                                    widget.name.toString().trim().isNotEmpty
+                                        ? widget.name
+                                              .toString()
+                                              .trim()[0]
+                                              .toUpperCase()
+                                        : "?",
+                                    style: GoogleFonts.inter(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w500,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                ),
+                              );
                             },
                           ),
                         ),
