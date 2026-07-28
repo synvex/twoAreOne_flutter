@@ -70,9 +70,7 @@ class ProfileCard extends StatelessWidget {
       onTap: onPress,
       child: Card(
         elevation: 2,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(30),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
         child: ClipRRect(
           borderRadius: BorderRadius.circular(30),
           child: Stack(
@@ -249,6 +247,7 @@ class ProfileCard extends StatelessWidget {
   Widget _buildPlaceholder() {
     return PlaceholderImage(height: 135, width: 140, size: 22);
   }
+
   Widget _smallIcon(
     VoidCallback? onTap,
     Images iconWidget,

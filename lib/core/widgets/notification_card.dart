@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:two_are_one/core/utils/date_time_formater.dart';
+import 'package:two_are_one/core/utils/random_color_picker_util.dart';
 import 'package:two_are_one/data/models/notification_model.dart';
 
 import '../constants/app_colors.dart';
@@ -49,14 +50,53 @@ class NotificationCard extends StatelessWidget {
                     fit: BoxFit.cover,
                     loadingBuilder: (context, child, progress) {
                       if (progress == null) return child;
-                      return Icon(
-                        Icons.person,
-                        color: AppColors.grey2,
-                        size: 24.r,
+                      final bgColor = RandomColorPickerUtil.getColor(
+                        item.userInfo.fullName.toString(),
+                      );
+                      return CircleAvatar(
+                        radius: 24.r,
+                        backgroundColor: bgColor,
+                        child: Center(
+                          child: Text(
+                            item.userInfo.fullName.toString().trim().isNotEmpty
+                                ? item.userInfo.fullName
+                                      .toString()
+                                      .trim()[0]
+                                      .toUpperCase()
+                                : "?",
+                            style: GoogleFonts.inter(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w500,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ),
                       );
                     },
-                    errorBuilder: (context, error, stackTrace) =>
-                        Icon(Icons.person, color: AppColors.grey2, size: 24.r),
+                    errorBuilder: (context, error, stackTrace) {
+                      final bgColor = RandomColorPickerUtil.getColor(
+                        item.userInfo.fullName.toString(),
+                      );
+                      return CircleAvatar(
+                        radius: 24.r,
+                        backgroundColor: bgColor,
+                        child: Center(
+                          child: Text(
+                            item.userInfo.fullName.toString().trim().isNotEmpty
+                                ? item.userInfo.fullName
+                                      .toString()
+                                      .trim()[0]
+                                      .toUpperCase()
+                                : "?",
+                            style: GoogleFonts.inter(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w500,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ),
+                      );
+                    },
                   ),
                 ),
               ),

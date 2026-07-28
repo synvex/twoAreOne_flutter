@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:two_are_one/core/constants/app_colors.dart';
 import 'package:two_are_one/core/constants/app_icons.dart';
 import 'package:two_are_one/core/widgets/containers.dart';
 import 'package:two_are_one/core/widgets/image.dart';
@@ -9,6 +10,7 @@ import 'package:two_are_one/core/widgets/texts.dart';
 import 'package:two_are_one/data/models/user_match_model.dart';
 import 'package:two_are_one/data/services/fav_services.dart';
 import 'package:two_are_one/features/views/home/profile_details_screen.dart';
+import 'package:two_are_one/features/views/notification/notification_screen.dart';
 import 'customs/bottom_bar.dart';
 
 class FavouriteScreen extends StatefulWidget {
@@ -122,8 +124,10 @@ class _FavouriteScreenState extends State<FavouriteScreen> {
   }
 
   void _onNotificationPress() {
-    // TODO: Apni notification screen route yahan navigate karein
-    // Navigator.pushNamed(context, NotificationScreen.routeName);
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => NotificationScreen()),
+    );
   }
 
   void _onMenuPress(FilterMatchModel item, int user_id) {
@@ -356,7 +360,7 @@ class _FavouriteScreenState extends State<FavouriteScreen> {
                       itemBuilder: (context, index) => _buildSkeletonCard(),
                     )
                   : RefreshIndicator(
-                      color: const Color(0xFFDD276F),
+                      color: AppColors.black,
                       onRefresh: _onRefresh,
                       child: _data.isEmpty
                           ? ListView(

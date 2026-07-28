@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:two_are_one/data/services/Api_Helper/api_manager.dart';
 import 'package:two_are_one/data/repo/socket_service.dart';
+import 'package:two_are_one/data/services/presense_service.dart';
 import 'package:two_are_one/data/viewmodels/chat_viewmodel.dart';
 import 'package:two_are_one/data/viewmodels/notification_view_model.dart';
 import 'package:two_are_one/features/views/Interested/interrested_user_screen.dart';
@@ -37,6 +38,7 @@ void main() async {
       providers: [
         ChangeNotifierProvider(create: (_) => ChatViewModel()),
         ChangeNotifierProvider(create: (_) => NotificationViewModel()),
+        ChangeNotifierProvider(create: (_) => PresenceService()..connect()),
         // .value, not create: - this must be the same instance ApiManager
         // drives via SocketService.instance, so widgets that watch it
         // (e.g. online-status dots) see the real connection state.
@@ -67,7 +69,7 @@ class MyApp extends StatelessWidget {
         routes: {
           '/settings_screen': (context) => const SettingsScreen(),
           '/profile_detail': (context) => const ProfileDetailsScreen(),
-          '/login': (context) =>  const LoginScreen(),
+          '/login': (context) => const LoginScreen(),
           '/interested_screen': (context) => const InterestedUserScreen(),
           '/edit_profile': (context) => const EditProfileScreen(),
           '/blocked_screen': (context) => const BlockedUserScreen(),

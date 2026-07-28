@@ -167,6 +167,7 @@ class ChatViewModel extends ChangeNotifier {
       isLoading = true;
       notifyListeners();
       chatHistory = await _chatService.fetchChatHistory(receiverId: receiverId);
+      markMessagesAsRead(receiverId);
     } catch (e) {
       debugPrint("Chat Members Error: $e");
     } finally {
@@ -234,6 +235,16 @@ class ChatViewModel extends ChangeNotifier {
       sendingMessageIds.remove(tempId);
     } finally {
       notifyListeners();
+    }
+  }
+
+  // --- Mark as read -----------------------------------------------
+
+  Future<void> markMessagesAsRead(int partnerId) async {
+    try {
+      await _chatService.markMessagesRead(partnerId: partnerId);
+    } catch (e) {
+      debugPrint("Mark Messages Read Error: $e");
     }
   }
 }
