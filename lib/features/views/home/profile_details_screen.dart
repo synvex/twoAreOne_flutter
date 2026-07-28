@@ -579,87 +579,56 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
   }
 
   Widget _buildFullScreenImageViewer() {
-    return GestureDetector(
-      onTap: () => setState(() => _selectedImage = null),
-      child: Container(
-        color: Colors.black,
-        width: double.infinity,
-        height: double.infinity,
-        child: Stack(
-          children: [
-            Center(
-              child: InteractiveViewer(
-                minScale: 1,
-                maxScale: 4,
-                child: Image.network(
-                  _selectedImage!,
-                  fit: BoxFit.contain,
-                  loadingBuilder: (context, child, loadingProgress) {
-                    if (loadingProgress == null) return child;
-                    return const Center(
-                      child: CircularProgressIndicator(color: Colors.white),
-                    );
-                  },
-                  errorBuilder: (context, error, stack) => const Center(
-                    child: Icon(
-                      Icons.broken_image,
-                      color: Colors.white,
-                      size: 48,
+    return Scaffold(
+      body: GestureDetector(
+        onTap: () => setState(() => _selectedImage = null),
+        child: Container(
+          color: Colors.black,
+          width: double.infinity,
+          height: double.infinity,
+          child: Stack(
+            children: [
+              Center(
+                child: InteractiveViewer(
+                  minScale: 1,
+                  maxScale: 4,
+                  child: Image.network(
+                    _selectedImage!,
+                    fit: BoxFit.contain,
+                    loadingBuilder: (context, child, loadingProgress) {
+                      if (loadingProgress == null) return child;
+                      return const Center(
+                        child: CircularProgressIndicator(color: Colors.white),
+                      );
+                    },
+                    errorBuilder: (context, error, stack) => const Center(
+                      child: Icon(
+                        Icons.broken_image,
+                        color: Colors.white,
+                        size: 48,
+                      ),
                     ),
                   ),
                 ),
               ),
-            ),
-            Positioned(
-              top: 50,
-              right: 20,
-              child: GestureDetector(
-                onTap: () => setState(() => _selectedImage = null),
-                child: const Text(
-                  "✕",
-                  style: TextStyle(
-                    fontSize: 22,
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
+              Positioned(
+                top: 50,
+                right: 20,
+                child: GestureDetector(
+                  onTap: () => setState(() => _selectedImage = null),
+                  child: const Text(
+                    "✕",
+                    style: TextStyle(
+                      fontSize: 22,
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
               ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildHeader() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Back_Button(onTap: () => Navigator.of(context).maybePop()),
-          GestureDetector(
-            onTap: () {
-              // RN navigates to NotificationScreen here.
-              TopToast.show(
-                context,
-                title: "Notifications",
-                type: ToastType.info,
-              );
-            },
-            child: Containers(
-              wWidth: 45,
-              wHeight: 45,
-              shape: BoxShape.circle,
-              hexValue: 0xFFFFFFFF,
-              border: Border.all(color: Colors.black12),
-              alignment: Alignment.center,
-              child: const Images(
-                imageStr: "assets/svg_images/notification.svg",
-              ),
-            ),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }

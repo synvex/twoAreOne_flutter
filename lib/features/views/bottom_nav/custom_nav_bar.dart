@@ -1,3 +1,4 @@
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:two_are_one/core/widgets/image.dart';
 import 'package:two_are_one/features/views/bottom_nav/profile_screen.dart';
@@ -5,8 +6,8 @@ import '../chat/message_screen.dart';
 import 'favourite_screen.dart';
 import 'home_screen.dart';
 
-const double _kCurveDepth = 90.0;
-const double _kBarHeight = 100.0;
+const double _kCurveDepth = 100.0;
+const double _kBarHeight = 170.0;
 
 class CustomNavBar extends StatefulWidget {
   final int initialIndex;
@@ -89,64 +90,147 @@ class CustomBottomNavBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final double screenWidth = MediaQuery.of(context).size.width;
-    final double totalHeight = _kCurveDepth + _kBarHeight;
-
     return SizedBox(
-      width: screenWidth,
-      height: totalHeight,
-      child: Stack(
-        clipBehavior: Clip.none,
-        children: [
-          Positioned.fill(
-            child: CustomPaint(
-              painter: _ShadowPainter(
-                curveDepth: _kCurveDepth,
-                barHeight: _kBarHeight,
-              ),
-            ),
-          ),
-
-          // ── Layer 2: White curved shape ──────────────────────────────────
-          ClipPath(
-            clipper: _CurveClipper(
-              curveDepth: _kCurveDepth,
-              barHeight: _kBarHeight,
-            ),
-            child: Container(
-              width: screenWidth,
-              height: totalHeight,
-              color: Colors.white,
-            ),
-          ),
-          // ── Layer 3: Tab items
-          Positioned(
-            top: _kCurveDepth - 10,
-            left: 0,
-            // bottom: 10,
-            right: 0,
-            height: _kBarHeight,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: List.generate(_imgStr.length, (index) {
-                final bool isSelected = selectedIndex == index;
-                return Padding(
-                  padding: const EdgeInsets.only(bottom: 16),
-                  child: _NavItem(
-                    imgStr: isSelected
-                        ? _selectedImgStr[index]
-                        : _imgStr[index],
-                    label: _tabNames[index],
-                    isSelected: isSelected,
-                    onTap: () => onTabChanged(index),
+        width: screenWidth,
+        height: _kBarHeight+18,
+        child: Padding(
+          padding: const EdgeInsets.only(top: 18.0),
+          child: Stack(
+            clipBehavior: Clip.none,
+            children: [
+              SizedBox(height: 30,),
+              Positioned.fill(
+                child: CustomPaint(
+                  painter: _ShadowPainter(
+                    curveDepth: _kCurveDepth,
+                    barHeight: _kBarHeight,
                   ),
-                );
-              }),
-            ),
+                ),
+              ),
+              Positioned(
+                top: 10,
+                left: 0,
+                right: 0,
+                bottom: -20,
+                child: Transform.translate(
+                  offset: const Offset(0, 6),
+                  child: ClipPath(
+                    clipper: _CurveClipper(
+                      curveDepth: _kCurveDepth,
+                      barHeight: _kBarHeight,
+                    ),
+                    child: Container(
+                      width: screenWidth,
+                      height: _kBarHeight,
+                      color: const Color(0xFF77153C).withOpacity(0.12),
+                    ),
+                  ),
+                ),
+              ),
+
+              // main white bar
+              ClipPath(
+                clipper: _CurveClipper(
+                  curveDepth: _kCurveDepth,
+                  barHeight: _kBarHeight,
+                ),
+                child: Container(
+                  width: screenWidth,
+                  height: _kBarHeight,
+                  color: Colors.white,
+                ),
+              ),
+
+              // tab items
+              Positioned(
+                top: 54,
+                left: 0,
+                right: 0,
+                height: 100,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: List.generate(_imgStr.length, (index) {
+                    final bool isSelected = selectedIndex == index;
+                    return Expanded(
+                      child: Padding(
+                        padding:  EdgeInsets.symmetric(horizontal: 8),
+                        child: _NavItem(
+                          imgStr: isSelected
+                              ? _selectedImgStr[index]
+                              : _imgStr[index],
+                          label: _tabNames[index],
+                          isSelected: isSelected,
+                          onTap: () => onTabChanged(index),
+                        ),
+                      ),
+                    );
+                  }),
+                ),
+              ),
+            ],
           ),
-        ],
-      ),
+        ),
     );
+
+    // return SizedBox(
+    //   width: screenWidth,
+    //   height: totalHeight,
+    //   child: Stack(
+    //     clipBehavior: Clip.none,
+    //     children: [
+    //       Positioned.fill(
+    //         child: CustomPaint(
+    //           painter: _ShadowPainter(
+    //             curveDepth: _kCurveDepth,
+    //             barHeight: _kBarHeight,
+    //           ),
+    //         ),
+    //       ),
+    //
+    //       // ── Layer 2: White curved shape ──────────────────────────────────
+    //       ClipPath(
+    //         clipper: _CurveClipper(
+    //           curveDepth: _kCurveDepth,
+    //           barHeight: _kBarHeight,
+    //         ),
+    //         child: Container(
+    //           width: screenWidth,
+    //           height: totalHeight,
+    //           color: Colors.white,
+    //         ),
+    //       ),
+    //       // ── Layer 3: Tab items
+    //       Positioned(
+    //         // top: _kCurveDepth - 10,
+    //         left: 0,
+    //         top: 34,
+    //         // bottom: 10,
+    //         right: 0,
+    //         // height: _kBarHeight,
+    //         height: 100,
+    //         child: Row(
+    //           mainAxisAlignment: MainAxisAlignment.spaceAround,
+    //           crossAxisAlignment: CrossAxisAlignment.center,
+    //           children: List.generate(_imgStr.length, (index) {
+    //             final bool isSelected = selectedIndex == index;
+    //             return Padding(
+    //               padding: const EdgeInsets.only(bottom: 16),
+    //               child: _NavItem(
+    //                 imgStr: isSelected
+    //                     ? _selectedImgStr[index]
+    //                     : _imgStr[index],
+    //                 label: _tabNames[index],
+    //                 isSelected: isSelected,
+    //                 onTap: () => onTabChanged(index),
+    //               ),
+    //             );
+    //           }),
+    //         ),
+    //       ),
+    //     ],
+    //   ),
+    // );
   }
 }
 
@@ -168,56 +252,54 @@ class _NavItem extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       behavior: HitTestBehavior.opaque,
-      child: SizedBox(
-        width: 60,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            AnimatedScale(
-              scale: isSelected ? 1.15 : 1.0,
-              duration: const Duration(milliseconds: 300),
-              curve: Curves.easeOutBack,
-              child: Stack(
-                alignment: Alignment.center,
-                children: [
-                  // ── Selected Glow Effect (Halo behind icon) ──
-                  // Ye sirf tab nazar ayega jab tab select hoga
-                  if (isSelected)
-                    SizedBox(
-                      width: 38,
-                      height: 38,
-                      // decoration: BoxDecoration(
-                      //   shape: BoxShape.circle,
-                      //   boxShadow: [
-                      //     BoxShadow(
-                      //       color: const Color(0xFFDD276F).withOpacity(0.25),
-                      //       blurRadius: 12,
-                      //       spreadRadius: 4,
-                      //     ),
-                      //   ],
-                      // ),
+        child: SizedBox(
+          width: 60,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              AnimatedScale(
+                scale: isSelected ? 1.15 : 1.0,
+                duration: const Duration(milliseconds: 250),
+                curve: Curves.easeOutBack,
+                child: Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    if (isSelected)
+                      Positioned(
+                        bottom: -4,
+                        // left: .5,
+                        child: ImageFiltered(
+                          imageFilter: ImageFilter.blur(sigmaX: 1, sigmaY: 1),
+                          child: Images(
+                            color: Color(0xFFDD276F).withValues(alpha: .7) ,
+                            imageStr: imgStr,
+                            height: isSelected ? 28 : 24,
+                            width: isSelected ? 29 : 24,
+                          ),
+                        ),
+                      ),
+                    Images(
+                      imageStr: imgStr,
+                      height: isSelected ? 28 : 24,
+                      width: isSelected ? 28 : 24,
                     ),
-                  // ── The SVG Icon ──
-                  // Yahan humne koi color assign nahi kiya taake images ka
-                  // apna gradient/color mutasir na ho.
-                  Images(imageStr: imgStr, height: 26, width: 26),
-                ],
+                  ],
+                ),
               ),
-            ),
-            const SizedBox(height: 1),
-            Text(
-              label,
-              style: TextStyle(
-                fontSize: 10,
-                fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
-                color: isSelected
-                    ? const Color(0xFFDD276F)
-                    : const Color(0xFF8E8E8E),
+              const SizedBox(height: 2),
+              Text(
+                label,
+                style: TextStyle(
+                  fontSize: 10,
+                  fontWeight:  FontWeight.w500,
+                  color: isSelected
+                      ? const Color(0xFFDD276F)
+                      : const Color(0xFF000000),
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
-      ),
     );
   }
 }
@@ -255,13 +337,13 @@ class _ShadowPainter extends CustomPainter {
       ..lineTo(size.width, size.height)
       ..lineTo(0, size.height)
       ..close();
-
     canvas.drawPath(
       path.shift(const Offset(0, -1)),
       Paint()
-        ..color = Colors.black.withValues(alpha: 0.07)
-        ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 1)
+        ..color = const Color(0xFF77153C).withOpacity(0.14)
+        ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 4)
         ..style = PaintingStyle.fill,
+
     );
   }
 
