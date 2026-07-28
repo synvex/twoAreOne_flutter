@@ -128,12 +128,10 @@ class _EmailOtpVerificationState extends State<EmailOtpVerification> {
           const SnackBar(content: Text("Account verified successfully!")),
         );
         if (widget.isFromForget) {
-          final nextScreen = await OnboardingFlowRouter.resolveResumeScreen();
-
           Navigator.pushAndRemoveUntil(
             context,
             MaterialPageRoute(
-                builder: (context) => nextScreen),
+                builder: (context) => NewPassword(email: widget.email)),
                 (route) => false,
           );
           // Navigator.pushReplacement(
@@ -142,11 +140,22 @@ class _EmailOtpVerificationState extends State<EmailOtpVerification> {
           //   const NewPassword()),
           // );
         } else {
-          Navigator.pushReplacement(
+          // SIGN UP FLOW: Resolve where the user left off (Gender, Profile, or Home)
+          final nextScreen = await OnboardingFlowRouter.resolveResumeScreen();
+          if (!mounted) return;
+          Navigator.pushAndRemoveUntil(
             context,
-            MaterialPageRoute(builder: (context) => const MainScreen()),
+            MaterialPageRoute(
+                builder: (context) => nextScreen),
+                (route) => false,
           );
         }
+        // else {
+        //   Navigator.pushReplacement(
+        //     context,
+        //     MaterialPageRoute(builder: (context) => const MainScreen()),
+        //   );
+        // }
       } else {
         if (!mounted) return;
         ScaffoldMessenger.of(context).showSnackBar(
