@@ -7,10 +7,8 @@ import 'package:package_info_plus/package_info_plus.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:two_are_one/core/widgets/containers.dart';
 import 'package:two_are_one/core/widgets/divider.dart';
-import 'package:two_are_one/core/widgets/header.dart';
 import 'package:two_are_one/core/widgets/image.dart';
 import 'package:two_are_one/core/widgets/my_icons.dart';
-import 'package:two_are_one/core/widgets/texts.dart';
 import 'package:two_are_one/core/widgets/main_button_widget.dart';
 import 'package:two_are_one/core/widgets/confirmation_dialogue.dart';
 import 'package:two_are_one/core/widgets/profile_bottom_sheet.dart';
@@ -19,6 +17,8 @@ import 'package:two_are_one/data/models/user_full_profile.dart';
 import 'package:two_are_one/data/services/Api_Helper/api_manager.dart';
 import 'package:two_are_one/data/services/profiles_services.dart';
 import 'package:two_are_one/features/views/favourites/favourites_screen.dart';
+
+import '../notification/notification_screen.dart';
 
 const String kProfileScreenUploadBase = "https://www.twoareone.love/uploads/";
 const Color kProfileMehroon = Color(0xFF77153C);
@@ -49,7 +49,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
     _getUserInfo();
     _loadAppVersion();
   }
-
   Future<void> _loadAppVersion() async {
     try {
       final info = await PackageInfo.fromPlatform();
@@ -58,7 +57,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
       // Non-critical — leave blank if the platform channel isn't available.
     }
   }
-
   Future<void> _getUserInfo() async {
     final res = await _profileService.getUserInfo();
     if (!mounted) return;
@@ -80,17 +78,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
       );
     }
   }
-
   String _capitalize(String? text) {
     if (text == null || text.isEmpty) return '';
     return text[0].toUpperCase() + text.substring(1);
   }
-
   String _fullUrl(String? path) {
     if (path == null || path.isEmpty) return '';
     return path.startsWith('http') ? path : '$kProfileScreenUploadBase$path';
   }
-
   Future<void> _uploadAvatar(File file) async {
     setState(() => _imageLoader = true);
     final res = await _profileService.uploadProfilePicture(file);
@@ -114,7 +109,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
       );
     }
   }
-
   Future<bool> _ensureCameraPermission() async {
     final status = await Permission.camera.status;
     if (status.isGranted) return true;
@@ -130,7 +124,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
     }
     return false;
   }
-
   void _openAvatarSheet() {
     showModalBottomSheet(
       context: context,
@@ -192,7 +185,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
       ),
     );
   }
-
   void _openMenu() {
     showModalBottomSheet(
       context: context,
@@ -213,7 +205,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
       ),
     );
   }
-
   void _showLogoutDialog() {
     showDialog(
       context: context,
@@ -236,7 +227,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
       ),
     );
   }
-
   void _showDeleteDialog() {
     showDialog(
       context: context,
@@ -270,7 +260,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
       ),
     );
   }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -335,12 +324,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         ),
                       ),
                     ),
-                    // _menuItem(
-                    //   iconImg: "assets/svg_images/Profile/settingStar.svg",
-                    //   label: "Favorite",
-                    //   onTap: () => Navigator.push(context,
-                    //       MaterialPageRoute(builder: (_) => const FavouriteScreen())),
-                    // ),
                     _menuItem(
                       iconImg: "assets/svg_images/Profile/settingBlock.svg",
                       label: "Blocked User",
@@ -357,11 +340,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       iconImg:
                           "assets/svg_images/Profile/settingNotification.svg",
                       label: "Notification",
-                      onTap: () => TopToast.show(
-                        context,
-                        title: "Coming soon",
-                        type: ToastType.info,
-                      ),
+                      onTap: () {
+                        Navigator.push(context,  MaterialPageRoute(
+                          builder: (context) => NotificationScreen(),) );
+                      }
                     ),
                     const SizedBox(height: 10),
                     if (_appVersion.isNotEmpty)

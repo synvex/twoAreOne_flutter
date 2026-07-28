@@ -249,7 +249,6 @@ class CurveBackgroundPainter extends CustomPainter {
     final shadowPaint = Paint()
       ..color = Colors.black.withValues(alpha: 0.05)
       ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 10);
-
     final path = Path();
     double w = size.width;
     double h = size.height;

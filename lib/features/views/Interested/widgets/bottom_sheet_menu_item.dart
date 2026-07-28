@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 
 import '../../../../core/constants/app_colors.dart';
 
-/// Port of the RN `MenuItem` component + `sheetItem` / `sheetIcon` /
-/// `label` styles used inside the bottom sheet.
 class BottomSheetMenuItem extends StatelessWidget {
   final Widget icon;
   final String label;
