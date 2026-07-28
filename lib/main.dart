@@ -7,6 +7,7 @@ import 'package:two_are_one/data/services/Api_Helper/api_manager.dart';
 import 'package:two_are_one/data/repo/socket_service.dart';
 import 'package:two_are_one/data/services/home_service.dart';
 import 'package:two_are_one/data/viewmodels/chat_viewmodel.dart';
+import 'package:two_are_one/data/viewmodels/notification_view_model.dart';
 import 'package:two_are_one/features/views/Interested/interrested_user_screen.dart';
 import 'package:two_are_one/features/views/Settings/settings_screen.dart';
 import 'package:two_are_one/features/views/auth/login_screen.dart';
@@ -40,6 +41,7 @@ void main() async {
     MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => ChatViewModel()),
+        ChangeNotifierProvider(create: (_) => NotificationViewModel()),
         // .value, not create: - this must be the same instance ApiManager
         // drives via SocketService.instance, so widgets that watch it
         // (e.g. online-status dots) see the real connection state.

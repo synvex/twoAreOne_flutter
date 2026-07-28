@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:two_are_one/data/models/chat_history_model.dart';
 import '../models/chat_member_model.dart';
@@ -20,6 +22,94 @@ class ChatViewModel extends ChangeNotifier {
 
   bool isKeyboardVisible = false;
 
+  Timer? _membersPollTimer;
+  Timer? _historyPollTimer;
+  int? _activeReceiverId;
+  String _lastSearchQuery = '';
+
+  // --- Polling control -----------------------------------------
+
+  void startMembersPolling({Duration interval = const Duration(seconds: 5)}) {
+    _membersPollTimer?.cancel();
+    _membersPollTimer = Timer.periodic(
+      interval,
+      (_) => _silentRefreshMembers(),
+    );
+  }
+
+  void startHistoryPolling(
+    int receiverId, {
+    Duration interval = const Duration(seconds: 3),
+  }) {
+    _activeReceiverId = receiverId;
+    _historyPollTimer?.cancel();
+    _historyPollTimer = Timer.periodic(
+      interval,
+      (_) => _silentRefreshHistory(receiverId),
+    );
+  }
+
+  void stopMembersPolling() {
+    _membersPollTimer?.cancel();
+    _membersPollTimer = null;
+  }
+
+  void stopHistoryPolling() {
+    _historyPollTimer?.cancel();
+    _historyPollTimer = null;
+    _activeReceiverId = null;
+  }
+
+  @override
+  void dispose() {
+    stopMembersPolling();
+    stopHistoryPolling();
+    scrollController.dispose();
+    super.dispose();
+  }
+
+  // --- Silent refresh (no isLoading spinner, no jumpy UI) --------
+
+  Future<void> _silentRefreshMembers() async {
+    try {
+      final latest = await _chatService.fetchChatMembers();
+      chatMembers = latest;
+      // Keep the filtered/search list live too, using whatever the
+      // user currently has typed in the search field.
+      searchChatMembers(_lastSearchQuery);
+      notifyListeners();
+    } catch (e) {
+      debugPrint("Silent Members Refresh Error: $e");
+    }
+  }
+
+  Future<void> _silentRefreshHistory(int receiverId) async {
+    // Don't refresh over a message that's still sending/optimistic
+    if (sendingMessageIds.isNotEmpty) return;
+    try {
+      final latest = await _chatService.fetchChatHistory(
+        receiverId: receiverId,
+      );
+
+      final oldLastId = chatHistory.isNotEmpty ? chatHistory.last.id : null;
+      final newLastId = latest.isNotEmpty ? latest.last.id : null;
+      final hasNewMessage = oldLastId != newLastId;
+
+      if (latest.length != chatHistory.length || hasNewMessage) {
+        chatHistory = latest;
+        notifyListeners();
+
+        if (hasNewMessage) {
+          scrollToBottom();
+        }
+      }
+    } catch (e) {
+      debugPrint("Silent History Refresh Error: $e");
+    }
+  }
+
+  // --- UI state helpers --------------------------------------------
+
   void onKeyboardChanged(bool visible, FocusNode messageFocusNode) {
     if (isKeyboardVisible == visible) return;
 
@@ -33,9 +123,8 @@ class ChatViewModel extends ChangeNotifier {
   }
 
   void scrollToBottom() {
-    if (!scrollController.hasClients) return;
-
     WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!scrollController.hasClients) return;
       scrollController.animateTo(
         scrollController.position.maxScrollExtent,
         duration: const Duration(milliseconds: 300),
@@ -45,6 +134,8 @@ class ChatViewModel extends ChangeNotifier {
   }
 
   void searchChatMembers(String query) {
+    _lastSearchQuery = query;
+
     if (query.trim().isEmpty) {
       chatSearch = List.from(chatMembers);
     } else {
@@ -55,6 +146,8 @@ class ChatViewModel extends ChangeNotifier {
     }
     notifyListeners();
   }
+
+  // --- Initial fetches -----------------------------------------------
 
   Future<void> getChatMembers() async {
     try {
@@ -78,9 +171,7 @@ class ChatViewModel extends ChangeNotifier {
       debugPrint("Chat Members Error: $e");
     } finally {
       isLoading = false;
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        scrollToBottom();
-      });
+      scrollToBottom();
       notifyListeners();
     }
   }
@@ -125,6 +216,9 @@ class ChatViewModel extends ChangeNotifier {
     chatHistory.add(optimisticMessage);
     sendingMessageIds.add(tempId);
     notifyListeners();
+
+    // Scroll to show the message you just sent
+    scrollToBottom();
 
     try {
       await _chatService.sendMessage(receiverId: receiverId, message: trimmed);
