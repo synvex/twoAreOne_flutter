@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 import 'package:two_are_one/core/constants/app_colors.dart';
+import 'package:two_are_one/core/widgets/app_header_widget.dart';
 import 'package:two_are_one/core/widgets/error_view.dart';
 import 'package:two_are_one/core/widgets/header.dart';
 import 'package:two_are_one/core/widgets/loading_indicator.dart';
@@ -28,13 +30,27 @@ class _PrivacyPolicyView extends StatelessWidget {
 
     return Scaffold(
       backgroundColor: AppColors.background,
-      appBar: AppHeader(
-        title: 'Privacy Policy',
-        onBackPressed: () => Navigator.of(context).pop(),
+
+      body: SafeArea(
+        child: Column(
+          children: [
+            SizedBox(height: 20.h),
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 16.w),
+              child: AppHeaderWidget(
+                title: 'Privacy Policy',
+                isTrailing: false,
+              ),
+            ),
+            SizedBox(height: 10.h),
+            Divider(),
+            Expanded(child: _buildBody(context, viewModel)),
+          ],
+        ),
       ),
-      body: _buildBody(context, viewModel),
     );
   }
+
   Widget _buildBody(BuildContext context, PrivacyPolicyViewModel viewModel) {
     if (viewModel.isLoading) {
       return const LoadingIndicator();
@@ -61,7 +77,10 @@ class _PrivacyPolicyView extends StatelessWidget {
           ),
           'strong': Style(fontWeight: FontWeight.bold),
           'a': Style(color: AppColors.link),
-          'ul': Style(padding: HtmlPaddings.only(left: 20), margin: Margins.only(bottom: 10)),
+          'ul': Style(
+            padding: HtmlPaddings.only(left: 20),
+            margin: Margins.only(bottom: 10),
+          ),
           'li': Style(margin: Margins.only(bottom: 6)),
         },
       ),

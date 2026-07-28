@@ -4,7 +4,11 @@ import 'package:two_are_one/core/widgets/main_button_widget.dart';
 import 'package:two_are_one/core/widgets/containers.dart';
 import 'package:two_are_one/core/widgets/textfield.dart';
 import 'package:two_are_one/core/widgets/texts.dart';
+// <<<<<<< saqlain-02
 import 'package:two_are_one/data/services/auth_service.dart'; // Import AuthService
+// =======
+import 'package:two_are_one/features/views/auth/onboarding.dart';
+// >>>>>>> refector
 import 'login_screen.dart';
 
 class NewPassword extends StatefulWidget {

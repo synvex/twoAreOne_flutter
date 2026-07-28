@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:two_are_one/core/constants/app_colors.dart';
+import 'package:two_are_one/core/widgets/app_header_widget.dart';
 import 'package:two_are_one/data/models/favourite_model.dart';
 import 'package:two_are_one/features/views/favourites/widgets/favourite_action_sheet.dart';
 import 'package:two_are_one/features/views/favourites/widgets/user_list_tile.dart';
@@ -93,23 +96,19 @@ class _FavouriteUserViewState extends State<_FavouriteUserView> {
           backgroundColor: AppColors.white,
           body: SafeArea(
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 40),
+              padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 20.h),
               child: Column(
                 children: [
-                  Row(
-                    children: [
-                      Back_Button(onTap: () => Navigator.pop(context)),
-                      const SizedBox(width: 64),
-                      const Text(
-                        'Favourite',
-                        style: TextStyle(
-                          fontSize: 24,
-                          fontFamily: 'Poltawski Nowy',
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                    ],
+                  AppHeaderWidget(
+                    title: 'Favourite',
+                    isTrailing: false,
+                    titleStyle: GoogleFonts.poltawskiNowy(
+                      fontSize: 24,
+                      fontWeight: FontWeight.w500,
+                      color: Colors.black,
+                    ),
                   ),
+
                   const SizedBox(height: 30),
                   FavouriteTabBar(
                     activeTab: vm.activeTab,

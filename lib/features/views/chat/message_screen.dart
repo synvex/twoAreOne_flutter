@@ -6,6 +6,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:two_are_one/core/constants/app_colors.dart';
 import 'package:two_are_one/core/constants/app_icons.dart';
 import 'package:two_are_one/core/utils/date_time_formater.dart';
+import 'package:two_are_one/core/widgets/app_header_widget.dart';
 import 'package:two_are_one/data/viewmodels/chat_viewmodel.dart';
 import 'package:two_are_one/features/views/chat/chat_screen.dart';
 import 'package:provider/provider.dart';
@@ -62,39 +63,23 @@ class _MessageScreenState extends State<MessageScreen> {
 
             child: SafeArea(
               child: Padding(
-                padding: EdgeInsetsGeometry.symmetric(horizontal: 16.w),
+                padding: EdgeInsetsGeometry.symmetric(
+                  horizontal: 20.w,
+                  vertical: 20.h,
+                ),
                 child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Stack(
-                      alignment: Alignment.center,
-                      children: [
-                        Center(
-                          child: Text(
-                            'Messages',
-                            style: GoogleFonts.poltawskiNowy(
-                              fontSize: 24,
-                              fontWeight: FontWeight.w500,
-                              color: AppColors.background,
-                            ),
-                          ),
-                        ),
-                        // Align(
-                        //   alignment: Alignment.centerRight,
-                        //   child: GestureDetector(
-                        //     onTap: () async {
-                        //       await chatViewModel.getChatMembers();
-                        //     },
-                        //     child: SvgPicture.asset(
-                        //       AppIcons.vert_more,
-                        //       colorFilter: ColorFilter.mode(
-                        //         AppColors.background,
-                        //         BlendMode.srcIn,
-                        //       ),
-                        //     ),
-                        //   ),
-                        // ),
-                      ],
+                    Text(
+                      'Messages',
+                      style: GoogleFonts.poltawskiNowy(
+                        fontSize: 24,
+                        fontWeight: FontWeight.w500,
+                        color: AppColors.background,
+                      ),
                     ),
+
                     SizedBox(height: 40.h),
                     TextFormField(
                       controller: _searchController,
@@ -122,7 +107,7 @@ class _MessageScreenState extends State<MessageScreen> {
                             vertical: 8.h,
                           ),
                           child: SvgPicture.asset(
-                            AppIcons.chat_serach,
+                            AppIcons.chat_search,
                             colorFilter: ColorFilter.mode(
                               AppColors.background,
                               BlendMode.srcIn,

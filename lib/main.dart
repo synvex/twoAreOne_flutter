@@ -77,9 +77,9 @@ class MyApp extends StatelessWidget {
           '/blocked_screen': (context) => const BlockedUserScreen(),
           'visited_screen': (context) => const VisitedUserScreen(),
           SettingsRoutes.privacyPolicy: (context) =>
-          const PrivacyPolicyScreen(),
+              const PrivacyPolicyScreen(),
           SettingsRoutes.termsOfUse: (context) =>
-          const TermsAndConditionsScreen(),
+              const TermsAndConditionsScreen(),
         },
         onGenerateRoute: (settings) {
           final args = settings.arguments is Map
@@ -88,8 +88,8 @@ class MyApp extends StatelessWidget {
           DateTime asDateTime(dynamic v) => v is DateTime
               ? v
               : (v is int
-              ? DateTime.fromMillisecondsSinceEpoch(v)
-              : DateTime.now().add(const Duration(seconds: 60)));
+                    ? DateTime.fromMillisecondsSinceEpoch(v)
+                    : DateTime.now().add(const Duration(seconds: 60)));
           switch (settings.name) {
             case SettingsRoutes.resetPassword:
               return MaterialPageRoute(
@@ -155,7 +155,7 @@ Widget _screenFromCache(Map<String, String?> cached) {
     sexuality: cached['sexuality'] ?? "",
   );
 
-  if (complete) return const MainBarScreen();
+  if (complete) return const CustomNavBar();
 
   switch (screenType) {
     case "1":
@@ -169,8 +169,8 @@ Widget _screenFromCache(Map<String, String?> cached) {
 }
 
 Future<Map<String, String?>> _readCachedUserInfo(
-    SharedPreferences prefs,
-    ) async {
+  SharedPreferences prefs,
+) async {
   return {
     'complete_question': prefs.getString('cached_complete_question'),
     'screen_type': prefs.getString('cached_screen_type'),
@@ -180,10 +180,9 @@ Future<Map<String, String?>> _readCachedUserInfo(
 }
 
 Future<void> _writeCachedUserInfo(
-    SharedPreferences prefs,
-    Map<String, dynamic> data,
-    ) async
-{
+  SharedPreferences prefs,
+  Map<String, dynamic> data,
+) async {
   await prefs.setString(
     'cached_complete_question',
     data['complete_question']?.toString() ?? "",
@@ -239,6 +238,7 @@ Future<Widget> getInitialScreen() async {
 
   ApiManager.setUpRequestToken(token);
 
+// <<<<<<< saqlain-02
   // Use the shared router instead of local logic
   return await OnboardingFlowRouter.resolveResumeScreen();
 }
@@ -478,3 +478,27 @@ Future<Widget> getInitialScreen() async {
 //
 //
 //
+// =======
+  final homeService = HomeService();
+  final res = await homeService.getUserInfo();
+
+  if (res['success'] == true) {
+    final data = res['data'] as Map<String, dynamic>;
+    await _writeCachedUserInfo(prefs, data);
+    return _screenFromCache(await _readCachedUserInfo(prefs));
+  }
+
+  if (res['isSessionExpired'] == true) {
+    await ApiManager.logout();
+    return const LoginScreen();
+  }
+
+  final cached = await _readCachedUserInfo(prefs);
+  if (cached['screen_type'] != null) {
+    return _screenFromCache(cached);
+  }
+
+  // No cache and no successful response yet — safest fallback.
+  return const LoginScreen();
+}
+// >>>>>>> refector

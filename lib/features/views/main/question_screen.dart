@@ -204,7 +204,7 @@ class _QuestionnaireScreenState extends State<QuestionnaireScreen>
     // Equivalent to dispatch(setScreen("3"))
     Navigator.pushReplacement(
       context,
-      MaterialPageRoute(builder: (_) => const MainBarScreen()),
+      MaterialPageRoute(builder: (_) => const CustomNavBar()),
     );
   }
 

@@ -8,15 +8,15 @@ import 'home_screen.dart';
 const double _kCurveDepth = 90.0;
 const double _kBarHeight = 100.0;
 
-class MainBarScreen extends StatefulWidget {
-  final int initialIndex; // agar kisi screen se direct tab open karna ho
-  const MainBarScreen({super.key, this.initialIndex = 0});
+class CustomNavBar extends StatefulWidget {
+  final int initialIndex;
+  const CustomNavBar({super.key, this.initialIndex = 0});
 
   @override
-  State<MainBarScreen> createState() => _MainBarScreenState();
+  State<CustomNavBar> createState() => _CustomNavBarState();
 }
 
-class _MainBarScreenState extends State<MainBarScreen> {
+class _CustomNavBarState extends State<CustomNavBar> {
   late int _selectedIndex;
   final List<Widget> _screens = const [
     HomeScreen(),

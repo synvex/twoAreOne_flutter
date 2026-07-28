@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:two_are_one/core/constants/app_colors.dart';
-import 'package:two_are_one/core/widgets/back_button.dart';
+import 'package:two_are_one/core/widgets/app_header_widget.dart';
 import 'package:two_are_one/core/widgets/image.dart';
 import 'package:two_are_one/data/services/auth_service.dart';
 import 'package:two_are_one/core/widgets/textfield.dart';
@@ -133,89 +133,86 @@ class _NoVerificationState extends State<NoVerification> {
 
   @override
   Widget build(BuildContext context) {
-    final double screenHeight = MediaQuery.of(context).size.height;
-    final bool isLandscape =
-        MediaQuery.of(context).orientation == Orientation.landscape;
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
         child: Padding(
           padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 20.h),
-          child: SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Back_Button(onTap: () => Navigator.of(context).pop()),
-                SizedBox(height: 40.h),
-                Text(
-                  "Can we get your number?",
-                  style: GoogleFonts.poppins(
-                    fontWeight: FontWeight.w600,
-                    fontSize: 24.sp,
-                  ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              AppHeaderWidget(isLeading: true, isTrailing: false),
+              SizedBox(height: 40.h),
+              Text(
+                "Can we get your number?",
+                style: GoogleFonts.poppins(
+                  fontWeight: FontWeight.w600,
+                  fontSize: 24.sp,
                 ),
+              ),
 
-                SizedBox(height: 30.h),
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    GestureDetector(
-                      onTap: _showCountryPicker,
-                      child: Container(
-                        width: 90.w,
-                        padding: const EdgeInsets.only(bottom: 1),
-                        decoration: const BoxDecoration(
-                          border: Border(
-                            bottom: BorderSide(color: Colors.black, width: 1.5),
-                          ),
-                        ),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Texts(
-                              text:
-                                  "$_selectedCountryName $_selectedCountryCode",
-                              size: 14,
-                              fontWeight: FontWeight.w600,
-                            ),
-                            const Icon(
-                              CupertinoIcons.arrowtriangle_down_fill,
-                              size: 12,
-                            ),
-                          ],
+              SizedBox(height: 30.h),
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  GestureDetector(
+                    onTap: _showCountryPicker,
+                    child: Container(
+                      width: 90.w,
+                      padding: const EdgeInsets.only(bottom: 1),
+                      decoration: const BoxDecoration(
+                        border: Border(
+                          bottom: BorderSide(color: Colors.black, width: 1.5),
                         ),
                       ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Texts(
+                            text: "$_selectedCountryName $_selectedCountryCode",
+                            size: 14,
+                            fontWeight: FontWeight.w600,
+                          ),
+                          const Icon(
+                            CupertinoIcons.arrowtriangle_down_fill,
+                            size: 12,
+                          ),
+                        ],
+                      ),
                     ),
-                    SizedBox(width: 15.w),
-                    Expanded(child: TxtField(controller: _phoneController)),
-                  ],
-                ),
-                SizedBox(height: 13.h),
-                if (_errorMessage != null)
-                  Texts(
-                    text: _errorMessage!,
-                    colorHexValue: 0xFFD32F2F,
-                    size: 13,
-                    fontWeight: FontWeight.w400,
                   ),
-                const SizedBox(height: 13),
-                const Texts(
-                  text:
-                      "Enter your phone number. We’ll text you a code\nto verify it's really you and keep your journey safe.",
-                  colorHexValue: 0xFF000000,
+                  SizedBox(width: 15.w),
+                  Expanded(child: TxtField(controller: _phoneController)),
+                ],
+              ),
+              SizedBox(height: 13.h),
+              if (_errorMessage != null)
+                Texts(
+                  text: _errorMessage!,
+                  colorHexValue: 0xFFD32F2F,
                   size: 13,
+                  fontWeight: FontWeight.w400,
                 ),
-                SizedBox(height: isLandscape ? 20 : screenHeight * 0.52),
-                MainButtonWidget(
-                  text: "Next",
-                  onTap: _verifyPhoneNo,
-                  isLoading: _isLoading,
-                  gradient: const LinearGradient(
-                    colors: [Color(0xFF77153C), Color(0xFFDD276F)],
-                  ),
+              const SizedBox(height: 13),
+              Text(
+                "Enter your phone number. We’ll text you a code\n"
+                "to verify it's really you and keep your journey safe.",
+                style: GoogleFonts.inter(
+                  fontSize: 13.sp,
+                  fontWeight: FontWeight.w500, // optional
                 ),
-              ],
-            ),
+              ),
+              Spacer(),
+              MainButtonWidget(
+                text: "Next",
+                onTap: _verifyPhoneNo,
+                isLoading: _isLoading,
+                gradient: const LinearGradient(
+                  colors: [Color(0xFF77153C), Color(0xFFDD276F)],
+                ),
+              ),
+              SizedBox(height: 20.h),
+            ],
           ),
         ),
       ),
@@ -227,8 +224,6 @@ class _NoVerificationState extends State<NoVerification> {
       context: context,
       barrierDismissible: false,
       builder: (context) {
-        bool isLandscape =
-            MediaQuery.of(context).orientation == Orientation.landscape;
         return AlertDialog(
           backgroundColor: Colors.white,
           surfaceTintColor: Colors.white,
