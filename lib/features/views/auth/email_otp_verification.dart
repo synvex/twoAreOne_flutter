@@ -21,7 +21,7 @@ class EmailOtpVerification extends StatefulWidget {
   const EmailOtpVerification({
     super.key,
     required this.email,
-    this.isFromForget = false,
+    required this.isFromForget,
   });
 
   @override
@@ -121,6 +121,7 @@ class _EmailOtpVerificationState extends State<EmailOtpVerification> {
       final result = await _authService.verifyEmailOtp(
         email: widget.email,
         otp: otp,
+        isFromForget: widget.isFromForget,
       );
 
       if (result['success']) {

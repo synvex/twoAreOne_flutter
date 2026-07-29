@@ -156,10 +156,9 @@ class ApiManager {
         return {
           "success": false,
           "error": null,
-          // "Session expired. Please login again.",
-          "isSessionExpired": true,
         };
-      }}
+      }
+    }
 
     final isNetworkError = error.type == DioExceptionType.connectionError ||
         error.type == DioExceptionType.connectionTimeout ||
@@ -176,7 +175,6 @@ class ApiManager {
       };
     }
 
-    // ✅ OTHER SERVER ERRORS
     return {
       "success": false,
       "error": message ?? error.message ?? "Something went wrong",
