@@ -59,7 +59,6 @@ dependencies:
   flutter_screenutil: ^5.9.3
   web_socket_channel: ^3.0.3
   intl: ^0.18.1
-  pull_to_refresh_flutter3: ^2.0.2
 
 dev_dependencies:
   flutter_test:

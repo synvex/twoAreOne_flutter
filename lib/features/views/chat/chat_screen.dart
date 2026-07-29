@@ -9,6 +9,7 @@ import 'package:two_are_one/core/constants/app_colors.dart';
 import 'package:two_are_one/core/constants/app_icons.dart';
 import 'package:two_are_one/core/utils/date_time_formater.dart';
 import 'package:two_are_one/core/utils/random_color_picker_util.dart';
+import 'package:two_are_one/core/utils/skelton_util.dart';
 import 'package:two_are_one/data/models/chat_history_model.dart';
 import 'package:two_are_one/data/services/presense_service.dart';
 import 'package:two_are_one/data/viewmodels/chat_viewmodel.dart';
@@ -268,7 +269,7 @@ class _ChatScreenState extends State<ChatScreen> {
                   SizedBox(height: 20.h),
                   Expanded(
                     child: chatViewModel.isLoading
-                        ? const Center(child: CircularProgressIndicator())
+                        ? SkeletonEffect.messageList(itemCount: 10)
                         : chatViewModel.chatHistory.isEmpty
                         ? const Center(child: Text("No chat available"))
                         : ListView.builder(
