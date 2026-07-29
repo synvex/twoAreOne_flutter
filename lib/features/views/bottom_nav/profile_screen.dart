@@ -49,6 +49,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     _getUserInfo();
     _loadAppVersion();
   }
+
   Future<void> _loadAppVersion() async {
     try {
       final info = await PackageInfo.fromPlatform();
@@ -57,6 +58,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       // Non-critical — leave blank if the platform channel isn't available.
     }
   }
+
   Future<void> _getUserInfo() async {
     final res = await _profileService.getUserInfo();
     if (!mounted) return;
@@ -78,14 +80,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
       );
     }
   }
+
   String _capitalize(String? text) {
     if (text == null || text.isEmpty) return '';
     return text[0].toUpperCase() + text.substring(1);
   }
+
   String _fullUrl(String? path) {
     if (path == null || path.isEmpty) return '';
     return path.startsWith('http') ? path : '$kProfileScreenUploadBase$path';
   }
+
   Future<void> _uploadAvatar(File file) async {
     setState(() => _imageLoader = true);
     final res = await _profileService.uploadProfilePicture(file);
@@ -109,6 +114,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       );
     }
   }
+
   Future<bool> _ensureCameraPermission() async {
     final status = await Permission.camera.status;
     if (status.isGranted) return true;
@@ -124,6 +130,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     }
     return false;
   }
+
   void _openAvatarSheet() {
     showModalBottomSheet(
       context: context,
@@ -185,6 +192,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       ),
     );
   }
+
   void _openMenu() {
     showModalBottomSheet(
       context: context,
@@ -205,6 +213,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       ),
     );
   }
+
   void _showLogoutDialog() {
     showDialog(
       context: context,
@@ -227,6 +236,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       ),
     );
   }
+
   void _showDeleteDialog() {
     showDialog(
       context: context,
@@ -260,6 +270,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       ),
     );
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -296,7 +307,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
               ),
               Expanded(
                 child: ListView(
-                  physics: const BouncingScrollPhysics(),
                   children: [
                     const SizedBox(height: 20),
                     _buildProfileCard(),
@@ -341,9 +351,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           "assets/svg_images/Profile/settingNotification.svg",
                       label: "Notification",
                       onTap: () {
-                        Navigator.push(context,  MaterialPageRoute(
-                          builder: (context) => NotificationScreen(),) );
-                      }
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => NotificationScreen(),
+                          ),
+                        );
+                      },
                     ),
                     const SizedBox(height: 10),
                     if (_appVersion.isNotEmpty)

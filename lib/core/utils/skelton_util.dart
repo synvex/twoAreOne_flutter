@@ -37,6 +37,90 @@ class SkeletonEffect {
   // SHIMMER WRAPPER
   // -------------------------------------------------------------------------
 
+  // -------------------------------------------------------------------------
+  // CHAT CONVERSATION (Message Screen)
+  // -------------------------------------------------------------------------
+
+  /// Single message bubble skeleton.
+  static Widget messageBubble({
+    required bool isMe,
+    EdgeInsets padding = const EdgeInsets.symmetric(
+      horizontal: 16,
+      vertical: 8,
+    ),
+  }) {
+    return shimmer(
+      Padding(
+        padding: padding,
+        child: Row(
+          mainAxisAlignment: isMe
+              ? MainAxisAlignment.end
+              : MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.end,
+          children: [
+            if (!isMe) ...[circle(diameter: 34), const SizedBox(width: 8)],
+
+            Flexible(
+              child: Column(
+                crossAxisAlignment: isMe
+                    ? CrossAxisAlignment.end
+                    : CrossAxisAlignment.start,
+                children: [
+                  Container(
+                    width: isMe ? 180 : 220,
+                    padding: const EdgeInsets.all(14),
+                    decoration: BoxDecoration(
+                      color: baseColor,
+                      borderRadius: BorderRadius.only(
+                        topLeft: const Radius.circular(18),
+                        topRight: const Radius.circular(18),
+                        bottomLeft: Radius.circular(isMe ? 18 : 4),
+                        bottomRight: Radius.circular(isMe ? 4 : 18),
+                      ),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        box(height: 10, width: double.infinity),
+                        const SizedBox(height: 8),
+                        box(height: 10, width: isMe ? 110 : 150),
+                      ],
+                    ),
+                  ),
+
+                  const SizedBox(height: 6),
+
+                  box(width: 40, height: 8, radius: 3),
+                ],
+              ),
+            ),
+
+            if (isMe) ...[const SizedBox(width: 8), circle(diameter: 34)],
+          ],
+        ),
+      ),
+    );
+  }
+
+  /// Conversation skeleton.
+  ///
+  /// Pattern:
+  /// My
+  /// Friend
+  /// My
+  /// Friend
+  /// ...
+  static Widget messageList({int itemCount = 8}) {
+    return ListView.builder(
+      physics: const NeverScrollableScrollPhysics(),
+      shrinkWrap: true,
+      itemCount: itemCount,
+      itemBuilder: (context, index) {
+        return messageBubble(isMe: index.isEven);
+      },
+    );
+  }
+
   /// Wraps [child] with an animated shimmer sweep. Use this if you're
   /// building a fully custom skeleton layout out of [box] / [circle].
   static Widget shimmer(Widget child, {bool enabled = true}) {
