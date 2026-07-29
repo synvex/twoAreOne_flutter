@@ -110,8 +110,6 @@ class ProfileDetailCard extends StatelessWidget {
                                   imageStr: isFavorite
                                       ? "assets/svg_images/filled_star.svg"
                                       : "assets/svg_images/unfill_star.svg",
-                                  // height: 28,
-                                  // width: 30,
                                 ),
                               ),
                             ),

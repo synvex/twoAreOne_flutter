@@ -17,7 +17,6 @@ import 'package:two_are_one/data/models/user_full_profile.dart';
 import 'package:two_are_one/data/services/Api_Helper/api_manager.dart';
 import 'package:two_are_one/data/services/profiles_services.dart';
 import 'package:two_are_one/features/views/favourites/favourites_screen.dart';
-
 import '../notification/notification_screen.dart';
 
 const String kProfileScreenUploadBase = "https://www.twoareone.love/uploads/";

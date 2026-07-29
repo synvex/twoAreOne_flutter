@@ -107,6 +107,7 @@ class AuthService {
   Future<Map<String, dynamic>> verifyEmailOtp({
     required String email,
     required String otp,
+    required bool isFromForget,
   }) async
   {
     try {
@@ -136,7 +137,9 @@ class AuthService {
 
           if (token != null && token.isNotEmpty) {
             final prefs = await SharedPreferences.getInstance();
-            await prefs.setString('auth_token', token);
+            if(isFromForget== false){
+              await prefs.setString('auth_token', token);
+            }
 
             if (userId != null) {
               await prefs.setString('user_id', userId);
