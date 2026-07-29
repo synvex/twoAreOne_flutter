@@ -9,7 +9,6 @@ import 'package:two_are_one/features/views/favourites/widgets/user_list_tile.dar
 import '../../../core/routes/routes.dart';
 import '../../../data/repo/favourites_repo.dart';
 import 'package:provider/provider.dart';
-import 'package:two_are_one/core/widgets/back_button.dart';
 import 'package:two_are_one/features/views/favourites/widgets/favourite_tab_bar.dart';
 import 'package:two_are_one/features/views/favourites/widgets/skeleton_user_card.dart';
 import '../../../data/viewmodels/favourite_view_model.dart';

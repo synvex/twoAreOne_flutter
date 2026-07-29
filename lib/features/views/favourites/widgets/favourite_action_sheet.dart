@@ -19,7 +19,9 @@ class FavouriteActionSheet extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               BottomSheetMenuItem(
-                icon: const Images(imageStr: 'assets/svg_images/Profile/view_profile.svg'),
+                icon: const Images(
+                  imageStr: 'assets/svg_images/Favorite/viewProfile.svg',
+                ),
                 label: 'View Profile',
                 onPressed: onViewProfile,
               ),
@@ -37,7 +39,6 @@ class FavouriteActionSheet extends StatelessWidget {
                 isLoading: vm.removeLoading,
                 onPressed: vm.removeSelected,
               ),
-
             ],
           ),
         );
