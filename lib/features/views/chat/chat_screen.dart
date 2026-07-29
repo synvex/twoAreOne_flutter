@@ -62,27 +62,28 @@ class _ChatScreenState extends State<ChatScreen> {
   final TextEditingController _messageController = TextEditingController();
   final FocusNode _focusNode = FocusNode();
   int _currentUserId = 0;
-
   @override
   void initState() {
     super.initState();
 
-    // Call API when screen opens
     Future.microtask(() async {
       await _loadCurrentUser();
       await context.read<ChatViewModel>().fetchedChatHistory(widget.receiverId);
 
-      // Start live polling for this conversation once initial history is loaded
+      // Subscribe to the global socket for this conversation.
+      // Replaces the old startHistoryPolling().
       if (mounted) {
-        context.read<ChatViewModel>().startHistoryPolling(widget.receiverId);
+        context.read<ChatViewModel>().startListening(widget.receiverId);
       }
     });
   }
 
   @override
   void dispose() {
-    // Stop polling so it doesn't keep hitting the API after leaving the screen
-    context.read<ChatViewModel>().stopHistoryPolling();
+    // Unsubscribe from this conversation's messages. The global socket
+    // itself stays connected — other screens (presence, unread badges)
+    // still depend on it, same as RN.
+    context.read<ChatViewModel>().stopListening();
     _messageController.dispose();
     super.dispose();
   }
@@ -297,6 +298,8 @@ class _ChatScreenState extends State<ChatScreen> {
                                   msg: chatMsg,
                                   avatarUrl: widget.avatarUrl,
                                   name: widget.name,
+                                  isFailed: chatViewModel.failedMessageIds
+                                      .contains(raw.id),
                                 ),
                               );
                             },
@@ -328,12 +331,14 @@ class _TextBubble extends StatelessWidget {
     required this.avatarUrl,
     required this.isSending,
     required this.name,
+    required this.isFailed, // ADD THIS
   });
 
   final _ChatMessage msg;
   final String avatarUrl;
   final bool isSending;
   final String name;
+  final bool isFailed; // ADD THIS
 
   @override
   Widget build(BuildContext context) {
@@ -374,14 +379,14 @@ class _TextBubble extends StatelessWidget {
           ),
         ),
         Visibility(
-          visible: isSending,
+          visible: isSending || isFailed,
           child: Padding(
             padding: EdgeInsets.only(top: 2.h),
             child: Text(
-              'sending...',
+              isFailed ? 'Failed to send' : 'sending...',
               style: GoogleFonts.inriaSerif(
                 fontSize: 10.sp,
-                color: Colors.grey,
+                color: isFailed ? Colors.red : Colors.grey,
               ),
             ),
           ),
