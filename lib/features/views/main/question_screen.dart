@@ -247,171 +247,165 @@ class _QuestionnaireScreenState extends State<QuestionnaireScreen>
         backgroundColor: Colors.white,
         body: SafeArea(
           child: Stack(
+            alignment: AlignmentGeometry.center,
             children: [
-              SingleChildScrollView(
-                padding: const EdgeInsets.only(
-                  bottom: 120,
-                ),
-                child: Column(
-                  children: [
-                    const SizedBox(height: 100),
-                    // Progress Lottie
-                    Center(
-                      child: Stack(
-                        alignment: Alignment.center,
-                        children: [
-                          Transform.scale(
-                            scaleY: 6,
-                            scaleX: 6,
-                            child: Lottie.asset(
-                              'assets/jsonImg/jason.json',
-                              width: 100,
-                              height: 100,
-                              controller: _lottieController,
-                              fit: BoxFit.contain,
-                              onLoaded: (comp) =>
-                                  _lottieController.duration = comp.duration,
+              Expanded(
+                child: SingleChildScrollView(
+                  padding: const EdgeInsets.only(
+                    bottom: 120,
+                  ),
+                  child: Column(
+                    children: [
+                      const SizedBox(height: 90),
+                      // Progress Lottie
+                      Center(
+                        child: Stack(
+                          alignment: Alignment.center,
+                          children: [
+                            Transform.scale(
+                              scaleY: 6,
+                              scaleX: 6,
+                              child: Lottie.asset(
+                                'assets/jsonImg/jason.json',
+                                width: 100,
+                                height: 100,
+                                controller: _lottieController,
+                                fit: BoxFit.contain,
+                                onLoaded: (comp) =>
+                                    _lottieController.duration = comp.duration,
+                              ),
                             ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.only(top: 10),
-                            child: Texts(
-                              text: '${_serverPercent.toInt()}%',
-                              size: 16,
-                              fontWeight: FontWeight.bold,
-                              colorHexValue: 0xFF3A7FDB, // Blue color from RN
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(height: 25),
-                    Texts(
-                      text: _capitalize(q.categoryName),
-                      size: 20,
-                      fontWeight: FontWeight.w500,
-                      colorHexValue: 0xB2000000,
-                    ),
-                    const SizedBox(height: 20),
-                    // Question Box (Matching RN questionBox styles)
-                    Containers(
-                      radius: BorderRadius.circular(16),
-                      hexValue: 0xFFFFFFFF,
-                      padding: const EdgeInsets.all(20),
-                      margin: const EdgeInsets.symmetric(horizontal: 15),
-                      border: Border.all(
-                        color: const Color(0xFFE8E3E3),
-                        width: 0.5,
-                      ),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withValues(alpha: 0.1),
-                          blurRadius: 10,
-                          offset: const Offset(0, 1),
-                        ),
-                      ],
-                      child: Column(
-                        children: [
-                          Row(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Texts(
-                                text: '${q.orderNo}. ',
+                            Padding(
+                              padding: const EdgeInsets.only(top: 10),
+                              child: Texts(
+                                text: '${_serverPercent.toInt()}%',
                                 size: 16,
                                 fontWeight: FontWeight.bold,
+                                colorHexValue: 0xFF3A7FDB, // Blue color from RN
                               ),
-                              Expanded(
-                                child: Texts(
-                                  text: q.text,
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 25),
+                      Texts(
+                        text: _capitalize(q.categoryName),
+                        size: 20,
+                        fontWeight: FontWeight.w500,
+                        colorHexValue: 0xB2000000,
+                      ),
+                      const SizedBox(height: 20),
+                      // Question Box (Matching RN questionBox styles)
+                      Containers(
+                        radius: BorderRadius.circular(16),
+                        hexValue: 0xFFFFFFFF,
+                        padding: const EdgeInsets.all(20),
+                        margin: const EdgeInsets.symmetric(horizontal: 15),
+                        border: Border.all(
+                          color: const Color(0xFFE8E3E3),
+                          width: 0.5,
+                        ),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withValues(alpha: 0.1),
+                            blurRadius: 10,
+                            offset: const Offset(0, 1),
+                          ),
+                        ],
+                        child: Column(
+                          children: [
+                            Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Texts(
+                                  text: '${q.orderNo}. ',
                                   size: 16,
                                   fontWeight: FontWeight.bold,
                                 ),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 25),
-                          ...q.answers.map((ans) {
-                            final isSelected = _selectedAnswerId == ans.id;
-                            return GestureDetector(
-                              onTap: () => setState(() {
-                                _selectedAnswerId = ans.id;
-                                _answerError = null;
-                              }),
-                              child: AnimatedContainer(
-                                duration: const Duration(milliseconds: 200),
-                                margin: const EdgeInsets.only(bottom: 12),
-                                padding: const EdgeInsets.symmetric(
-                                  vertical: 15,
-                                ),
-                                decoration: BoxDecoration(
-                                  color: isSelected
-                                      ? const Color(0xFF77153C)
-                                      : Colors.white,
-                                  borderRadius: BorderRadius.circular(28),
-                                  border: Border.all(
-                                    color: isSelected
-                                        ? Colors.transparent
-                                        : const Color(0x80969696),
-                                  ),
-                                ),
-                                child: Center(
+                                Expanded(
                                   child: Texts(
-                                    edgeInsets: EdgeInsets.symmetric(
-                                      horizontal: 10,
-                                    ),
-                                    text: ans.text,
-                                    size: 14,
-                                    colorHexValue: isSelected
-                                        ? 0xFFFFFFFF
-                                        : 0x99000000,
+                                    text: q.text,
+                                    size: 16,
+                                    fontWeight: FontWeight.bold,
                                   ),
                                 ),
-                              ),
-                            );
-                          }),
-                        ],
-                      ),
-                    ),
-
-                    if (_answerError != null)
-                      Padding(
-                        padding: const EdgeInsets.all(15),
-                        child: Texts(
-                          text: _answerError!,
-                          colorHexValue: 0xFFFF0000,
-                          size: 12,
+                              ],
+                            ),
+                            const SizedBox(height: 25),
+                            ...q.answers.map((ans) {
+                              final isSelected = _selectedAnswerId == ans.id;
+                              return GestureDetector(
+                                onTap: () => setState(() {
+                                  _selectedAnswerId = ans.id;
+                                  _answerError = null;
+                                }),
+                                child: AnimatedContainer(
+                                  duration: const Duration(milliseconds: 200),
+                                  margin: const EdgeInsets.only(bottom: 12),
+                                  padding: const EdgeInsets.symmetric(
+                                    vertical: 15,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: isSelected
+                                        ? const Color(0xFF77153C)
+                                        : Colors.white,
+                                    borderRadius: BorderRadius.circular(28),
+                                    border: Border.all(
+                                      color: isSelected
+                                          ? Colors.transparent
+                                          : const Color(0x80969696),
+                                    ),
+                                  ),
+                                  child: Center(
+                                    child: Texts(
+                                      textAlign: TextAlign.center,
+                                      edgeInsets: EdgeInsets.symmetric(
+                                        horizontal: 10,
+                                      ),
+                                      text: ans.text,
+                                      size: 14,
+                                      colorHexValue: isSelected
+                                          ? 0xFFFFFFFF
+                                          : 0x99000000,
+                                    ),
+                                  ),
+                                ),
+                              );
+                            }),
+                          ],
                         ),
                       ),
-                  ],
+                      if (_answerError != null)
+                        Padding(
+                          padding: const EdgeInsets.all(15),
+                          child: Texts(
+                            text: _answerError!,
+                            colorHexValue: 0xFFFF0000,
+                            size: 12,
+                          ),
+                        ),
+                    ],
+                  ),
                 ),
               ),
-              // // Fixed Bottom Button
-              // Positioned(
-              //   bottom: 30,
-              //   left: 20,
-              //   right: 20,
-              //   child: MainButtonWidget(
-              //     text: 'Next',
-              //     isLoading: _btnLoader,
-              //     onTap: _handleNext,
-              //     gradient: const LinearGradient(
-              //       colors: [Color(0xFF77153C), Color(0xFFDD276F)],
-              //     ),
-              //   ),
-              // ),
+              Positioned(child: SizedBox(height: double.infinity,)),
+              Positioned(
+                bottom: 30,
+                // left: 20,
+                // right: 20,
+                child: MainButtonWidget(
+                  text: 'Next',
+                  isLoading: _btnLoader,
+                  onTap: _handleNext,
+                  gradient: const LinearGradient(
+                    colors: [Color(0xFF77153C), Color(0xFFDD276F)],
+                  ),
+                ),
+              ),
             ],
           ),
         ),
-        floatingActionButton: MainButtonWidget(
-          text: 'Next',
-          isLoading: _btnLoader,
-          onTap: _handleNext,
-          gradient: const LinearGradient(
-            colors: [Color(0xFF77153C), Color(0xFFDD276F)],
-          ),
         ),
-        floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      ),
     );
   }
 }

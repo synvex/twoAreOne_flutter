@@ -167,6 +167,7 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
     if (text == null || text.isEmpty) return '';
     return text[0].toUpperCase() + text.substring(1);
   }
+
   String _fullUrl(String? path) {
     if (path == null || path.isEmpty) return '';
     return path.startsWith('http') ? path : '$kProfileUploadImagesBase$path';
