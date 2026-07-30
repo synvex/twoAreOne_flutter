@@ -385,6 +385,7 @@ class _FavouriteScreenState extends State<FavouriteScreen> {
                             ),
                     ),
             ),
+            SizedBox(height: 50.h),
           ],
         ),
       ),
