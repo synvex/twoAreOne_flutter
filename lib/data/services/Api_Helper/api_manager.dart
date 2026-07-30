@@ -1,3 +1,4 @@
+
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 
@@ -5,9 +6,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../core/Error/api_error.dart';
 import '../../end_points.dart';
-
+import '../../repo/socket_service.dart';
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
-
 class Api {
   final String url;
   final String method;
@@ -18,9 +18,7 @@ class Api {
 
 class ApiManager {
   static const String baseUrl = "https://www.twoareone.love/api/";
-
   static bool _sessionDialogShowing = false;
-
   static final Dio _dio = Dio(BaseOptions(
     baseUrl: baseUrl,
     connectTimeout: const Duration(seconds: 30),
@@ -28,31 +26,27 @@ class ApiManager {
     responseType: ResponseType.json,
     headers: {
       'User-Agent':
-          'Mozilla/5.0 (Linux; Android 10) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.181 Mobile Safari/537.36',
+      'Mozilla/5.0 (Linux; Android 10) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.181 Mobile Safari/537.36',
       'Accept': 'application/json',
       'X-Requested-With': 'XMLHttpRequest',
     },
   ));
-
   static void setUpRequestToken(String token) {
     _dio.options.headers["Authorization"] = "Bearer $token";
     _dio.options.headers["x-api-key"] = token;
+    SocketService.instance.updateToken(token);
   }
   static Future<void> logout() async {
     _dio.options.headers.remove("Authorization");
     _dio.options.headers.remove("x-api-key");
+    SocketService.instance.updateToken(null);
     final prefs = await SharedPreferences.getInstance();
     await prefs.clear();
   }
-
   static void removeRequestToken() {
     _dio.options.headers.remove("Authorization");
     _dio.options.headers.remove("x-api-key");
   }
-
-  /// Normalizes a path so it never produces a double slash when combined
-  /// with [baseUrl] (which already ends in "/"). Fixes endpoints that were
-  /// written with a leading "/" (e.g. "/user/user-add-block-profile.php").
   static String _normalize(String url) =>
       url.startsWith('/') ? url.substring(1) : url;
 
@@ -71,7 +65,6 @@ class ApiManager {
       return _handleDioError(e, api, parameters);
     }
   }
-
   Future<Map<String, dynamic>> fetchMultipart(
       Api api, FormData formData) async
   {
@@ -96,9 +89,10 @@ class ApiManager {
       return _handleDioError(e, api, formData);
     }
   }
+
   Map<String, dynamic> _parseSuccessResponse(dynamic res) {
     if (res is! Map) {
-      // Defensive: some endpoints could return a bare list/string.
+
       return {
         "success": res != null,
         "data": res,
@@ -110,10 +104,16 @@ class ApiManager {
     }
 
     bool success;
-    if (res.containsKey('error')) {
-      success = res['error'] == false;
-    } else if (res.containsKey('success')) {
+    if (res.containsKey('success')) {
       success = res['success'] == true;
+    } else if (res.containsKey('error')) {
+      // Some PHP endpoints use an "error" field where success is represented
+      // as `false`, but others simply omit it or send `null`/""/0 when there
+      // is no error. Treating only a strict `== false` as success meant any
+      // endpoint returning `"error": null` on success was always read as a
+      // failure, even though the data was right there in `res['data']`.
+      final err = res['error'];
+      success = err == false || err == null || err == 0 || err == '';
     } else {
       success = res['data'] != null;
     }
@@ -132,7 +132,6 @@ class ApiManager {
       "error": res['message'],
     };
   }
-
   Map<String, dynamic> _handleDioError(
       DioException error, Api api, dynamic parameters)
   {
@@ -148,27 +147,19 @@ class ApiManager {
         api.url.contains("reset-password") ||
         api.url.contains("otp-verify");
 
-    // final isAuthRequest = api.url.contains("login.php") ||
-    //
-    //     api.url.contains("register.php") ||
-    //     api.url.contains("verify-otp.php");
-    // ✅ TOKEN EXPIRED / INVALID (mirrors RN's handleApiError 401 branch)
-
     if (!isAuthRequest) {
       if (status == 401 || status == 403 ||
-        message == "Invalid or expired token" ||
-        message == "Invalid or expired token." ||
-        message == "Unauthorized") {
-      ApiManager.handleUnauthorized();
-      return {
-        "success": false,
-        "error": "Session expired. Please login again.",
-        "isSessionExpired": true,
-      };
-    }}
+          message == "Invalid or expired token" ||
+          message == "Invalid or expired token." ||
+          message == "Unauthorized") {
+        ApiManager.handleUnauthorized();
+        return {
+          "success": false,
+          "error": null,
+        };
+      }
+    }
 
-    // ✅ NETWORK ERROR (no internet / can't reach server) — mirrors RN's
-    // isNetworkError + retryAction so screens can offer a "Retry" button.
     final isNetworkError = error.type == DioExceptionType.connectionError ||
         error.type == DioExceptionType.connectionTimeout ||
         error.type == DioExceptionType.receiveTimeout ||
@@ -184,7 +175,6 @@ class ApiManager {
       };
     }
 
-    // ✅ OTHER SERVER ERRORS
     return {
       "success": false,
       "error": message ?? error.message ?? "Something went wrong",
@@ -196,22 +186,25 @@ class ApiManager {
 
     logout();
   }
-
   static void _showSessionExpiredDialogStatic() {
-    // Guard against multiple 401s firing at once (e.g. several parallel
-    // requests all expiring together) which used to stack dialogs and
-    // trigger navigation twice.
     if (_sessionDialogShowing) return;
 
     final context = navigatorKey.currentContext;
     if (context == null) return;
-
     _sessionDialogShowing = true;
 
     showDialog(
       context: context,
       barrierDismissible: false,
       builder: (BuildContext dialogContext) {
+        Future.delayed(const Duration(seconds: 3), () {
+          _sessionDialogShowing = false;
+          Navigator.of(dialogContext).pop();
+          Navigator.of(dialogContext).pushNamedAndRemoveUntil(
+            '/login',
+                (route) => false,
+          );
+        });
         return AlertDialog(
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
           title: const Text("Session Expired"),
@@ -224,7 +217,7 @@ class ApiManager {
                 _sessionDialogShowing = false;
                 Navigator.of(dialogContext).pushNamedAndRemoveUntil(
                   '/login',
-                  (route) => false,
+                      (route) => false,
                 );
               },
               child: const Text(
@@ -249,7 +242,7 @@ class Api_Manager {
       BaseOptions(
         baseUrl: _baseUrl,
         connectTimeout: const Duration(seconds: 30),
-        receiveTimeout: const Duration(seconds: 30),
+        receiveTimeout: const Duration(seconds: 60),
         headers: {'Content-Type': 'application/json'},
       ),
     );
@@ -257,7 +250,7 @@ class Api_Manager {
 
   static final Api_Manager instance = Api_Manager._internal();
 
-  final String _baseUrl = 'https://www.twoareone.love/api';
+  final String _baseUrl = 'https://www.twoareone.love/api/';
 
   late final Dio _dio;
 
@@ -270,15 +263,12 @@ class Api_Manager {
     _dio.options.headers.remove('Authorization');
     _dio.options.headers.remove('x-api-key');
   }
-
-  /// Fires [request], resolving with the raw [Response] on success or
-  /// throwing a normalized [ApiError] on failure. Callers (ViewModels)
-  /// wrap this in their own try/catch instead of passing success/error
-  /// callbacks — this reads far more naturally with `async/await`.
+//kkk
   Future<Response<dynamic>> fetch(
       ApiRequest request, {
         Map<String, dynamic>? parameters,
-      }) async {
+      }) async
+  {
     try {
       final response = await _dio.request(
         request.url,
@@ -294,12 +284,12 @@ class Api_Manager {
       throw await _mapError(error, request, parameters);
     }
   }
-
   Future<ApiError> _mapError(
       DioException error,
       ApiRequest request,
       Map<String, dynamic>? parameters,
-      ) async {
+      ) async
+  {
     final status = error.response?.statusCode;
     final message = error.response?.data is Map
         ? error.response?.data['message']?.toString()
@@ -331,7 +321,6 @@ class Api_Manager {
       );
     }
 
-    // ── Everything else (validation errors, 500s, timeouts, etc.) ─────
     return ApiError(
       title: 'Server response',
       message: message ?? error.message ?? 'Something went wrong',

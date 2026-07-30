@@ -7,6 +7,7 @@ class ApiError {
   final Response? response;
   final VoidCallback? retryAction;
   final String alertActionButton;
+  final int? statusCode;
 
   ApiError({
     required this.title,
@@ -15,6 +16,7 @@ class ApiError {
     this.response,
     this.retryAction,
     this.alertActionButton = 'Ok',
+    this.statusCode,
   });
 }
 

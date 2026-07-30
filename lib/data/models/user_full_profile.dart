@@ -1,21 +1,4 @@
-// lib/models/user_full_profile_model.dart
-// Model for the logged-in user's own profile data, returned by
-// GET user/user-info.php (RN: GetUserInfoService).
-//
-// Used by:
-//  - ProfileScreen (header card: name/email/avatar + favorites/interested/
-//    blocks stat counters) — original fields, untouched.
-//  - EditProfileScreen (RN: EditProfileScreen/index.js) — the additional
-//    fields below (bio, gender, age, height, weight, work, location,
-//    photos, video, categories) mirror exactly what RN reads off its
-//    `user` redux selector (`authUser`).
-
 import 'details_screen_model.dart' show ProfileCategory;
-
-/// One entry in `all_images` (RN: `user.all_images`, each `{ id, url }`).
-/// Needed (unlike ProfileDetailModel's plain `List<String> images`)
-/// because EditProfileScreen must send the numeric `id` back to
-/// `remove-photo.php` (RN: `removeUserPhotoService` payload `{ image_id }`).
 class ProfileMediaImage {
   final int id;
   final String url;
@@ -29,7 +12,6 @@ class ProfileMediaImage {
     );
   }
 }
-/// `user_video` (RN: `user.user_video`, `{ id, url }` or null).
 class ProfileMediaVideo {
   final int id;
   final String url;
@@ -94,7 +76,8 @@ class UserFullProfile {
     final List<dynamic> rawCategories = (json['categories'] as List?) ?? [];
 
     return UserFullProfile(
-      id: int.tryParse(json['id']?.toString() ?? '0') ?? 0,
+      // id: int.tryParse(json['id']?.toString() ?? '0') ?? 0,
+      id: int.tryParse((json['id'] ?? json['user_id'])?.toString() ?? '0') ?? 0,
       fullName: (json['full_name'] ?? json['name'])?.toString() ?? '',
       email: json['email']?.toString() ?? '',
       // RN stores just the raw filename/path here too (Upload_Images is
@@ -129,40 +112,3 @@ class UserFullProfile {
     );
   }
 }
-
-// class UserFullProfile {
-//   final int id;
-//   final String fullName;
-//   final String email;
-//   final String profilePicture;
-//   final int totalFavorites;
-//   final int totalInterested;
-//   final int totalBlocks;
-//
-//   UserFullProfile({
-//     required this.id,
-//     required this.fullName,
-//     required this.email,
-//     required this.profilePicture,
-//     required this.totalFavorites,
-//     required this.totalInterested,
-//     required this.totalBlocks,
-//   });
-//
-//   factory UserFullProfile.fromJson(Map<String, dynamic> json) {
-//     return UserFullProfile(
-//       id: int.tryParse(json['id']?.toString() ?? '0') ?? 0,
-//       fullName: (json['full_name'] ?? json['name'])?.toString() ?? '',
-//       email: json['email']?.toString() ?? '',
-//       // RN stores just the raw filename/path here too (Upload_Images is
-//       // prepended in the UI, same as ProfileScreen._fullUrl does below).
-//       profilePicture: json['profile_picture']?.toString() ?? '',
-//       totalFavorites:
-//       int.tryParse(json['total_favorites']?.toString() ?? '0') ?? 0,
-//       totalInterested:
-//       int.tryParse(json['total_interested']?.toString() ?? '0') ?? 0,
-//       totalBlocks:
-//       int.tryParse(json['total_blocks']?.toString() ?? '0') ?? 0,
-//     );
-//   }
-// }
