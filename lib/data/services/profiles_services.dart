@@ -5,7 +5,6 @@ import 'Api_Helper/api_manager.dart';
 class ProfileService {
   final ApiManager _api = ApiManager();
 
-  // ── GET user/user-info.php (RN: GetUserInfoService) ─────────────────────
   Future<Map<String, dynamic>> getUserInfo() async {
     return await _api.fetch(
       Api(url: "user/user-info.php", method: "GET"),
@@ -13,7 +12,6 @@ class ProfileService {
     );
   }
 
-  // ── POST user/update-profile-photo.php (RN: uploadUserProfilePictureService) ──
   Future<Map<String, dynamic>> uploadProfilePicture(File file) async {
     final formData = FormData();
     formData.files.add(MapEntry(
@@ -26,7 +24,6 @@ class ProfileService {
     );
   }
 
-  // ── POST user/user-update-photos.php (RN: updateUserPhotoService) ───────
   Future<Map<String, dynamic>> addUserPhoto(File file) async {
     final formData = FormData();
     formData.files.add(MapEntry(
@@ -39,7 +36,6 @@ class ProfileService {
     );
   }
 
-  // ── POST user/remove-photo.php (RN: removeUserPhotoService) ──────────────
   Future<bool> removeUserPhoto(int imageId) async {
     final res = await _api.fetch(
       Api(url: "user/remove-photo.php", method: "POST"),
@@ -48,12 +44,12 @@ class ProfileService {
     return res['success'] == true;
   }
 
-  // ── POST user/user-update-video.php (RN: updateUserVideoService) ────────
   Future<Map<String, dynamic>> addUserVideo(File file) async {
     final formData = FormData();
     formData.files.add(MapEntry(
       'video', // matches RN's formData.append("video", ...)
-      await MultipartFile.fromFile(file.path),
+      await MultipartFile.fromFile(file.path,
+        filename: file.path.split('/').last,),
     ));
     return await _api.fetchMultipart(
       Api(url: "user/user-update-video.php", method: "POST"),

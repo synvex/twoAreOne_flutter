@@ -5,7 +5,6 @@ import '../../core/Error/api_error.dart';
 import '../../core/constants/app_constants.dart';
 import '../end_points.dart';
 import 'storage_service.dart';
-import 'dart:async';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';

@@ -43,7 +43,6 @@ android {
 dependencies {
     // Import the Firebase BoM
     implementation(platform("com.google.firebase:firebase-bom:34.15.0"))
-
     implementation("com.google.firebase:firebase-auth")
     implementation("com.google.firebase:firebase-analytics")
 }
