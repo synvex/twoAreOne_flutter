@@ -222,7 +222,12 @@ class ChatViewModel extends ChangeNotifier {
     scrollToBottom();
 
     try {
-      await _chatService.sendMessage(receiverId: receiverId, message: trimmed);
+      final response = await _chatService.sendMessage(
+        receiverId: receiverId,
+        message: trimmed,
+      );
+      print('send sms response is ******');
+      print(response);
 
       // Success: just stop showing "sending..." for this message.
       // (If your API response includes the real saved message/id,

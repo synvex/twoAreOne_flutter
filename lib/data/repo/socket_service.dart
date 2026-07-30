@@ -27,7 +27,9 @@ class SocketService extends ChangeNotifier {
   /// Named `addMessageListener` (not `addListener`) because `ChangeNotifier`
   /// already owns `addListener` for its own widget-rebuild subscribers -
   /// this is a separate mechanism for raw socket message events.
-  void Function() addMessageListener(void Function(Map<String, dynamic>) callback) {
+  void Function() addMessageListener(
+    void Function(Map<String, dynamic>) callback,
+  ) {
     _listeners.add(callback);
     return () => _listeners.remove(callback);
   }
@@ -53,16 +55,21 @@ class SocketService extends ChangeNotifier {
     _reconnectTimer = null;
 
     try {
-      final channel = WebSocketChannel.connect(Uri.parse(AppConstant.socketUrl));
+      final channel = WebSocketChannel.connect(
+        Uri.parse(AppConstant.socketUrl),
+      );
       _channel = channel;
-      channel.ready.then((_) {
-        if (_channel != channel) return; // superseded by a newer connect/disconnect
-        channel.sink.add(jsonEncode({'action': 'auth', 'token': _token}));
-        _isConnected = true;
-        notifyListeners();
-      }).catchError((_) {
-        if (_channel == channel) _onClosed();
-      });
+      channel.ready
+          .then((_) {
+            if (_channel != channel)
+              return; // superseded by a newer connect/disconnect
+            channel.sink.add(jsonEncode({'action': 'auth', 'token': _token}));
+            _isConnected = true;
+            notifyListeners();
+          })
+          .catchError((_) {
+            if (_channel == channel) _onClosed();
+          });
 
       _sub = channel.stream.listen(
         _onMessage,
@@ -104,6 +111,7 @@ class SocketService extends ChangeNotifier {
         }
     }
   }
+
   void _onClosed() {
     _isConnected = false;
     _channel = null;
@@ -112,6 +120,7 @@ class SocketService extends ChangeNotifier {
       _reconnectTimer = Timer(const Duration(seconds: 2), _connect);
     }
   }
+
   void _disconnect() {
     _reconnectTimer?.cancel();
     _reconnectTimer = null;
@@ -123,6 +132,7 @@ class SocketService extends ChangeNotifier {
     }
     _isConnected = false;
   }
+
   bool sendMessage(Map<String, dynamic> payload) {
     if (_channel == null || !_isConnected) return false;
     try {
@@ -132,6 +142,7 @@ class SocketService extends ChangeNotifier {
       return false;
     }
   }
+
   void reconnect() => _connect();
   void disconnect() => _disconnect();
 
@@ -141,7 +152,6 @@ class SocketService extends ChangeNotifier {
     super.dispose();
   }
 }
-
 
 // import 'dart:async';
 // import 'dart:convert';
