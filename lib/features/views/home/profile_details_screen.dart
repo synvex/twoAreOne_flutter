@@ -1,17 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:two_are_one/core/constants/app_icons.dart';
 import 'package:two_are_one/core/widgets/app_header_widget.dart';
 import 'package:two_are_one/core/widgets/image.dart';
 import 'package:two_are_one/core/widgets/texts.dart';
-import 'package:two_are_one/core/widgets/back_button.dart';
 import 'package:two_are_one/core/widgets/containers.dart';
 import 'package:two_are_one/core/widgets/top_toast.dart';
 import 'package:two_are_one/data/models/details_screen_model.dart';
 import 'package:two_are_one/data/models/user_match_model.dart';
 import 'package:two_are_one/data/models/visited_blocked_model.dart';
 import 'package:two_are_one/data/services/home_service.dart';
-import 'package:two_are_one/data/services/notification_service.dart';
 import 'package:two_are_one/features/views/notification/notification_screen.dart';
 import '../../../data/models/favourite_model.dart';
 import 'package:two_are_one/data/models/interested_model.dart';
