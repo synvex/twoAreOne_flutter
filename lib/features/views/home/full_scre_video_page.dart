@@ -14,11 +14,12 @@ class _FullscreenVideoPageState extends State<FullscreenVideoPage> {
   bool _showControls = true;
   Timer? _hideTimer;
   @override
+  @override
   void initState() {
     super.initState();
     SystemChrome.setPreferredOrientations([
-      DeviceOrientation.landscapeLeft,
-      DeviceOrientation.landscapeRight,
+      DeviceOrientation.portraitUp,
+      DeviceOrientation.portraitDown,
     ]);
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
     widget.controller.addListener(_onUpdate);
@@ -72,7 +73,7 @@ class _FullscreenVideoPageState extends State<FullscreenVideoPage> {
     final controller = widget.controller;
     final position = controller.value.position;
     final duration = controller.value.duration;
-    const Color kMehroon = Color(0xFF77153C);
+    const Color kRed = Color(0xFFF44336);
     final progress = duration.inMilliseconds == 0
         ? 0.0
         : position.inMilliseconds / duration.inMilliseconds;
@@ -93,21 +94,6 @@ class _FullscreenVideoPageState extends State<FullscreenVideoPage> {
               ),
             ),
             if (_showControls) ...[
-              Positioned(
-                top: 10,
-                left: 10,
-                child: SafeArea(
-                  child: GestureDetector(
-                    onTap: () => Navigator.of(context).pop(),
-                    child: Container(
-                      padding: const EdgeInsets.all(6),
-                      decoration: const BoxDecoration(
-                          color: Colors.black45, shape: BoxShape.circle),
-                      child: const Icon(Icons.arrow_back, color: Colors.white),
-                    ),
-                  ),
-                ),
-              ),
               Center(
                 child: GestureDetector(
                   onTap: _togglePlay,
@@ -133,7 +119,7 @@ class _FullscreenVideoPageState extends State<FullscreenVideoPage> {
                         data: SliderTheme.of(context).copyWith(trackHeight: 3),
                         child: Slider(
                           value: progress.clamp(0.0, 1.0),
-                          activeColor: kMehroon,
+                          activeColor: kRed,
                           inactiveColor: Colors.white38,
                           onChanged: (v) => controller.seekTo(duration * v),
                         ),
@@ -143,7 +129,6 @@ class _FullscreenVideoPageState extends State<FullscreenVideoPage> {
                         children: [
                           Text("${_fmt(position)} / ${_fmt(duration)}",
                               style: const TextStyle(color: Colors.white)),
-                          // Wapis portrait/inline mode pe jane ka button
                           GestureDetector(
                             onTap: () => Navigator.of(context).pop(),
                             child: const Icon(Icons.fullscreen_exit,

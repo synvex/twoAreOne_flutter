@@ -579,7 +579,6 @@ class _InlineVideoPlayerState extends State<InlineVideoPlayer> {
       }
     });
   }
-
   void _togglePlay() {
     if (!_started) {
       _startPlayback();
@@ -608,7 +607,6 @@ class _InlineVideoPlayerState extends State<InlineVideoPlayer> {
       _autoHideControls();
     }
   }
-
   void _toggleMute() {
     final controller = _controller;
     if (controller == null || !_initialized) return;
@@ -617,25 +615,23 @@ class _InlineVideoPlayerState extends State<InlineVideoPlayer> {
       controller.setVolume(_isMuted ? 0 : 1);
     });
   }
-
   String _formatDuration(Duration? d) {
     if (d == null) return "00:00";
     final m = d.inMinutes.remainder(60).toString().padLeft(2, '0');
     final s = d.inSeconds.remainder(60).toString().padLeft(2, '0');
     return "$m:$s";
   }
-
   Future<void> _openFullscreen() async {
     if (_controller == null || !_initialized) return;
     await Navigator.of(context).push(
       MaterialPageRoute(
-        builder: (_) => FullscreenVideoPage(controller: _controller!),
+        builder: (_) => FullscreenVideoPage(
+            controller: _controller!),
         fullscreenDialog: true,
       ),
     );
     if (mounted) setState(() {});
   }
-
   @override
   Widget build(BuildContext context) {
     final borderRadius = widget.borderRadius ?? BorderRadius.circular(12);
@@ -717,7 +713,8 @@ class _InlineVideoPlayerState extends State<InlineVideoPlayer> {
             Image.network(
               widget.thumbnailUrl!,
               fit: BoxFit.cover,
-              errorBuilder: (_, __, ___) => Container(color: Colors.black),
+              errorBuilder: (_, __, ___) => Container(
+                  color: Colors.black),
             ),
             Center(
               child: Container(
@@ -771,9 +768,6 @@ class _InlineVideoPlayerState extends State<InlineVideoPlayer> {
               ),
             ),
 
-          // Center play/pause overlay — only while paused or ended, NOT
-          // while actively playing. This makes it disappear the instant
-          // playback starts, per your requirement.
           if (_initialized && controller != null && !isPlaying)
             Center(
               child: GestureDetector(
@@ -793,21 +787,19 @@ class _InlineVideoPlayerState extends State<InlineVideoPlayer> {
                 ),
               ),
             ),
-
-          // Bottom pill-shaped control bar — single row, auto-hides after
-          // 3s, reappears on tap.
           if (_showControls && _initialized && controller != null)
             Positioned(
               left: 10,
               right: 10,
               bottom: 10,
               child: Container(
-                padding:
-                const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                decoration: BoxDecoration(
-                  color: Colors.black.withOpacity(0.45),
-                  borderRadius: BorderRadius.circular(30),
-                ),
+                color: Colors.black.withOpacity(0.45),
+                // padding:
+                // const EdgeInsets.symmetric(
+                //     horizontal: 10, vertical: 6),
+                // decoration: BoxDecoration(
+                //   borderRadius: BorderRadius.circular(30),
+                // ),
                 child: Row(
                   children: [
                     GestureDetector(
