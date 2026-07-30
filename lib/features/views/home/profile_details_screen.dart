@@ -128,7 +128,6 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
     _visitedUser();
     _getUserDetails();
   }
-
   int? get _userId => _details?.userId ?? _cardUser?.id;
   // ── API ──────────────────────────────────────────────────────────────
   Future<void> _visitedUser() async {
@@ -141,7 +140,6 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
     final res = await _homeService.addVisitedUser(id);
     debugPrint("visited/add.php -> $res");
   }
-
   Future<void> _getUserDetails() async {
     final id = _cardUser?.id ?? widget.userId;
     if (id == null) {
@@ -164,23 +162,19 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
       setState(() => _loading = false);
     }
   }
-
   // ── utils ────────────────────────────────────────────────────────────
   String _capitalize(String? text) {
     if (text == null || text.isEmpty) return '';
     return text[0].toUpperCase() + text.substring(1);
   }
-
   String _fullUrl(String? path) {
     if (path == null || path.isEmpty) return '';
     return path.startsWith('http') ? path : '$kProfileUploadImagesBase$path';
   }
-
   String get _truncatedBio {
     final bio = _details?.bio ?? '';
     return bio.length > 200 ? bio.substring(0, 200) : bio;
   }
-
   // ── actions ──────────────────────────────────────────────────────────
   void _handleSilentChat() {
     if (_chatLoading) return;
@@ -213,7 +207,6 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
       );
     });
   }
-
   Future<void> _onBlockPress() async {
     final id = _userId;
     if (id == null) return;
@@ -240,7 +233,6 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
       );
     }
   }
-
   Future<void> _onLikePress() async {
     final id = _userId;
     if (id == null || _details == null) return;
@@ -257,7 +249,6 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
     }
     setState(() => _heartLoading = false);
   }
-
   Future<void> _onStarPress() async {
     final id = _userId;
     if (id == null || _details == null) return;
@@ -285,11 +276,10 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
     return Stack(
       children: [
         _buildScreen(context),
-        if (_selectedImage != null) _buildFullScreenImageViewer(),
+        if (_selectedImage != null)_buildFullScreenImageViewer(),
       ],
     );
   }
-
   Widget _buildScreen(BuildContext context) {
     final details = _details;
     final screenWidth = MediaQuery.of(context).size.width;
@@ -309,7 +299,7 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => NotificationScreen(),
+                        builder: (context) => const NotificationScreen(),
                       ),
                     );
                   },
@@ -318,7 +308,7 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
                     wHeight: 45,
                     shape: BoxShape.circle,
                     hexValue: 0xFFFFFFFF,
-                    border: Border.all(color: Colors.black12),
+                    border:  Border.all(color: Colors.black12),
                     alignment: Alignment.center,
                     child: const Images(
                       imageStr: "assets/svg_images/notification.svg",
@@ -574,7 +564,6 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
       ),
     );
   }
-
   Widget _buildFullScreenImageViewer() {
     return Scaffold(
       body: GestureDetector(

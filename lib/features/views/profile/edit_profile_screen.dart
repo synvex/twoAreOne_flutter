@@ -600,7 +600,6 @@ class _EditProfileScreenState extends State<EditProfileScreen>
       ),
     );
   }
-
   bool _validate() {
     final nameOk = RegExp(
       r'^[A-Za-z\s]+$',
@@ -999,7 +998,6 @@ class _EditProfileScreenState extends State<EditProfileScreen>
       ),
     );
   }
-
   Widget _buildAvatarSection() {
     final avatarUrl = _fullUrl(_user?.profilePicture);
     return Center(
@@ -1056,13 +1054,13 @@ class _EditProfileScreenState extends State<EditProfileScreen>
       ),
     );
   }
-
   Widget _buildDropdown({
     required String hint,
     required String? value,
     required List<_DropdownOption> items,
     required ValueChanged<String?> onChanged,
-  }) {
+  })
+  {
     final safeValue = (value != null && items.any((o) => o.value == value))
         ? value
         : null;
@@ -1106,7 +1104,6 @@ class _EditProfileScreenState extends State<EditProfileScreen>
       ),
     );
   }
-
   Widget _buildUpdateButton() {
     return MainButtonWidget(
       text: "Update",
@@ -1267,8 +1264,8 @@ class _EditProfileScreenState extends State<EditProfileScreen>
             clipBehavior: Clip.none,
             children: [
               SizedBox(
-                width: 300,
-                height: 180,
+                // width: 300,
+                height: 190,
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(12),
                   child: _pickedVideoFile != null
