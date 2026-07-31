@@ -43,6 +43,15 @@ class ChatViewModel extends ChangeNotifier {
   /// Subscribes this viewmodel to the global socket for a given
   /// conversation. Call once when the chat screen opens.
   /// Replaces the old startHistoryPolling().
+  ///
+  int get unreadConversationCount {
+    return chatMembers.where((e) => (e.unreadCount ?? 0) > 0).length;
+  }
+
+  int get totalUnreadMessages {
+    return chatMembers.fold(0, (sum, e) => sum + (e.unreadCount ?? 0));
+  }
+
   void startListening(int receiverId) {
     _activeChatReceiverId = receiverId;
     _socketUnsubscribe?.call();
