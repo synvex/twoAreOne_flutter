@@ -63,6 +63,7 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
         location: '',
         city: '',
         matchPercent: '0%',
+
       );
     } else if (args is InterestedUserModel) {
       _cardUser = FilterMatchModel(
@@ -74,7 +75,8 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
         city: '',
         matchPercent: '0%',
       );
-    } else if (args is VisitedBlockedUserModel) {
+    }
+    else if (args is VisitedBlockedUserModel) {
       _cardUser = FilterMatchModel(
         id: args.profileId,
         name: args.fullName,
@@ -158,6 +160,7 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
         );
         _loading = false;
       });
+      debugPrint("RAW API DATA: ${res['data']}");
     } else {
       setState(() => _loading = false);
     }
