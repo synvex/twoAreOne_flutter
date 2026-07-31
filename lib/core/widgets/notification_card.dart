@@ -151,7 +151,6 @@ class NotificationCard extends StatelessWidget {
                     SizedBox(height: 6.h),
                     Text(
                       DateTimeUtil.utcToPkTime(item.datetime),
-                      // DateTimeFormatter.onlyDate(item.datetime),
                       style: GoogleFonts.inter(
                         fontSize: 14.sp,
                         fontWeight: FontWeight.w300,
