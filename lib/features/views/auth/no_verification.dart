@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:io';
-
 import 'package:country_code_picker/country_code_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -27,7 +26,6 @@ class _NoVerificationState extends State<NoVerification> {
   final AuthService _authService = AuthService();
 
   bool _isLoading = false;
-
   String _selectedCountryCode = "+92";
   String _selectedCountryName = "PK";
 
