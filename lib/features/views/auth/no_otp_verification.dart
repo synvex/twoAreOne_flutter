@@ -157,6 +157,7 @@ class _NoOtpVerificationState extends State<NoOtpVerification> {
                     children: [
                       SizedBox(height: 25.h),
                       Containers(
+                        padding: EdgeInsets.symmetric(horizontal: 8.w),
                         wHeight: 70.h,
                         wWidth: 70.w,
                         hexValue: 0xFF77153C,
