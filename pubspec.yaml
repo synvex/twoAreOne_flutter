@@ -59,6 +59,7 @@ dependencies:
   flutter_screenutil: ^5.9.3
   web_socket_channel: ^3.0.3
   intl: ^0.18.1
+  country_code_picker: ^3.4.1
 
 dev_dependencies:
   flutter_test:

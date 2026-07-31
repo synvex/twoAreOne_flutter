@@ -1,16 +1,18 @@
 import 'dart:async';
 import 'dart:io';
-import 'package:flutter/cupertino.dart';
+
+import 'package:country_code_picker/country_code_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:two_are_one/core/constants/app_colors.dart';
 import 'package:two_are_one/core/widgets/app_header_widget.dart';
 import 'package:two_are_one/core/widgets/image.dart';
-import 'package:two_are_one/data/services/auth_service.dart';
+import 'package:two_are_one/core/widgets/main_button_widget.dart';
 import 'package:two_are_one/core/widgets/textfield.dart';
 import 'package:two_are_one/core/widgets/texts.dart';
-import 'package:two_are_one/core/widgets/main_button_widget.dart';
+import 'package:two_are_one/data/services/auth_service.dart';
+
 import 'no_otp_verification.dart';
 
 class NoVerification extends StatefulWidget {
@@ -23,45 +25,47 @@ class NoVerification extends StatefulWidget {
 class _NoVerificationState extends State<NoVerification> {
   final TextEditingController _phoneController = TextEditingController();
   final AuthService _authService = AuthService();
+
   bool _isLoading = false;
+
   String _selectedCountryCode = "+92";
   String _selectedCountryName = "PK";
+
   String? _errorMessage;
 
   void _verifyPhoneNo() async {
-    // 1. Sanitize Input
     String inputDigits = _phoneController.text.replaceAll(RegExp(r'\D'), '');
     String selectedCodeDigits = _selectedCountryCode.replaceAll(
       RegExp(r'\D'),
       '',
     );
+
     String localNumber = inputDigits;
 
-    // Handle double-prefixing
     if (inputDigits.startsWith(selectedCodeDigits) &&
         inputDigits.length > selectedCodeDigits.length) {
       localNumber = inputDigits.substring(selectedCodeDigits.length);
     }
 
-    // Strip leading zeros
     if (localNumber.startsWith('0')) {
       localNumber = localNumber.substring(1);
     }
 
-    // Validation
     if (localNumber.length < 9 || localNumber.length > 11) {
-      setState(() => _errorMessage = "Please enter a valid phone number");
+      setState(() {
+        _errorMessage = "Please enter a valid phone number";
+      });
       return;
     }
 
     final phoneNoWithCode = "$_selectedCountryCode$localNumber";
+
     setState(() {
       _isLoading = true;
       _errorMessage = null;
     });
 
     try {
-      // Step A: Check database (Matches RN's ApiManager.fetch)
       final result = await _authService.checkPhoneExists(
         phoneNo: phoneNoWithCode,
       );
@@ -69,12 +73,14 @@ class _NoVerificationState extends State<NoVerification> {
       if (!mounted) return;
 
       if (result['success'] == true) {
-        // Phone is available -> Start Firebase (Matches RN's onApiResponse)
         _startFirebaseOTP(phoneNoWithCode);
       } else {
-        // Phone exists or other error (Matches RN's onApiError)
-        setState(() => _isLoading = false);
+        setState(() {
+          _isLoading = false;
+        });
+
         String errorMsg = result['error']?.toString() ?? "";
+
         if (errorMsg.toLowerCase().contains("already exists") ||
             errorMsg.contains("linked")) {
           _showResultPopup(phoneNoWithCode);
@@ -92,17 +98,29 @@ class _NoVerificationState extends State<NoVerification> {
       }
     } on SocketException {
       if (!mounted) return;
-      setState(() => _isLoading = false);
+
+      setState(() {
+        _isLoading = false;
+      });
+
       _showError(
         "No internet connection. Please check your network and try again.",
       );
     } on TimeoutException {
       if (!mounted) return;
-      setState(() => _isLoading = false);
+
+      setState(() {
+        _isLoading = false;
+      });
+
       _showError("Server is taking too long. Please try again.");
     } catch (e) {
       if (!mounted) return;
-      setState(() => _isLoading = false);
+
+      setState(() {
+        _isLoading = false;
+      });
+
       _showError("Something went wrong. Please try again.");
     }
   }
@@ -112,11 +130,15 @@ class _NoVerificationState extends State<NoVerification> {
       phoneNumber: phoneNumber,
       onCodeSent: (verificationId) {
         if (!mounted) return;
-        setState(() => _isLoading = false);
+
+        setState(() {
+          _isLoading = false;
+        });
+
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
-            builder: (context) => NoOtpVerification(
+            builder: (_) => NoOtpVerification(
               phoneNumber: phoneNumber,
               verificationId: verificationId,
             ),
@@ -125,7 +147,11 @@ class _NoVerificationState extends State<NoVerification> {
       },
       onVerificationFailed: (e) {
         if (!mounted) return;
-        setState(() => _isLoading = false);
+
+        setState(() {
+          _isLoading = false;
+        });
+
         _showError(e.message ?? "Firebase could not send OTP");
       },
     );
@@ -142,7 +168,9 @@ class _NoVerificationState extends State<NoVerification> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               AppHeaderWidget(isLeading: true, isTrailing: false),
+
               SizedBox(height: 40.h),
+
               Text(
                 "Can we get your number?",
                 style: GoogleFonts.poppins(
@@ -152,40 +180,48 @@ class _NoVerificationState extends State<NoVerification> {
               ),
 
               SizedBox(height: 30.h),
+
               Row(
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
-                  GestureDetector(
-                    onTap: _showCountryPicker,
-                    child: Container(
-                      width: 90.w,
-                      padding: const EdgeInsets.only(bottom: 1),
-                      decoration: const BoxDecoration(
-                        border: Border(
-                          bottom: BorderSide(color: Colors.black, width: 1.5),
-                        ),
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Texts(
-                            text: "$_selectedCountryName $_selectedCountryCode",
-                            size: 14,
-                            fontWeight: FontWeight.w600,
-                          ),
-                          const Icon(
-                            CupertinoIcons.arrowtriangle_down_fill,
-                            size: 12,
-                          ),
-                        ],
+                  Container(
+                    width: 120.w,
+                    decoration: const BoxDecoration(
+                      border: Border(
+                        bottom: BorderSide(color: Colors.black, width: 1.5),
                       ),
                     ),
+                    child: CountryCodePicker(
+                      initialSelection: "PK",
+                      favorite: const ["PK", "US"],
+                      showFlag: true,
+                      showFlagDialog: true,
+                      showCountryOnly: false,
+                      showOnlyCountryWhenClosed: false,
+                      alignLeft: true,
+                      padding: EdgeInsets.zero,
+                      textStyle: GoogleFonts.poppins(
+                        fontSize: 14.sp,
+                        fontWeight: FontWeight.w600,
+                        color: Colors.black,
+                      ),
+                      onChanged: (country) {
+                        setState(() {
+                          _selectedCountryCode = country.dialCode ?? "+92";
+                          _selectedCountryName = country.code ?? "PK";
+                        });
+                      },
+                    ),
                   ),
+
                   SizedBox(width: 15.w),
+
                   Expanded(child: TxtField(controller: _phoneController)),
                 ],
               ),
+
               SizedBox(height: 13.h),
+
               if (_errorMessage != null)
                 Texts(
                   text: _errorMessage!,
@@ -193,24 +229,29 @@ class _NoVerificationState extends State<NoVerification> {
                   size: 13,
                   fontWeight: FontWeight.w400,
                 ),
-              const SizedBox(height: 13),
+
+              SizedBox(height: 13.h),
+
               Text(
                 "Enter your phone number. We’ll text you a code\n"
                 "to verify it's really you and keep your journey safe.",
                 style: GoogleFonts.inter(
                   fontSize: 13.sp,
-                  fontWeight: FontWeight.w500, // optional
+                  fontWeight: FontWeight.w500,
                 ),
               ),
-              Spacer(),
+
+              const Spacer(),
+
               MainButtonWidget(
                 text: "Next",
-                onTap: _verifyPhoneNo,
                 isLoading: _isLoading,
+                onTap: _verifyPhoneNo,
                 gradient: const LinearGradient(
                   colors: [Color(0xFF77153C), Color(0xFFDD276F)],
                 ),
               ),
+
               SizedBox(height: 20.h),
             ],
           ),
@@ -223,7 +264,7 @@ class _NoVerificationState extends State<NoVerification> {
     showDialog(
       context: context,
       barrierDismissible: false,
-      builder: (context) {
+      builder: (_) {
         return AlertDialog(
           backgroundColor: Colors.white,
           surfaceTintColor: Colors.white,
@@ -235,7 +276,9 @@ class _NoVerificationState extends State<NoVerification> {
               mainAxisSize: MainAxisSize.min,
               children: [
                 const Images(imageStr: "assets/svg_images/error.svg"),
+
                 SizedBox(height: 10.h),
+
                 Text(
                   "Oops, Failed!",
                   style: GoogleFonts.poppins(
@@ -246,15 +289,18 @@ class _NoVerificationState extends State<NoVerification> {
                 ),
 
                 SizedBox(height: 15.h),
+
                 Text(
                   "This Number is already linked to another account. Please use a different phone number",
                   style: GoogleFonts.inter(
                     fontSize: 13.sp,
                     color: AppColors.verifactiontext,
                   ),
+                  textAlign: TextAlign.center,
                 ),
 
-                SizedBox(height: 25.sp),
+                SizedBox(height: 25.h),
+
                 MainButtonWidget(
                   height: 50,
                   text: "Close",
@@ -271,48 +317,9 @@ class _NoVerificationState extends State<NoVerification> {
     );
   }
 
-  void _showCountryPicker() {
-    showModalBottomSheet(
-      context: context,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-      ),
-      builder: (context) => Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          const Padding(
-            padding: EdgeInsets.all(16.0),
-            child: Texts(text: "Select Country"),
-          ),
-          ListTile(
-            leading: const Text("🇺🇸", style: TextStyle(fontSize: 24)),
-            title: const Text("United States (+1)"),
-            onTap: () {
-              setState(() {
-                _selectedCountryCode = "+1";
-                _selectedCountryName = "US";
-              });
-              Navigator.pop(context);
-            },
-          ),
-          ListTile(
-            leading: const Text("🇵🇰", style: TextStyle(fontSize: 24)),
-            title: const Text("Pakistan (+92)"),
-            onTap: () {
-              setState(() {
-                _selectedCountryCode = "+92";
-                _selectedCountryName = "PK";
-              });
-              Navigator.pop(context);
-            },
-          ),
-          const SizedBox(height: 20),
-        ],
-      ),
-    );
-  }
-
   void _showError(String msg) {
-    setState(() => _errorMessage = msg);
+    setState(() {
+      _errorMessage = msg;
+    });
   }
 }
