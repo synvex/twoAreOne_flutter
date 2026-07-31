@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:two_are_one/core/utils/date_time_formater.dart';
+import 'package:two_are_one/core/utils/date_time_util.dart';
 import 'package:two_are_one/core/utils/random_color_picker_util.dart';
 import 'package:two_are_one/data/models/notification_model.dart';
 
@@ -150,7 +150,7 @@ class NotificationCard extends StatelessWidget {
                     ),
                     SizedBox(height: 6.h),
                     Text(
-                      '',
+                      DateTimeUtil.utcToPkTime(item.datetime),
                       // DateTimeFormatter.onlyDate(item.datetime),
                       style: GoogleFonts.inter(
                         fontSize: 14.sp,
