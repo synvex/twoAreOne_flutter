@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:two_are_one/core/constants/app_colors.dart';
-import 'package:two_are_one/core/utils/skelton_util.dart';
 import 'package:two_are_one/core/widgets/containers.dart';
 import 'package:two_are_one/core/widgets/divider.dart';
 import 'package:two_are_one/core/widgets/image.dart';
@@ -12,7 +11,6 @@ import 'package:two_are_one/data/models/user_match_model.dart';
 import 'package:two_are_one/data/services/home_service.dart';
 import 'package:two_are_one/features/views/Interested/interrested_user_screen.dart';
 import 'package:two_are_one/features/views/bottom_nav/custom_nav_bar.dart';
-import 'package:two_are_one/features/views/chat/message_screen.dart';
 import 'package:two_are_one/features/views/favourites/favourites_screen.dart';
 import 'package:two_are_one/features/views/home/home_filter_screen.dart';
 import 'package:two_are_one/features/views/home/profile_card.dart';
@@ -297,11 +295,10 @@ class _HomeScreenState extends State<HomeScreen> {
                               );
                             },
                           ),
-                          if (_isFetchingMore)
-                            const Padding(
-                              padding: EdgeInsets.all(20),
-                              child: Center(child: CircularProgressIndicator()),
-                            ),
+                          if (_isFetchingMore) ...[
+                            const SizedBox(height: 15),
+                            _buildLoadMoreShimmer(),
+                          ],
                           const SizedBox(height: 100),
                         ],
                       ),
@@ -310,6 +307,21 @@ class _HomeScreenState extends State<HomeScreen> {
           ],
         ),
       ),
+    );
+  }
+
+  Widget _buildLoadMoreShimmer() {
+    return GridView.builder(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      itemCount: 4, // Number of shimmer cards
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 2,
+        crossAxisSpacing: 15,
+        mainAxisSpacing: 15,
+        childAspectRatio: 0.7,
+      ),
+      itemBuilder: (_, __) => _buildShimmerCard(),
     );
   }
 
@@ -676,21 +688,32 @@ class _HomeScreenState extends State<HomeScreen> {
                           width: 80.w,
                           height: 80.h,
                           // fit: BoxFit.cover,
-                          _profileImageUrl??'',
-                        errorBuilder: (
-                            context, error,
-                            stackTrace) => Text(_userName.toString().trim()[0].toUpperCase(),
-                        style: TextStyle(fontWeight: FontWeight.w500, color: Colors.white, ),
-                        ),
+                          _profileImageUrl ?? '',
+                          errorBuilder: (context, error, stackTrace) => Text(
+                            _userName.toString().trim()[0].toUpperCase(),
+                            style: TextStyle(
+                              fontWeight: FontWeight.w500,
+                              color: Colors.white,
+                            ),
+                          ),
                         ),
                       ),
                     ),
                   ),
                   SizedBox(height: 10.h),
-                  Text(_userName,style: TextStyle(fontWeight: FontWeight.w500, color: Colors.white, ),
+                  Text(
+                    _userName,
+                    style: TextStyle(
+                      fontWeight: FontWeight.w500,
+                      color: Colors.white,
+                    ),
                   ),
-                  Text(_userEmail,
-                    style: TextStyle( color: Colors.white,overflow: TextOverflow.ellipsis ),
+                  Text(
+                    _userEmail,
+                    style: TextStyle(
+                      color: Colors.white,
+                      overflow: TextOverflow.ellipsis,
+                    ),
                   ),
                   const SizedBox(height: 20),
                   // UserAccountsDrawerHeader(

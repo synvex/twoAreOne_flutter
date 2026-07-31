@@ -61,13 +61,13 @@ class MenuBottomSheet extends StatelessWidget {
                   ), // Maroon color for Logout
                   onTap: onDelete,
                 ),
+                const SizedBox(height: 15),
+
                 _sheetItem(
                   iconImg: 'assets/svg_images/Profile/profileLogout.svg',
                   // icon: Icons.logout_rounded,
                   label: "Logout",
-                  labelColor: const Color(
-                    0xFF77153C,
-                  ), // Maroon color for Logout
+                  labelColor: Colors.black,
                   onTap: onLogout,
                 ),
               ],
@@ -77,13 +77,13 @@ class MenuBottomSheet extends StatelessWidget {
       ),
     );
   }
+
   Widget _sheetItem({
     required String iconImg,
     required String label,
     required VoidCallback onTap,
     Color? labelColor,
-  })
-  {
+  }) {
     return GestureDetector(
       onTap: onTap,
       child: Container(
@@ -150,8 +150,7 @@ class CurveBackgroundPainter extends CustomPainter {
     path.quadraticBezierTo(0, 0, 45, 0);
     path.close();
 
-    canvas.drawPath(path.shift(
-        const Offset(0, -2)), shadowPaint);
+    canvas.drawPath(path.shift(const Offset(0, -2)), shadowPaint);
     canvas.drawPath(path, paint);
   }
 
