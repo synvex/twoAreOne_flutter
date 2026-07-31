@@ -134,14 +134,12 @@ class ProfileCard extends StatelessWidget {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceAround,
                           children: [
-                            // 1. Heart (Interested) -> calls onHeart (home screen: _handleInterest)
                            Expanded (child: _smallIcon(
                               onHeart,
                               user.isInterested
                                   ? "assets/svg_images/fiiled_like.svg"
                                   : "assets/svg_images/heart_unfill.svg",
                             ),),
-                            // 2. Star (Favorite) -> calls onStar (home screen: _handleFavorite)
                             Expanded(
                               child: _smallIcon(
                                 onStar,
@@ -152,14 +150,12 @@ class ProfileCard extends StatelessWidget {
                                 padding: user.isFavorite?2:3.5
                               ),
                             ),
-                            // 3. Block -> calls onDislike (home screen: _handleBlock)
                             Expanded(
                               child: _smallIcon(
                                 onDislike,
                                 "assets/svg_images/block.svg",
                               ),
                             ),
-                            // 4. Friend request send -> calls onRequestSend (home screen: _handleSilentChat)
                             Expanded(
                               child: _smallIcon(
                                 onRequestSend,
