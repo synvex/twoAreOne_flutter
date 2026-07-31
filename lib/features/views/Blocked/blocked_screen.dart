@@ -5,8 +5,6 @@ import 'package:two_are_one/core/widgets/app_header_widget.dart';
 import 'package:two_are_one/core/widgets/image.dart';
 import 'package:two_are_one/data/models/visited_blocked_model.dart';
 import 'package:two_are_one/features/views/home/profile_details_screen.dart';
-
-import '../../../core/widgets/back_button.dart';
 import '../../../data/viewmodels/blocked_viewmodel.dart';
 import 'bottom_sheet.dart';
 import 'list_tiles.dart';

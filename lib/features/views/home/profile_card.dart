@@ -414,8 +414,8 @@ class ProfileCard extends StatelessWidget {
                                 user.isFavorite
                                     ? "assets/svg_images/filled_star.svg"
                                     : "assets/svg_images/unfill_star.svg",
-                                iconSize: 12,
-                                padding: 4
+                                iconSize: user.isFavorite? 17:12,
+                                padding: user.isFavorite?3:4
                               ),
                             ),
                             // 3. Block -> calls onDislike (home screen: _handleBlock)

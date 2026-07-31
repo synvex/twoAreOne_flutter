@@ -1,5 +1,6 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -31,6 +32,7 @@ import 'firebase_options.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
+  await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
   runApp(
@@ -38,6 +40,7 @@ void main() async {
       providers: [
         ChangeNotifierProvider(create: (_) => ChatViewModel()),
         ChangeNotifierProvider(create: (_) => NotificationViewModel()),
+
         ChangeNotifierProvider(create: (_) => PresenceService()..connect()),
         // .value, not create: - this must be the same instance ApiManager
         // drives via SocketService.instance, so widgets that watch it
@@ -46,6 +49,7 @@ void main() async {
         // (e.g. online-status dots) see the real connection state.
         ChangeNotifierProvider.value(value: SocketService.instance),
       ],
+
       child: const MyApp(),
     ),
   );

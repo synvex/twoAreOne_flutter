@@ -318,6 +318,13 @@ class ChatViewModel extends ChangeNotifier {
       "text": trimmed,
       "temp_id": tempId,
     });
+    // try {
+    //   final response = await _chatService.sendMessage(
+    //     receiverId: receiverId,
+    //     message: trimmed,
+    //   );
+    //   print('send sms response is ******');
+    //   print(response);
 
     if (!sent) {
       debugPrint("Send Message Error: socket not open");

@@ -241,12 +241,12 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-        key: _scaffoldKey,
-        backgroundColor: Colors.white,
-        drawer: _buildDrawer(),
-        body: Column(
+    return Scaffold(
+      key: _scaffoldKey,
+      backgroundColor: Colors.white,
+      drawer: _buildDrawer(),
+      body: SafeArea(
+        child: Column(
           children: [
             _buildHeader(),
             Expanded(
@@ -641,9 +641,9 @@ class _HomeScreenState extends State<HomeScreen> {
       backgroundColor: Colors.white,
       child: Column(
         children: [
-          // const SizedBox(height: 50),
           Container(
-            height: 120.h,
+            // height: 120.h,
+            padding: EdgeInsets.only(top: 90),
             decoration: const BoxDecoration(
               gradient: LinearGradient(
                 colors: [Color(0xFF477CB6), Color(0xFFDD276F)],
@@ -651,27 +651,84 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             child: Padding(
               padding: const EdgeInsets.only(left: 15),
-              child: Row(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Images(
-                    imageStr: "assets/images/two_are_one.png",
-                    height: 35.h,
-                    width: 180.w,
+                  Row(
+                    children: [
+                      Images(
+                        imageStr: "assets/images/two_are_one.png",
+                        height: 35.h,
+                        width: 180.w,
+                      ),
+                      Spacer(),
+                    ],
                   ),
-                  Spacer(),
+                  SizedBox(height: 10.h),
+                  CircleAvatar(
+                    radius: 43.r,
+                    backgroundColor: Colors.white,
+
+                    child: Center(
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(100),
+                        child: Image.network(
+                          width: 80.w,
+                          height: 80.h,
+                          // fit: BoxFit.cover,
+                          _profileImageUrl??'',
+                        errorBuilder: (
+                            context, error,
+                            stackTrace) => Text(_userName.toString().trim()[0].toUpperCase(),
+                        style: TextStyle(fontWeight: FontWeight.w500, color: Colors.white, ),
+                        ),
+                        ),
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: 10.h),
+                  Text(_userName,style: TextStyle(fontWeight: FontWeight.w500, color: Colors.white, ),
+                  ),
+                  Text(_userEmail,
+                    style: TextStyle( color: Colors.white,overflow: TextOverflow.ellipsis ),
+                  ),
+                  const SizedBox(height: 20),
+                  // UserAccountsDrawerHeader(
+                  //   decoration: const BoxDecoration(
+                  //     gradient: LinearGradient(
+                  //       colors: [Color(0xFF477CB6), Color(0xFFDD276F)],
+                  //     ),
+                  //   ),
+                  //   currentAccountPicture:
+                  //   _profileImageUrl != null && _profileImageUrl!.isNotEmpty
+                  //       ? Container(
+                  //     decoration: BoxDecoration(
+                  //       shape: BoxShape.circle,
+                  //       border: Border.all(
+                  //         color: const Color(0xA6FFFFFF), // Matches banner's white-ish border
+                  //         width: 2,
+                  //       ),
+                  //       image: DecorationImage(
+                  //         image: NetworkImage(_profileImageUrl!),
+                  //         fit: BoxFit.cover,
+                  //       ),
+                  //     ),
+                  //   )
+                  //       : const CircleAvatar(
+                  //     backgroundColor: Colors.white,
+                  //     child: Icon(Icons.person, color: Colors.grey, size: 40),
+                  //   ),
+                  //   // decoration: const BoxDecoration(
+                  //   //   gradient: LinearGradient(
+                  //   //     colors: [Color(0xFF477CB6), Color(0xFFDD276F)],
+                  //   //   ),
+                  //   // ),
+                  //   accountName: Text(_userName),
+                  //   accountEmail: Text(_userEmail),
+                  // ),
                 ],
               ),
             ),
-          ),
-          UserAccountsDrawerHeader(
-            decoration: const BoxDecoration(
-              gradient: LinearGradient(
-                colors: [Color(0xFF477CB6), Color(0xFFDD276F)],
-              ),
-            ),
-            // ✅ FIX: Real name and email in drawer
-            accountName: Text(_userName),
-            accountEmail: Text(_userEmail),
           ),
           _drawerItem(
             "Matches",

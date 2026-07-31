@@ -5,6 +5,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:two_are_one/core/constants/app_colors.dart';
 import 'package:two_are_one/core/constants/app_icons.dart';
 import 'package:two_are_one/core/utils/date_time_formater.dart';
+import 'package:two_are_one/core/utils/date_time_util.dart';
 import 'package:two_are_one/core/utils/random_color_picker_util.dart';
 import 'package:two_are_one/core/utils/skelton_util.dart';
 import 'package:two_are_one/data/services/presense_service.dart';
@@ -401,10 +402,15 @@ class _MessageScreenState extends State<MessageScreen> {
                                                       ),
                                                     const Spacer(),
                                                     Text(
-                                                      DateTimeFormatter.chatTime(
+                                                      DateTimeUtil.formatTime(
                                                         item.lastMessageTime
                                                             .toString(),
                                                       ),
+
+                                                      // DateTimeFormatter.chatTime(
+                                                      //   item.lastMessageTime
+                                                      //       .toString(),
+                                                      // ),
                                                       style: GoogleFonts.inter(
                                                         fontSize: 10,
                                                         fontWeight:

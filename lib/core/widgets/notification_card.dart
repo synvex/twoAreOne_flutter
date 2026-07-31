@@ -150,7 +150,8 @@ class NotificationCard extends StatelessWidget {
                     ),
                     SizedBox(height: 6.h),
                     Text(
-                      DateTimeFormatter.onlyDate(item.datetime),
+                      '',
+                      // DateTimeFormatter.onlyDate(item.datetime),
                       style: GoogleFonts.inter(
                         fontSize: 14.sp,
                         fontWeight: FontWeight.w300,
@@ -177,7 +178,8 @@ class NotificationCard extends StatelessWidget {
                   ),
                   SizedBox(height: 26.h),
                   Text(
-                    DateTimeFormatter.chatTime(item.datetime),
+                    '',
+                    // DateTimeFormatter.chatTime(item.datetime),
                     style: GoogleFonts.poppins(
                       fontSize: 10.sp,
                       fontWeight: FontWeight.w500,
