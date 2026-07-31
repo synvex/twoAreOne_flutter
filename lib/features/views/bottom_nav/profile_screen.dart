@@ -47,6 +47,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     super.initState();
     _getUserInfo();
     _loadAppVersion();
+    _refreshProfile();
   }
 
   Future<void> _loadAppVersion() async {
@@ -270,6 +271,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
+  Future<void> _refreshProfile() async {
+    await _getUserInfo();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -305,72 +310,77 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 ],
               ),
               Expanded(
-                child: ListView(
-                  children: [
-                    const SizedBox(height: 20),
-                    _buildProfileCard(),
-                    const SizedBox(height: 20),
-                    _menuItem(
-                      hexValue: 0x00000000,
-                      iconImg: "assets/svg_images/Profile/accountSetting.svg",
-                      label: "Account settings",
-                      onTap: () =>
-                          Navigator.pushNamed(context, '/settings_screen'),
-                    ),
-                    _menuItem(
-                      iconImg: "assets/svg_images/Profile/settingHeart.svg",
-                      label: "Interested User",
-                      onTap: () =>
-                          Navigator.pushNamed(context, '/interested_screen'),
-                    ),
-                    _menuItem(
-                      iconImg: "assets/svg_images/Profile/settingStar.svg",
-                      label: "Favorite",
-                      onTap: () => Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => FavouriteUserScreen(),
-                        ),
+                child: RefreshIndicator(
+                  onRefresh: () async {
+                    await _refreshProfile();
+                  },
+                  child: ListView(
+                    children: [
+                      const SizedBox(height: 20),
+                      _buildProfileCard(),
+                      const SizedBox(height: 20),
+                      _menuItem(
+                        hexValue: 0x00000000,
+                        iconImg: "assets/svg_images/Profile/accountSetting.svg",
+                        label: "Account settings",
+                        onTap: () =>
+                            Navigator.pushNamed(context, '/settings_screen'),
                       ),
-                    ),
-                    _menuItem(
-                      iconImg: "assets/svg_images/Profile/settingBlock.svg",
-                      label: "Blocked User",
-                      onTap: () =>
-                          Navigator.pushNamed(context, '/blocked_screen'),
-                    ),
-                    _menuItem(
-                      iconImg: "assets/svg_images/Profile/visitor.svg",
-                      label: "Visited User",
-                      onTap: () =>
-                          Navigator.pushNamed(context, 'visited_screen'),
-                    ),
-                    _menuItem(
-                      iconImg:
-                          "assets/svg_images/Profile/settingNotification.svg",
-                      label: "Notification",
-                      onTap: () {
-                        Navigator.push(
+                      _menuItem(
+                        iconImg: "assets/svg_images/Profile/settingHeart.svg",
+                        label: "Interested User",
+                        onTap: () =>
+                            Navigator.pushNamed(context, '/interested_screen'),
+                      ),
+                      _menuItem(
+                        iconImg: "assets/svg_images/Profile/settingStar.svg",
+                        label: "Favorite",
+                        onTap: () => Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => NotificationScreen(),
+                            builder: (context) => FavouriteUserScreen(),
                           ),
-                        );
-                      },
-                    ),
-                    const SizedBox(height: 10),
-                    if (_appVersion.isNotEmpty)
-                      Text(
-                        "App Version $_appVersion",
-                        textAlign: TextAlign.center,
-                        style: const TextStyle(
-                          fontSize: 12,
-                          color: Color(0xFF424242),
-                          fontWeight: FontWeight.w600,
                         ),
                       ),
-                    const SizedBox(height: 120),
-                  ],
+                      _menuItem(
+                        iconImg: "assets/svg_images/Profile/settingBlock.svg",
+                        label: "Blocked User",
+                        onTap: () =>
+                            Navigator.pushNamed(context, '/blocked_screen'),
+                      ),
+                      _menuItem(
+                        iconImg: "assets/svg_images/Profile/visitor.svg",
+                        label: "Visited User",
+                        onTap: () =>
+                            Navigator.pushNamed(context, 'visited_screen'),
+                      ),
+                      _menuItem(
+                        iconImg:
+                            "assets/svg_images/Profile/settingNotification.svg",
+                        label: "Notification",
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => NotificationScreen(),
+                            ),
+                          );
+                        },
+                      ),
+                      const SizedBox(height: 10),
+                      if (_appVersion.isNotEmpty)
+                        Text(
+                          "App Version $_appVersion",
+                          textAlign: TextAlign.center,
+                          style: const TextStyle(
+                            fontSize: 12,
+                            color: Color(0xFF424242),
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      const SizedBox(height: 120),
+                    ],
+                  ),
                 ),
               ),
             ],

@@ -4,7 +4,6 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:two_are_one/core/constants/app_colors.dart';
 import 'package:two_are_one/core/constants/app_icons.dart';
-import 'package:two_are_one/core/utils/date_time_formater.dart';
 import 'package:two_are_one/core/utils/date_time_util.dart';
 import 'package:two_are_one/core/utils/random_color_picker_util.dart';
 import 'package:two_are_one/core/utils/skelton_util.dart';
@@ -23,7 +22,6 @@ class MessageScreen extends StatefulWidget {
 class _MessageScreenState extends State<MessageScreen> {
   final TextEditingController _searchController = TextEditingController();
   late ChatViewModel _viewModel;
-
   @override
   void initState() {
     super.initState();
@@ -441,9 +439,3 @@ class _MessageScreenState extends State<MessageScreen> {
     );
   }
 }
-////////////////
-///
-///import 'package:flutter/material.dart';
-
-/// A reusable shimmer effect wrapper.
-/// Wrap any widget tree in this to make it "shimmer" (loading skeleton effect).

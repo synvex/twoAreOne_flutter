@@ -300,8 +300,8 @@ class ProfileCard extends StatelessWidget {
     final String imageUrl = user.imagePath.trim();
     final bool isValidUrl =
         imageUrl.isNotEmpty &&
-            imageUrl.startsWith('http') &&
-            imageUrl != "https://www.twoareone.love/uploads/";
+        imageUrl.startsWith('http') &&
+        imageUrl != "https://www.twoareone.love/uploads/";
 
     return GestureDetector(
       onTap: onPress,
@@ -316,17 +316,17 @@ class ProfileCard extends StatelessWidget {
               Positioned.fill(
                 child: isValidUrl
                     ? Image.network(
-                  imageUrl,
-                  fit: BoxFit.cover,
-                  errorBuilder: (context, error, stackTrace) =>
-                      _buildPlaceholder(),
-                  loadingBuilder: (context, child, loadingProgress) {
-                    if (loadingProgress == null) return child;
-                    return const Center(
-                      child: CircularProgressIndicator(strokeWidth: 2),
-                    );
-                  },
-                )
+                        imageUrl,
+                        fit: BoxFit.cover,
+                        errorBuilder: (context, error, stackTrace) =>
+                            _buildPlaceholder(),
+                        loadingBuilder: (context, child, loadingProgress) {
+                          if (loadingProgress == null) return child;
+                          return const Center(
+                            child: CircularProgressIndicator(strokeWidth: 2),
+                          );
+                        },
+                      )
                     : _buildPlaceholder(),
               ),
               // Online Indicator
@@ -335,12 +335,12 @@ class ProfileCard extends StatelessWidget {
                 right: 15,
                 child: user.isOnline
                     ? Containers(
-                  wWidth: 12,
-                  wHeight: 12,
-                  hexValue: 0xFF2E7D32,
-                  shape: BoxShape.circle,
-                  border: Border.all(color: Colors.white, width: 2),
-                )
+                        wWidth: 12,
+                        wHeight: 12,
+                        hexValue: 0xFF2E7D32,
+                        shape: BoxShape.circle,
+                        border: Border.all(color: Colors.white, width: 2),
+                      )
                     : const SizedBox.shrink(),
               ),
               // Bottom Info & Icons
@@ -401,12 +401,14 @@ class ProfileCard extends StatelessWidget {
                           mainAxisAlignment: MainAxisAlignment.spaceAround,
                           children: [
                             // 1. Heart (Interested) -> calls onHeart (home screen: _handleInterest)
-                           Expanded (child: _smallIcon(
-                              onHeart,
-                              user.isInterested
-                                  ? "assets/svg_images/fiiled_like.svg"
-                                  : "assets/svg_images/heart_unfill.svg",
-                            ),),
+                            Expanded(
+                              child: _smallIcon(
+                                onHeart,
+                                user.isInterested
+                                    ? "assets/svg_images/fiiled_like.svg"
+                                    : "assets/svg_images/heart_unfill.svg",
+                              ),
+                            ),
                             // 2. Star (Favorite) -> calls onStar (home screen: _handleFavorite)
                             Expanded(
                               child: _smallIcon(
@@ -414,8 +416,8 @@ class ProfileCard extends StatelessWidget {
                                 user.isFavorite
                                     ? "assets/svg_images/filled_star.svg"
                                     : "assets/svg_images/unfill_star.svg",
-                                iconSize: user.isFavorite? 17:12,
-                                padding: user.isFavorite?3:4
+                                iconSize: user.isFavorite ? 17 : 12,
+                                padding: user.isFavorite ? 3 : 4,
                               ),
                             ),
                             // 3. Block -> calls onDislike (home screen: _handleBlock)
@@ -431,7 +433,7 @@ class ProfileCard extends StatelessWidget {
                                 onRequestSend,
                                 "assets/svg_images/interested.svg",
                                 padding: 2,
-                                iconSize: 18
+                                iconSize: 18,
                               ),
                             ),
                           ],
@@ -452,7 +454,12 @@ class ProfileCard extends StatelessWidget {
     return PlaceholderImage(height: 135, width: 140, size: 22);
   }
 
-  Widget _smallIcon(VoidCallback? onTap, String imageStr, {double iconSize = 16, double padding = 3}) {
+  Widget _smallIcon(
+    VoidCallback? onTap,
+    String imageStr, {
+    double iconSize = 16,
+    double padding = 3,
+  }) {
     return GestureDetector(
       onTap: onTap,
       child: Containers(
@@ -461,9 +468,9 @@ class ProfileCard extends StatelessWidget {
         hexValue: 0x33FFFFFF, // Semi-transparent white background
         shape: BoxShape.circle,
         child: SizedBox(
-          height: iconSize+4,
-          width: iconSize+4,
-          child: Images(imageStr: imageStr, height: iconSize, width:  iconSize),
+          height: iconSize + 4,
+          width: iconSize + 4,
+          child: Images(imageStr: imageStr, height: iconSize, width: iconSize),
         ),
       ),
     );
