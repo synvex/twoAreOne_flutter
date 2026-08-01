@@ -58,6 +58,7 @@ class AppHeaderWidget extends StatelessWidget {
                 )
               : const SizedBox(),
         ),
+
         /// Title
         Expanded(
           child: isTitle
