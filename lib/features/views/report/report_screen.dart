@@ -65,7 +65,7 @@ class _ReportScreenState extends State<ReportScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xffC62364),
+      backgroundColor: AppColors.mehroon,
       resizeToAvoidBottomInset: true,
       body: SafeArea(
         child: Column(
