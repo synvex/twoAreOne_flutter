@@ -202,13 +202,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
       ),
     );
   }
-
-  void _showSnackBar(String message) {
-    ScaffoldMessenger.of(
-      context,
-    ).showSnackBar(SnackBar(content: Text(message)));
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -280,7 +273,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
             CustomInputField(
               textInputType: TextInputType.name,
               controller: _nameController,
-              label: "Full Name",
+              // label: "Full Name",
               hintText: "Enter your full name",
               prefixIcon: Icons.quick_contacts_mail_outlined,
             ),
@@ -297,7 +290,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
             CustomInputField(
               textInputType: TextInputType.number,
               controller: _ageController,
-              label: "Age",
+              // label: "Age",
               hintText: "Enter your age",
               prefixIcon: CupertinoIcons.person_crop_circle,
             ),
@@ -315,7 +308,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
               textInputType: TextInputType.emailAddress,
               controller: _emailController,
               prefixIcon: Icons.email_outlined,
-              label: " Email",
+              // label: " Email",
               hintText: "Enter your email",
             ),
             _errorWidget(_emailError),
@@ -330,7 +323,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
             ),
             CustomInputField(
               controller: _passwordController,
-              label: "Password",
+              // label: "Password",
               hintText: "********",
               prefixIcon: Icons.lock_open,
               isPassword: _obscurePassword,
@@ -356,7 +349,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
               ),
             ),
             LocationSelectorField(
-              labels: "Location",
+              // labels: "Location",
               // Assuming LocationSelectorField passes a detailed map setup following your Places selection updates
               onLocationSelected: (LocationData locationData) {
                 setState(() {

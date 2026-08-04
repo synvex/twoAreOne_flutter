@@ -26,11 +26,9 @@ class NoOtpVerification extends StatefulWidget {
   @override
   State<NoOtpVerification> createState() => _NoOtpVerificationState();
 }
-
 class _NoOtpVerificationState extends State<NoOtpVerification> {
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
   final AuthService _authService = AuthService();
-
   late String _currentVerificationId;
   bool _isLoading = false;
   Timer? _timer;
@@ -39,14 +37,12 @@ class _NoOtpVerificationState extends State<NoOtpVerification> {
   final TextEditingController _otpController = TextEditingController();
   String? _errorMessage;
   final bool _isError = true;
-
   @override
   void initState() {
     super.initState();
     _currentVerificationId = widget.verificationId;
     _startTimer();
   }
-
   void _startTimer() {
     setState(() {
       _secondsRemaining = 60;
@@ -64,37 +60,29 @@ class _NoOtpVerificationState extends State<NoOtpVerification> {
       }
     });
   }
-
   @override
   void dispose() {
     _timer?.cancel();
     _otpController.dispose();
     super.dispose();
   }
-
   void _verifyOtp() async {
     String otp = _otpController.text.trim();
     if (otp.length != 6) {
       setState(() => _errorMessage = "Invalid OTP");
       return;
     }
-
     setState(() {
       _errorMessage = null;
       _isLoading = true;
     });
-
     try {
       final credential = PhoneAuthProvider.credential(
         verificationId: _currentVerificationId,
         smsCode: otp,
       );
-
       await _firebaseAuth.signInWithCredential(credential);
-
       if (!mounted) return;
-
-      // FIX: Pass the actual phone number, NOT the verificationId
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
@@ -110,7 +98,6 @@ class _NoOtpVerificationState extends State<NoOtpVerification> {
       if (mounted) setState(() => _isLoading = false);
     }
   }
-
   void _resendOtp() async {
     if (!_canResend) return;
     setState(() => _isLoading = true);
@@ -132,7 +119,6 @@ class _NoOtpVerificationState extends State<NoOtpVerification> {
       },
     );
   }
-
   @override
   Widget build(BuildContext context) {
     final double screenHeight = MediaQuery.of(context).size.height;

@@ -4,7 +4,6 @@ import 'package:two_are_one/core/widgets/placeholder.dart';
 import 'package:two_are_one/core/widgets/texts.dart';
 import 'package:two_are_one/data/models/user_match_model.dart';
 import 'package:two_are_one/core/widgets/containers.dart';
-
 class ProfileCard extends StatelessWidget {
   final FilterMatchModel user;
   final VoidCallback? onStar;
@@ -15,7 +14,6 @@ class ProfileCard extends StatelessWidget {
   final bool isStarLoading;
   final bool isHeartLoading;
   final bool isBlockLoading;
-
   const ProfileCard({
     super.key,
     required this.user,
@@ -28,7 +26,6 @@ class ProfileCard extends StatelessWidget {
     this.isBlockLoading = false,
     this.onRequestSend,
   });
-
   @override
   Widget build(BuildContext context) {
     final String imageUrl = user.imagePath.trim();
@@ -177,13 +174,12 @@ class ProfileCard extends StatelessWidget {
       ),
     );
   }
-
   Widget _buildPlaceholder() {
     return PlaceholderImage(height: 135, width: 140, size: 22);
   }
-
   Widget _smallIcon(VoidCallback? onTap, String imageStr,
-      {double iconSize = 16, double padding = 3}) {
+      {double iconSize = 16, double padding = 3})
+  {
     return Material(
       color: Colors.transparent,
       shape: const CircleBorder(),
@@ -210,24 +206,6 @@ class ProfileCard extends StatelessWidget {
           ),
         ),
       )
-      // InkWell(
-      //   splashColor: Colors.blue.withOpacity(0.3),
-      //   highlightColor: Colors.blue.withOpacity(0.9),
-      //   hoverColor: Colors.blue.withOpacity(0.95),
-      //   customBorder: const CircleBorder(),
-      //   onTap: onTap,
-      //   child: Containers(
-      //     alignment: Alignment.center,
-      //     padding: EdgeInsets.all(padding),
-      //     hexValue: 0x33FFFFFF, // Semi-transparent white background
-      //     shape: BoxShape.circle,
-      //     child: SizedBox(
-      //       height: iconSize+4,
-      //       width: iconSize+4,
-      //       child: Images(imageStr: imageStr, height: iconSize, width:  iconSize),
-      //     ),
-      //   ),
-      // ),
     );
   }
 }
