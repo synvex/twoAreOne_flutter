@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:intl/intl.dart'; // ADDED
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -38,6 +39,35 @@ class _ChatMessage {
       time: data.messageTime,
     );
   }
+}
+
+/// Converts a UTC timestamp (epoch string/int, epoch-in-seconds,
+/// or ISO8601 string) into the device's local time, formatted as
+/// time-only (e.g. "3:45 PM").
+String formatDeviceTime(String rawTime) {
+  if (rawTime.trim().isEmpty) return '';
+
+  DateTime? utcDate;
+
+  // Case 1: epoch timestamp (seconds or milliseconds), e.g. "1750000000"
+  final asInt = int.tryParse(rawTime);
+  if (asInt != null) {
+    // Heuristic: 10-digit numbers are seconds, 13-digit are milliseconds.
+    final ms = rawTime.length <= 10 ? asInt * 1000 : asInt;
+    utcDate = DateTime.fromMillisecondsSinceEpoch(ms, isUtc: true);
+  } else {
+    // Case 2: ISO8601 string, e.g. "2026-08-04T09:15:00Z"
+    try {
+      utcDate = DateTime.parse(rawTime).toUtc();
+    } catch (_) {
+      utcDate = null;
+    }
+  }
+
+  if (utcDate == null) return '';
+
+  final localDate = utcDate.toLocal(); // uses the device's current timezone
+  return DateFormat('h:mm a').format(localDate); // e.g. "3:45 PM"
 }
 
 class ChatScreen extends StatefulWidget {
@@ -331,14 +361,14 @@ class _TextBubble extends StatelessWidget {
     required this.avatarUrl,
     required this.isSending,
     required this.name,
-    required this.isFailed, // ADD THIS
+    required this.isFailed,
   });
 
   final _ChatMessage msg;
   final String avatarUrl;
   final bool isSending;
   final String name;
-  final bool isFailed; // ADD THIS
+  final bool isFailed;
 
   @override
   Widget build(BuildContext context) {
@@ -374,10 +404,7 @@ class _TextBubble extends StatelessWidget {
         Padding(
           padding: EdgeInsets.only(top: 4.h),
           child: Text(
-            DateTimeUtil.utcToPkTime(msg.time), // msg.time,
-            // convertUtcTimestampToPakistanTime(int.parse(msg.time)).toString(),
-
-            // DateTimeFormatter.chatTime(msg.time),
+            formatDeviceTime(msg.time), // CHANGED: device-local, time-only
             style: GoogleFonts.inriaSerif(fontSize: 10.sp, color: Colors.grey),
           ),
         ),
