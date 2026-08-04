@@ -10,6 +10,7 @@ import 'package:two_are_one/data/models/user_match_model.dart';
 import 'package:two_are_one/data/models/visited_blocked_model.dart';
 import 'package:two_are_one/data/services/home_service.dart';
 import 'package:two_are_one/features/views/notification/notification_screen.dart';
+import 'package:two_are_one/features/views/report/report_screen.dart';
 import '../../../data/models/favourite_model.dart';
 import 'package:two_are_one/data/models/interested_model.dart';
 import 'category_questions_screen.dart';
@@ -63,7 +64,6 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
         location: '',
         city: '',
         matchPercent: '0%',
-
       );
     } else if (args is InterestedUserModel) {
       _cardUser = FilterMatchModel(
@@ -75,8 +75,7 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
         city: '',
         matchPercent: '0%',
       );
-    }
-    else if (args is VisitedBlockedUserModel) {
+    } else if (args is VisitedBlockedUserModel) {
       _cardUser = FilterMatchModel(
         id: args.profileId,
         name: args.fullName,
@@ -130,6 +129,7 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
     _visitedUser();
     _getUserDetails();
   }
+
   int? get _userId => _details?.userId ?? _cardUser?.id;
   // ── API ──────────────────────────────────────────────────────────────
   Future<void> _visitedUser() async {
@@ -142,6 +142,7 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
     final res = await _homeService.addVisitedUser(id);
     debugPrint("visited/add.php -> $res");
   }
+
   Future<void> _getUserDetails() async {
     final id = _cardUser?.id ?? widget.userId;
     if (id == null) {
@@ -165,6 +166,7 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
       setState(() => _loading = false);
     }
   }
+
   // ── utils ────────────────────────────────────────────────────────────
   String _capitalize(String? text) {
     if (text == null || text.isEmpty) return '';
@@ -175,10 +177,12 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
     if (path == null || path.isEmpty) return '';
     return path.startsWith('http') ? path : '$kProfileUploadImagesBase$path';
   }
+
   String get _truncatedBio {
     final bio = _details?.bio ?? '';
     return bio.length > 200 ? bio.substring(0, 200) : bio;
   }
+
   // ── actions ──────────────────────────────────────────────────────────
   void _handleSilentChat() {
     if (_chatLoading) return;
@@ -211,6 +215,7 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
       );
     });
   }
+
   Future<void> _onBlockPress() async {
     final id = _userId;
     if (id == null) return;
@@ -237,6 +242,7 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
       );
     }
   }
+
   Future<void> _onLikePress() async {
     final id = _userId;
     if (id == null || _details == null) return;
@@ -253,6 +259,7 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
     }
     setState(() => _heartLoading = false);
   }
+
   Future<void> _onStarPress() async {
     final id = _userId;
     if (id == null || _details == null) return;
@@ -280,10 +287,11 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
     return Stack(
       children: [
         _buildScreen(context),
-        if (_selectedImage != null)_buildFullScreenImageViewer(),
+        if (_selectedImage != null) _buildFullScreenImageViewer(),
       ],
     );
   }
+
   Widget _buildScreen(BuildContext context) {
     final details = _details;
     final screenWidth = MediaQuery.of(context).size.width;
@@ -303,7 +311,8 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => const NotificationScreen(),
+                        builder: (context) =>
+                            ReportScreen(reportId: details!.userId),
                       ),
                     );
                   },
@@ -312,10 +321,10 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
                     wHeight: 45,
                     shape: BoxShape.circle,
                     hexValue: 0xFFFFFFFF,
-                    border:  Border.all(color: Colors.black12),
+                    border: Border.all(color: Colors.black12),
                     alignment: Alignment.center,
                     child: const Images(
-                      imageStr: "assets/svg_images/notification.svg",
+                      imageStr: "assets/svg_images/report.svg",
                     ),
                   ),
                 ),
@@ -568,6 +577,7 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
       ),
     );
   }
+
   Widget _buildFullScreenImageViewer() {
     return Scaffold(
       body: GestureDetector(
