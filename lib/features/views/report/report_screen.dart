@@ -11,7 +11,7 @@ import 'package:two_are_one/data/viewmodels/report_viewmodel.dart';
 import 'package:two_are_one/features/views/report/report_dialog.dart';
 
 class ReportScreen extends StatefulWidget {
-  final int reportId; // Add this line to accept the reportId
+  final int reportId;
   const ReportScreen({super.key, required this.reportId});
 
   @override
