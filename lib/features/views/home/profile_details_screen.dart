@@ -64,7 +64,6 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
         location: '',
         city: '',
         matchPercent: '0%',
-
       );
     } else if (args is InterestedUserModel) {
       _cardUser = FilterMatchModel(
@@ -76,8 +75,7 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
         city: '',
         matchPercent: '0%',
       );
-    }
-    else if (args is VisitedBlockedUserModel) {
+    } else if (args is VisitedBlockedUserModel) {
       _cardUser = FilterMatchModel(
         id: args.profileId,
         name: args.fullName,
@@ -312,7 +310,10 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
                     // RN navigates to NotificationScreen here.
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => ReportScreen()),
+                      MaterialPageRoute(
+                        builder: (context) =>
+                            ReportScreen(reportId: details!.userId),
+                      ),
                     );
                   },
                   child: Containers(

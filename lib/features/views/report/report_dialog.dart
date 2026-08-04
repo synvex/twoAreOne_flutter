@@ -5,8 +5,9 @@ import 'package:two_are_one/core/widgets/image.dart';
 
 class ReportSuccessDialog extends StatelessWidget {
   final VoidCallback? onPressed;
+  final String message;
 
-  const ReportSuccessDialog({super.key, this.onPressed});
+  const ReportSuccessDialog({super.key, this.onPressed, required this.message});
 
   @override
   Widget build(BuildContext context) {
@@ -47,7 +48,9 @@ class ReportSuccessDialog extends StatelessWidget {
             SizedBox(height: 18.h),
 
             Text(
-              "Thank you for your report. Our moderation team will review this profile and take appropriate action if it violates our Community Guidelines.",
+              message,
+              //
+              // "Thank you for your report. Our moderation team will review this profile and take appropriate action if it violates our Community Guidelines.",
               textAlign: TextAlign.center,
               style: GoogleFonts.inter(
                 fontSize: 13.sp,

@@ -2,14 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
 import 'package:two_are_one/core/constants/app_colors.dart';
 import 'package:two_are_one/core/constants/app_icons.dart';
 import 'package:two_are_one/core/widgets/app_header_widget.dart';
 import 'package:two_are_one/core/widgets/main_button_widget.dart';
+import 'package:two_are_one/data/viewmodels/report_viewmodel.dart';
 import 'package:two_are_one/features/views/report/report_dialog.dart';
 
 class ReportScreen extends StatefulWidget {
-  const ReportScreen({super.key});
+  final int reportId; // Add this line to accept the reportId
+  const ReportScreen({super.key, required this.reportId});
 
   @override
   State<ReportScreen> createState() => _ReportScreenState();
@@ -30,40 +33,12 @@ class _ReportScreenState extends State<ReportScreen> {
     "Other",
   ];
 
-  Future<void> _handleSubmit() async {
-    setState(() {
-      _isLoading = true;
-    });
-
-    // TODO: Call your Report API here
-    await Future.delayed(const Duration(seconds: 2));
-
-    setState(() {
-      _isLoading = false;
-    });
-
-    if (!mounted) return;
-
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (_) => ReportSuccessDialog(
-        onPressed: () {
-          Navigator.pop(context); // Close dialog
-          Navigator.pop(context); // Close Report Screen (optional)
-        },
-      ),
-    );
-  }
-
-  @override
-  void dispose() {
-    commentController.dispose();
-    super.dispose();
-  }
-
   @override
   Widget build(BuildContext context) {
+    final reportViewModel = Provider.of<ReportViewModel>(
+      context,
+      listen: false,
+    );
     return Scaffold(
       backgroundColor: AppColors.mehroon,
       resizeToAvoidBottomInset: true,
@@ -241,7 +216,28 @@ class _ReportScreenState extends State<ReportScreen> {
                           text: "Submit Feedback",
                           hexValue: 0xFFFFFFFF,
                           isLoading: _isLoading,
-                          onTap: _handleSubmit,
+                          onTap: () async {
+                            final success = await reportViewModel.submitReport(
+                              widget.reportId,
+                              selectedReason,
+                              commentController.text,
+                            );
+
+                            showDialog(
+                              context: context,
+                              barrierDismissible: false,
+                              builder: (_) => ReportSuccessDialog(
+                                message: reportViewModel.message,
+                                onPressed: () {
+                                  Navigator.pop(context);
+
+                                  if (success) {
+                                    Navigator.pop(context);
+                                  }
+                                },
+                              ),
+                            );
+                          },
                           gradient: const LinearGradient(
                             colors: [Color(0xFF77153C), Color(0xFFDD276F)],
                           ),
