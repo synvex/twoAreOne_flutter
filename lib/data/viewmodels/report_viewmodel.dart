@@ -6,9 +6,12 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class ReportViewModel with ChangeNotifier {
   String message = '';
+  bool isLoading = false;
 
   Future<bool> submitReport(int reportId, String reason, String comment) async {
     try {
+      isLoading = true;
+      notifyListeners();
       final prefs = await SharedPreferences.getInstance();
       final token = prefs.getString('auth_token') ?? '';
 
@@ -39,6 +42,9 @@ class ReportViewModel with ChangeNotifier {
       notifyListeners();
       print(e);
       return false;
+    } finally {
+      isLoading = false;
+      notifyListeners();
     }
   }
 }

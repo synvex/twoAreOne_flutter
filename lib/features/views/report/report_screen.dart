@@ -212,35 +212,39 @@ class _ReportScreenState extends State<ReportScreen> {
                       SizedBox(
                         width: double.infinity,
                         height: 55.h,
-                        child: MainButtonWidget(
-                          text: "Submit Feedback",
-                          hexValue: 0xFFFFFFFF,
-                          isLoading: _isLoading,
-                          onTap: () async {
-                            final success = await reportViewModel.submitReport(
-                              widget.reportId,
-                              selectedReason,
-                              commentController.text,
-                            );
+                        child: Consumer<ReportViewModel>(
+                          builder: (context, value, child) {
+                            return MainButtonWidget(
+                              text: "Submit Feedback",
+                              hexValue: 0xFFFFFFFF,
+                              isLoading: value.isLoading,
+                              onTap: () async {
+                                final success = await value.submitReport(
+                                  widget.reportId,
+                                  selectedReason,
+                                  commentController.text,
+                                );
 
-                            showDialog(
-                              context: context,
-                              barrierDismissible: false,
-                              builder: (_) => ReportSuccessDialog(
-                                message: reportViewModel.message,
-                                onPressed: () {
-                                  Navigator.pop(context);
+                                showDialog(
+                                  context: context,
+                                  barrierDismissible: false,
+                                  builder: (_) => ReportSuccessDialog(
+                                    message: value.message,
+                                    onPressed: () {
+                                      Navigator.pop(context);
 
-                                  if (success) {
-                                    Navigator.pop(context);
-                                  }
-                                },
+                                      if (success) {
+                                        Navigator.pop(context);
+                                      }
+                                    },
+                                  ),
+                                );
+                              },
+                              gradient: const LinearGradient(
+                                colors: [Color(0xFF77153C), Color(0xFFDD276F)],
                               ),
                             );
                           },
-                          gradient: const LinearGradient(
-                            colors: [Color(0xFF77153C), Color(0xFFDD276F)],
-                          ),
                         ),
                       ),
 
