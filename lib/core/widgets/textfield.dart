@@ -126,9 +126,8 @@ class TxtField extends StatelessWidget {
       decoration: InputDecoration(
         hintText: "XXX-XXXXXX",
         hintStyle: TextStyle(fontSize: 13),
-
         isDense: true,
-        contentPadding: EdgeInsets.symmetric(horizontal: 10, vertical: 1),
+        contentPadding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
         enabledBorder: UnderlineInputBorder(
           borderSide: BorderSide(color: Colors.black, width: 1.5),
         ),

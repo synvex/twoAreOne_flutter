@@ -51,7 +51,7 @@ class AuthService {
         onCodeSent(verificationId);
       },
       codeAutoRetrievalTimeout: (String verificationId) {},
-      timeout: const Duration(seconds: 120),
+      timeout: const Duration(seconds: 60),
     );
   }
   Future<Map<String, dynamic>> signUp({
@@ -122,15 +122,10 @@ class AuthService {
         },
         body: jsonEncode({'email': email, 'otp': otp}),
       ).timeout(const Duration(seconds: 60));
-
       final result = _handleResponse(response);
-
       if (result['success'] == true) {
-        // Server response is nested: result['data']['data'] holds the
-        // actual user payload.
         final responseBody = result['data'];
         final actualData = responseBody is Map ? responseBody['data'] : null;
-
         if (actualData != null) {
           final token = actualData['api_token']?.toString();
           final userId = actualData['user_id']?.toString();
@@ -140,16 +135,13 @@ class AuthService {
             if(isFromForget== false){
               await prefs.setString('auth_token', token);
             }
-
             if (userId != null) {
               await prefs.setString('user_id', userId);
             }
-
             ApiManager.setUpRequestToken(token);
           }
         }
       }
-
       return result;
     } catch (e) {
       return _catchError(e);
@@ -198,7 +190,7 @@ class AuthService {
           'Accept': 'application/json',
         },
         body: jsonEncode({'email': email}),
-      ).timeout(const Duration(seconds: 15));
+      ).timeout(const Duration(seconds: 30));
 
       return _handleResponse(response);
     } catch (e) {
@@ -274,7 +266,6 @@ class AuthService {
   Future<Map<String, dynamic>> forgotPassword({required String email}) async {
     try {
       final url = Uri.parse('$baseUrl/auth/forgotpassword.php');
-
       final response = await http.post(
         url,
         headers: {
@@ -332,14 +323,12 @@ class AuthService {
     final prefs = await SharedPreferences.getInstance();
     final userId = prefs.getString('user_id') ?? "0";
     final token = prefs.getString('auth_token') ?? "";
-
     if (token.isEmpty) {
       return {
         'success': false,
         'error': 'API Token not found. Please log in again.'
       };
     }
-
     final formData = FormData.fromMap({
       'user_id': userId,
       'screen_type': '2', // Crucial for backend routing
@@ -348,10 +337,9 @@ class AuthService {
       'work': work,
       'bio': bio,
     });
-
     if (profileImage != null) {
       formData.files.add(MapEntry(
-        'profile_picture', // FIX: must match RN's field name exactly
+        'profile_picture',
         await MultipartFile.fromFile(profileImage.path, filename: 'avatar.jpg'),
       ));
     }
@@ -391,10 +379,8 @@ class AuthService {
   }
   Future<Map<String, String>> getDeviceInfo() async {
     final deviceInfo = DeviceInfoPlugin();
-
     String deviceId = "";
     String deviceToken = "";
-
     try {
       if (Platform.isAndroid) {
         final androidInfo = await deviceInfo.androidInfo;
@@ -422,14 +408,12 @@ class AuthService {
       debugPrint("Status: ${response.statusCode}");
       debugPrint("Body: ${response.body}");
     }
-
     dynamic responseData;
     try {
       responseData = jsonDecode(response.body);
     } catch (e) {
       return {'success': false, 'error': "Invalid server response format."};
     }
-
     if (response.statusCode == 401) {
       ApiManager.handleUnauthorized();
       return {
@@ -438,7 +422,6 @@ class AuthService {
         'isSessionExpired': true,
       };
     }
-
     if (response.statusCode == 200 || response.statusCode == 201) {
       if (responseData is Map) {
         final isError = responseData['error'] == true ||

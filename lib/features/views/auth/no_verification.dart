@@ -168,7 +168,6 @@ class _NoVerificationState extends State<NoVerification> {
               AppHeaderWidget(isLeading: true, isTrailing: false),
 
               SizedBox(height: 40.h),
-
               Text(
                 "Can we get your number?",
                 style: GoogleFonts.poppins(
@@ -176,13 +175,12 @@ class _NoVerificationState extends State<NoVerification> {
                   fontSize: 24.sp,
                 ),
               ),
-
               SizedBox(height: 30.h),
-
               Row(
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
                   Container(
+                    alignment: Alignment.centerLeft,
                     width: 120.w,
                     decoration: const BoxDecoration(
                       border: Border(
@@ -197,7 +195,7 @@ class _NoVerificationState extends State<NoVerification> {
                       showCountryOnly: false,
                       showOnlyCountryWhenClosed: false,
                       alignLeft: true,
-                      padding: EdgeInsets.zero,
+                      padding: EdgeInsets.only(top: 10,left: 0),
                       textStyle: GoogleFonts.poppins(
                         fontSize: 14.sp,
                         fontWeight: FontWeight.w600,
@@ -211,15 +209,11 @@ class _NoVerificationState extends State<NoVerification> {
                       },
                     ),
                   ),
-
                   SizedBox(width: 15.w),
-
                   Expanded(child: TxtField(controller: _phoneController)),
                 ],
               ),
-
               SizedBox(height: 13.h),
-
               if (_errorMessage != null)
                 Texts(
                   text: _errorMessage!,
@@ -227,9 +221,7 @@ class _NoVerificationState extends State<NoVerification> {
                   size: 13,
                   fontWeight: FontWeight.w400,
                 ),
-
               SizedBox(height: 13.h),
-
               Text(
                 "Enter your phone number. We’ll text you a code\n"
                 "to verify it's really you and keep your journey safe.",
@@ -238,9 +230,7 @@ class _NoVerificationState extends State<NoVerification> {
                   fontWeight: FontWeight.w500,
                 ),
               ),
-
               const Spacer(),
-
               MainButtonWidget(
                 text: "Next",
                 isLoading: _isLoading,
@@ -249,7 +239,6 @@ class _NoVerificationState extends State<NoVerification> {
                   colors: [Color(0xFF77153C), Color(0xFFDD276F)],
                 ),
               ),
-
               SizedBox(height: 20.h),
             ],
           ),
@@ -274,9 +263,7 @@ class _NoVerificationState extends State<NoVerification> {
               mainAxisSize: MainAxisSize.min,
               children: [
                 const Images(imageStr: "assets/svg_images/error.svg"),
-
                 SizedBox(height: 10.h),
-
                 Text(
                   "Oops, Failed!",
                   style: GoogleFonts.poppins(
@@ -285,9 +272,7 @@ class _NoVerificationState extends State<NoVerification> {
                     color: AppColors.failedcolor,
                   ),
                 ),
-
                 SizedBox(height: 15.h),
-
                 Text(
                   "This Number is already linked to another account. Please use a different phone number",
                   style: GoogleFonts.inter(
@@ -296,9 +281,7 @@ class _NoVerificationState extends State<NoVerification> {
                   ),
                   textAlign: TextAlign.center,
                 ),
-
                 SizedBox(height: 25.h),
-
                 MainButtonWidget(
                   height: 50,
                   text: "Close",

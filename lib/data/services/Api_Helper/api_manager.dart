@@ -1,4 +1,3 @@
-
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 
@@ -107,22 +106,15 @@ class ApiManager {
     if (res.containsKey('success')) {
       success = res['success'] == true;
     } else if (res.containsKey('error')) {
-      // Some PHP endpoints use an "error" field where success is represented
-      // as `false`, but others simply omit it or send `null`/""/0 when there
-      // is no error. Treating only a strict `== false` as success meant any
-      // endpoint returning `"error": null` on success was always read as a
-      // failure, even though the data was right there in `res['data']`.
       final err = res['error'];
       success = err == false || err == null || err == 0 || err == '';
     } else {
       success = res['data'] != null;
     }
-
     dynamic processedData = res['data'];
     if (processedData is Map && processedData.containsKey('data')) {
       processedData = processedData['data'];
     }
-
     return {
       "success": success,
       "data": processedData,
@@ -188,11 +180,9 @@ class ApiManager {
   }
   static void _showSessionExpiredDialogStatic() {
     if (_sessionDialogShowing) return;
-
     final context = navigatorKey.currentContext;
     if (context == null) return;
     _sessionDialogShowing = true;
-
     showDialog(
       context: context,
       barrierDismissible: false,
@@ -249,21 +239,16 @@ class Api_Manager {
   }
 
   static final Api_Manager instance = Api_Manager._internal();
-
   final String _baseUrl = 'https://www.twoareone.love/api/';
-
   late final Dio _dio;
-
   void setAuthToken(String token) {
     _dio.options.headers['Authorization'] = 'Bearer $token';
     _dio.options.headers['x-api-key'] = token;
   }
-  /// Clears auth headers — call on logout.
   void clearAuthToken() {
     _dio.options.headers.remove('Authorization');
     _dio.options.headers.remove('x-api-key');
   }
-//kkk
   Future<Response<dynamic>> fetch(
       ApiRequest request, {
         Map<String, dynamic>? parameters,
@@ -307,7 +292,6 @@ class Api_Manager {
         response: error.response,
       );
     }
-
     // ── Network error ──────────────────────────────────────────────────
     if (error.type == DioExceptionType.connectionError ||
         error.type == DioExceptionType.connectionTimeout) {
@@ -320,7 +304,6 @@ class Api_Manager {
         alertActionButton: 'Retry',
       );
     }
-
     return ApiError(
       title: 'Server response',
       message: message ?? error.message ?? 'Something went wrong',
