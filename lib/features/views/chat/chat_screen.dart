@@ -11,64 +11,10 @@ import 'package:two_are_one/core/constants/app_icons.dart';
 import 'package:two_are_one/core/utils/random_color_picker_util.dart';
 import 'package:two_are_one/core/utils/skelton_util.dart';
 import 'package:two_are_one/core/utils/date_time_util.dart';
+import 'package:two_are_one/core/widgets/chat_bubble_widget.dart';
 import 'package:two_are_one/data/models/chat_history_model.dart';
 import 'package:two_are_one/data/services/presense_service.dart';
 import 'package:two_are_one/data/viewmodels/chat_viewmodel.dart';
-
-/// Simple text-only chat message.
-class _ChatMessage {
-  final bool isMe;
-  final String text;
-  final String time;
-
-  _ChatMessage({required this.isMe, required this.text, required this.time});
-
-  static _ChatMessage? fromChatHistory(
-    ChatHistoryModel data, {
-    required int currentUserId,
-  }) {
-    final message = data.message;
-
-    if (message == null || message.trim().isEmpty) {
-      return null;
-    }
-
-    return _ChatMessage(
-      isMe: data.user1 == currentUserId,
-      text: message,
-      time: data.messageTime,
-    );
-  }
-}
-
-/// Converts a UTC timestamp (epoch string/int, epoch-in-seconds,
-/// or ISO8601 string) into the device's local time, formatted as
-/// time-only (e.g. "3:45 PM").
-String formatDeviceTime(String rawTime) {
-  if (rawTime.trim().isEmpty) return '';
-
-  DateTime? utcDate;
-
-  // Case 1: epoch timestamp (seconds or milliseconds), e.g. "1750000000"
-  final asInt = int.tryParse(rawTime);
-  if (asInt != null) {
-    // Heuristic: 10-digit numbers are seconds, 13-digit are milliseconds.
-    final ms = rawTime.length <= 10 ? asInt * 1000 : asInt;
-    utcDate = DateTime.fromMillisecondsSinceEpoch(ms, isUtc: true);
-  } else {
-    // Case 2: ISO8601 string, e.g. "2026-08-04T09:15:00Z"
-    try {
-      utcDate = DateTime.parse(rawTime).toUtc();
-    } catch (_) {
-      utcDate = null;
-    }
-  }
-
-  if (utcDate == null) return '';
-
-  final localDate = utcDate.toLocal(); // uses the device's current timezone
-  return DateFormat('h:mm a').format(localDate); // e.g. "3:45 PM"
-}
 
 class ChatScreen extends StatefulWidget {
   const ChatScreen({
@@ -305,31 +251,25 @@ class _ChatScreenState extends State<ChatScreen> {
                         ? const Center(child: Text("No chat available"))
                         : ListView.builder(
                             controller: chatViewModel.scrollController,
+                            reverse: true,
 
                             padding: EdgeInsets.symmetric(horizontal: 16.w),
                             itemCount: chatViewModel.chatHistory.length,
                             itemBuilder: (context, index) {
-                              final raw = chatViewModel.chatHistory[index];
-
-                              final chatMsg = _ChatMessage.fromChatHistory(
-                                raw,
-                                currentUserId: _currentUserId,
-                              );
-
-                              if (chatMsg == null) {
-                                return const SizedBox.shrink();
-                              }
+                              final messageList = chatViewModel
+                                  .chatHistory
+                                  .reversed
+                                  .toList();
+                              final raw = messageList[index];
 
                               return Padding(
                                 padding: EdgeInsets.only(bottom: 20.h),
-                                child: _TextBubble(
-                                  isSending: chatViewModel.sendingMessageIds
-                                      .contains(raw.id),
-                                  msg: chatMsg,
-                                  avatarUrl: widget.avatarUrl,
-                                  name: widget.name,
-                                  isFailed: chatViewModel.failedMessageIds
-                                      .contains(raw.id),
+                                child: ChatBubble(
+                                  isMe: _currentUserId == raw.user2,
+                                  message: raw.message ?? '',
+                                  senderName: raw.senderName ?? '',
+                                  senderProfilePicture: widget.avatarUrl,
+                                  time: raw.time,
                                 ),
                               );
                             },
@@ -351,116 +291,6 @@ class _ChatScreenState extends State<ChatScreen> {
           ),
         ],
       ),
-    );
-  }
-}
-
-class _TextBubble extends StatelessWidget {
-  const _TextBubble({
-    required this.msg,
-    required this.avatarUrl,
-    required this.isSending,
-    required this.name,
-    required this.isFailed,
-  });
-
-  final _ChatMessage msg;
-  final String avatarUrl;
-  final bool isSending;
-  final String name;
-  final bool isFailed;
-
-  @override
-  Widget build(BuildContext context) {
-    final bubble = Column(
-      crossAxisAlignment: msg.isMe
-          ? CrossAxisAlignment.end
-          : CrossAxisAlignment.start,
-      children: [
-        Container(
-          constraints: BoxConstraints(maxWidth: 0.68.sw),
-          padding: EdgeInsets.symmetric(horizontal: 18.w, vertical: 14.h),
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
-              colors: msg.isMe
-                  ? [AppColors.grey1, AppColors.grey1]
-                  : [
-                      AppColors.mehroon.withValues(alpha: 0.8),
-                      AppColors.gradientFirst.withValues(alpha: 0.8),
-                    ],
-            ),
-            borderRadius: BorderRadius.circular(20.r),
-          ),
-          child: Text(
-            msg.text,
-            style: GoogleFonts.inriaSerif(
-              fontSize: 14.sp,
-              color: msg.isMe ? Colors.black : Colors.white,
-            ),
-          ),
-        ),
-        Padding(
-          padding: EdgeInsets.only(top: 4.h),
-          child: Text(
-            formatDeviceTime(msg.time), // CHANGED: device-local, time-only
-            style: GoogleFonts.inriaSerif(fontSize: 10.sp, color: Colors.grey),
-          ),
-        ),
-        Visibility(
-          visible: isSending || isFailed,
-          child: Padding(
-            padding: EdgeInsets.only(top: 2.h),
-            child: Text(
-              isFailed ? 'Failed to send' : 'sending...',
-              style: GoogleFonts.inriaSerif(
-                fontSize: 10.sp,
-                color: isFailed ? Colors.red : Colors.grey,
-              ),
-            ),
-          ),
-        ),
-      ],
-    );
-
-    if (msg.isMe) {
-      return Align(alignment: Alignment.centerRight, child: bubble);
-    }
-
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        ClipOval(
-          child: Image.network(
-            avatarUrl,
-            height: 32.h,
-            width: 32.w,
-            fit: BoxFit.cover,
-            errorBuilder: (_, __, ___) {
-              final bgColor = RandomColorPickerUtil.getColor(name.toString());
-              return CircleAvatar(
-                radius: 14.r,
-                backgroundColor: bgColor,
-                child: Center(
-                  child: Text(
-                    name.toString().trim().isNotEmpty
-                        ? name.toString().trim()[0].toUpperCase()
-                        : "?",
-                    style: GoogleFonts.inter(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w500,
-                      color: Colors.white,
-                    ),
-                  ),
-                ),
-              );
-            },
-          ),
-        ),
-        SizedBox(width: 8.w),
-        bubble,
-      ],
     );
   }
 }
