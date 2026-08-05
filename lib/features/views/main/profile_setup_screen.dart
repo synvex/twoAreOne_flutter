@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:two_are_one/core/constants/app_colors.dart';
 import 'package:two_are_one/core/widgets/containers.dart';
 import 'package:two_are_one/core/widgets/my_icons.dart';
 import 'package:two_are_one/features//views/main/question_screen.dart';
@@ -82,6 +83,7 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
       debugPrint("WARNING: No token found in ProfileSetup initState");
     }
   }
+
   Future<void> _onNextTapped() async {
     // 1. Validation
     setState(() {
@@ -112,10 +114,12 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
     setState(() => _isLoading = false);
 
     if (result['success'] == true) {
-
       // 3. Save locally for the HomeScreen Banner
       final prefs = await SharedPreferences.getInstance();
-      await prefs.setString('cached_screen_type', '2'); // Move to Questionnaire stage
+      await prefs.setString(
+        'cached_screen_type',
+        '2',
+      ); // Move to Questionnaire stage
       await prefs.setString('profile_height', _selectedHeight!);
       await prefs.setString('profile_work', _workController.text.trim());
       await prefs.setString('profile_bio', _bioController.text.trim());
@@ -143,6 +147,7 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
       _showError(result['error'] ?? "Failed to upload profile info.");
     }
   }
+
   void _showError(String message) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
@@ -338,41 +343,42 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
 
         case 1: // Additional images
           if (isCamera) {
+            // Check if limit reached
+            if (_additionalImages.length >= 5) {
+              _showImageLimitDialog();
+              return;
+            }
+
             final XFile? picked = await _picker.pickImage(
               source: ImageSource.camera,
               imageQuality: 85,
               maxWidth: 800,
             );
+
             if (picked != null && mounted) {
               setState(() => _additionalImages.add(File(picked.path)));
             }
           } else {
             final List<XFile> picked = await _picker.pickMultiImage();
+
             if (picked.isNotEmpty && mounted) {
-              final remainingSlots = 6 - _additionalImages.length;
+              final remainingSlots = 5 - _additionalImages.length;
+
               if (remainingSlots <= 0) {
-                showDialog(
-                  context: context,
-                  builder: (context) => AlertDialog(
-                    title: const Text("Limit Reached"),
-                    content: const Text(
-                      "You can upload a maximum of 6 images.",
-                    ),
-                    actions: [
-                      TextButton(
-                        onPressed: () => Navigator.pop(context),
-                        child: const Text("OK"),
-                      ),
-                    ],
-                  ),
-                );
+                _showImageLimitDialog();
                 return;
               }
-              setState(
-                () => _additionalImages.addAll(
+
+              setState(() {
+                _additionalImages.addAll(
                   picked.take(remainingSlots).map((e) => File(e.path)),
-                ),
-              );
+                );
+              });
+
+              // Inform user if they selected more than allowed
+              if (picked.length > remainingSlots) {
+                _showError("Only 5 images are allowed.");
+              }
             }
           }
           break;
@@ -394,6 +400,22 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
       debugPrint("Picker Error: $e");
       if (mounted) _showError("Something went wrong. Please try again.");
     }
+  }
+
+  void _showImageLimitDialog() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text("Limit Reached"),
+        content: const Text("You can upload a maximum of 5 images."),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text("OK"),
+          ),
+        ],
+      ),
+    );
   }
 
   Widget _mediaActionButton(String title, String icon, VoidCallback onTap) {
@@ -422,7 +444,8 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
     return PopScope(
       canPop: false, // Prevents back navigation
       onPopInvoked: (didPop) {
-        if (didPop) return;},
+        if (didPop) return;
+      },
       child: Scaffold(
         backgroundColor: Colors.white,
         body: SafeArea(
@@ -467,7 +490,10 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
                                   width: 120,
                                   height: 120,
                                 )
-                              : const Icon(Icons.person_outline_sharp, size: 80),
+                              : const Icon(
+                                  Icons.person_outline_sharp,
+                                  size: 80,
+                                ),
                         ),
                       ),
                       Positioned(
@@ -502,6 +528,7 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
                   value: _selectedHeight,
                   errorText: _heightError ? "Height is required" : null,
                   items: _heightOptions,
+                  bgColor: AppColors.mehroon,
                   onChanged: (String? value) {
                     setState(() {
                       _selectedHeight = value;
@@ -515,6 +542,7 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
                   value: _selectedWeight,
                   imageStr: "assets/svg_images/weight.svg",
                   items: _weightOptions,
+                  bgColor: AppColors.blue,
                   errorText: _weightError ? "Weight is required" : null,
                   onChanged: (String? value) {
                     setState(() {
@@ -638,8 +666,9 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
                     children: _additionalImages.asMap().entries.map((entry) {
                       return _buildMediaPreview(
                         entry.value,
-                        () =>
-                            setState(() => _additionalImages.removeAt(entry.key)),
+                        () => setState(
+                          () => _additionalImages.removeAt(entry.key),
+                        ),
                         isVideo: false,
                       );
                     }).toList(),
