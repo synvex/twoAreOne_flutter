@@ -343,41 +343,42 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
 
         case 1: // Additional images
           if (isCamera) {
+            // Check if limit reached
+            if (_additionalImages.length >= 5) {
+              _showImageLimitDialog();
+              return;
+            }
+
             final XFile? picked = await _picker.pickImage(
               source: ImageSource.camera,
               imageQuality: 85,
               maxWidth: 800,
             );
+
             if (picked != null && mounted) {
               setState(() => _additionalImages.add(File(picked.path)));
             }
           } else {
             final List<XFile> picked = await _picker.pickMultiImage();
+
             if (picked.isNotEmpty && mounted) {
-              final remainingSlots = 6 - _additionalImages.length;
+              final remainingSlots = 5 - _additionalImages.length;
+
               if (remainingSlots <= 0) {
-                showDialog(
-                  context: context,
-                  builder: (context) => AlertDialog(
-                    title: const Text("Limit Reached"),
-                    content: const Text(
-                      "You can upload a maximum of 6 images.",
-                    ),
-                    actions: [
-                      TextButton(
-                        onPressed: () => Navigator.pop(context),
-                        child: const Text("OK"),
-                      ),
-                    ],
-                  ),
-                );
+                _showImageLimitDialog();
                 return;
               }
-              setState(
-                () => _additionalImages.addAll(
+
+              setState(() {
+                _additionalImages.addAll(
                   picked.take(remainingSlots).map((e) => File(e.path)),
-                ),
-              );
+                );
+              });
+
+              // Inform user if they selected more than allowed
+              if (picked.length > remainingSlots) {
+                _showError("Only 5 images are allowed.");
+              }
             }
           }
           break;
@@ -399,6 +400,22 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
       debugPrint("Picker Error: $e");
       if (mounted) _showError("Something went wrong. Please try again.");
     }
+  }
+
+  void _showImageLimitDialog() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text("Limit Reached"),
+        content: const Text("You can upload a maximum of 5 images."),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text("OK"),
+          ),
+        ],
+      ),
+    );
   }
 
   Widget _mediaActionButton(String title, String icon, VoidCallback onTap) {
