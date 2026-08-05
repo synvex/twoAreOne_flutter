@@ -101,7 +101,7 @@ class CustomBottomNavBar extends StatelessWidget {
       width: screenWidth,
       height: _kBarHeight + 18,
       child: Padding(
-        padding: const EdgeInsets.only(top: 18.0),
+        padding: const EdgeInsets.only(top: 20.0),
         child: Stack(
           clipBehavior: Clip.none,
           children: [
@@ -147,7 +147,6 @@ class CustomBottomNavBar extends StatelessWidget {
                 color: Colors.white,
               ),
             ),
-
             // tab items
             Positioned(
               top: 54,
@@ -161,7 +160,7 @@ class CustomBottomNavBar extends StatelessWidget {
                   final bool isSelected = selectedIndex == index;
                   return Expanded(
                     child: Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 8),
+                      padding: EdgeInsets.symmetric(horizontal: 18.w),
                       child: Stack(
                         children: [
                           _NavItem(

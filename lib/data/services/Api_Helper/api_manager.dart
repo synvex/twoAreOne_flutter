@@ -91,7 +91,6 @@ class ApiManager {
 
   Map<String, dynamic> _parseSuccessResponse(dynamic res) {
     if (res is! Map) {
-
       return {
         "success": res != null,
         "data": res,
@@ -187,14 +186,15 @@ class ApiManager {
       context: context,
       barrierDismissible: false,
       builder: (BuildContext dialogContext) {
-        Future.delayed(const Duration(seconds: 3), () {
-          _sessionDialogShowing = false;
-          Navigator.of(dialogContext).pop();
-          Navigator.of(dialogContext).pushNamedAndRemoveUntil(
-            '/login',
-                (route) => false,
-          );
-        });
+        // Future.delayed(const Duration(seconds: 3), () {
+        //
+        // });
+        _sessionDialogShowing = false;
+        // Navigator.of(dialogContext).pop();
+        Navigator.of(dialogContext).pushNamedAndRemoveUntil(
+          '/login',
+              (route) => false,
+        );
         return AlertDialog(
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
           title: const Text("Session Expired"),

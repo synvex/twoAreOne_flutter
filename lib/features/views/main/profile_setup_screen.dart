@@ -53,7 +53,7 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
     final totalInches = 58 + i;
     final feet = totalInches ~/ 12;
     final inches = totalInches % 12;
-    return "$feet'$inches\"";
+    return "$feet'$inches";
   });
   List<String> get _weightOptions => List.generate(374, (i) => "${66 + i} lbs");
 
@@ -82,7 +82,6 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
       debugPrint("WARNING: No token found in ProfileSetup initState");
     }
   }
-
   Future<void> _onNextTapped() async {
     // 1. Validation
     setState(() {
@@ -144,22 +143,6 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
       _showError(result['error'] ?? "Failed to upload profile info.");
     }
   }
-
-  Future<void> _persistProfileLocally() async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setString('profile_height', _selectedHeight ?? '');
-    await prefs.setString('profile_weight', _selectedWeight ?? '');
-    await prefs.setString('profile_work', _workController.text.trim());
-    await prefs.setString('profile_bio', _bioController.text.trim());
-    await prefs.setString('profile_gender', widget.profileModel.gender ?? '');
-    await prefs.setString(
-      'profile_sexuality',
-      widget.profileModel.sexuality ?? '',
-    );
-    // Note: file paths for images are not stored – the server is the
-    // authoritative source for media URLs after upload.
-  }
-
   void _showError(String message) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
