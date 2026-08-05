@@ -97,7 +97,6 @@ class _MainScreenState extends State<MainScreen> {
   Widget build(BuildContext context) {
     final isLandscape =
         MediaQuery.of(context).orientation == Orientation.landscape;
-
     return PopScope(
   canPop: false,
   onPopInvoked: (didPop) {
@@ -111,7 +110,7 @@ class _MainScreenState extends State<MainScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              const SizedBox(height: 55),
+              const SizedBox(height: 45),
               const StackedUserCards(),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20.0),
@@ -137,7 +136,7 @@ class _MainScreenState extends State<MainScreen> {
                       child: Texts(
                         text: "I am a",
                         size: 16,
-                        fontWeight: FontWeight.w700,
+                        fontWeight: FontWeight.w600,
                         edgeInsets: EdgeInsets.only(left: 8),
                       ),
                     ),
@@ -158,7 +157,7 @@ class _MainScreenState extends State<MainScreen> {
                         ),
                       );
                     }),
-                    const SizedBox(height: 30),
+                    const SizedBox(height: 20),
                     MainButtonWidget(
                       text: "Next",
                       isLoading: _isLoading,
