@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:pinput/pinput.dart';
 import 'package:two_are_one/core/widgets/texts.dart';
 
@@ -17,6 +18,7 @@ class CustomInputField extends StatefulWidget {
   final int? textColor;
   final Function(String)? onChanged;
   final TextEditingController? controller;
+  final List<TextInputFormatter>? formatter;
   const CustomInputField({
     super.key,
     this.label,
@@ -32,7 +34,7 @@ class CustomInputField extends StatefulWidget {
     this.onChanged,
     this.onTap,
     this.textColor,
-    this.prefixImg,
+    this.prefixImg, this.formatter,
   });
 
   @override
@@ -60,6 +62,7 @@ class _CustomInputFieldState extends State<CustomInputField> {
           cursorColor: Colors.black,
           onChanged: widget.onChanged,
           style: TextStyle(color: Color(0xFF787878)),
+          inputFormatters: widget.formatter ?? [],
           decoration: InputDecoration(
             prefixIconConstraints: const BoxConstraints(
               minWidth: 0,

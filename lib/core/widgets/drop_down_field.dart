@@ -8,6 +8,7 @@ class CustomDropdownField extends StatelessWidget {
   final String? value;
   final String imageStr;
   final List<String> items;
+  final int? weightColor;
   final ValueChanged<String?> onChanged;
   final String? errorText; // ADD THIS
   final Color? bgColor;
