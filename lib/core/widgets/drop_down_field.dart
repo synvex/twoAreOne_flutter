@@ -8,6 +8,7 @@ class CustomDropdownField extends StatelessWidget {
   final String? value;
   final String imageStr;
   final List<String> items;
+  final int? weightColor;
   final ValueChanged<String?> onChanged;
   final String? errorText; // ADD THIS
 
@@ -18,7 +19,7 @@ class CustomDropdownField extends StatelessWidget {
     required this.imageStr,
     required this.items,
     required this.onChanged,
-    this.errorText, // ADD THIS
+    this.errorText, this.weightColor, // ADD THIS
   });
 
   @override

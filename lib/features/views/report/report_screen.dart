@@ -135,25 +135,28 @@ class _ReportScreenState extends State<ReportScreen> {
                                 color: const Color(0xffE5E7EB),
                               ),
                             ),
-                            child: RadioListTile<String>(
-                              value: reason,
-                              groupValue: selectedReason,
-                              onChanged: (value) {
-                                setState(() {
-                                  selectedReason = value!;
-                                });
-                              },
-                              activeColor: const Color(0xffD61E6E),
-                              controlAffinity: ListTileControlAffinity.leading,
-                              contentPadding: EdgeInsets.symmetric(
-                                horizontal: 8.w,
-                              ),
-                              title: Text(
-                                reason,
-                                style: GoogleFonts.inter(
-                                  fontSize: 14.sp,
-                                  color: const Color(0xff1F3340),
-                                  fontWeight: FontWeight.w500,
+                            child: Material(
+                              color: Colors.transparent,
+                              child: RadioListTile<String>(
+                                value: reason,
+                                groupValue: selectedReason,
+                                onChanged: (value) {
+                                  setState(() {
+                                    selectedReason = value!;
+                                  });
+                                },
+                                activeColor: const Color(0xffD61E6E),
+                                controlAffinity: ListTileControlAffinity.leading,
+                                contentPadding: EdgeInsets.symmetric(
+                                  horizontal: 8.w,
+                                ),
+                                title: Text(
+                                  reason,
+                                  style: GoogleFonts.inter(
+                                    fontSize: 14.sp,
+                                    color: const Color(0xff1F3340),
+                                    fontWeight: FontWeight.w500,
+                                  ),
                                 ),
                               ),
                             ),
