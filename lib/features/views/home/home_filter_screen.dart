@@ -1,14 +1,9 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-// <<<<<<< saqlain-02
 import 'package:provider/provider.dart';
-// =======
 import 'package:two_are_one/core/widgets/app_header_widget.dart';
-// >>>>>>> refector
-import 'package:two_are_one/core/widgets/back_button.dart';
 import 'package:two_are_one/core/widgets/image.dart';
 import 'package:two_are_one/core/widgets/texts.dart';
-import 'package:two_are_one/features//views/bottom_nav/custom_nav_bar.dart';
 import 'package:two_are_one/features//views/home/profile_card.dart';
 import 'package:two_are_one/data/models/user_match_model.dart';
 import 'package:two_are_one/data/services/home_service.dart'; // Ensure this matches your Service file
@@ -182,17 +177,19 @@ class _HomeFilterScreenState extends State<HomeFilterScreen> {
     if (_chatCooldowns.containsKey(userId)) {
       final diff = now.difference(_chatCooldowns[userId]!);
       if (diff.inSeconds < 30) {
-// <<<<<<< saqlain-02
+        // <<<<<<< saqlain-02
         final secondsLeft = 30 - diff.inSeconds;
-        TopToast.show(context,
-            title: "Please wait",
-            message: "You can send another invite in ${secondsLeft}s",
-            type: ToastType.info);
-// =======
+        TopToast.show(
+          context,
+          title: "Please wait",
+          message: "You can send another invite in ${secondsLeft}s",
+          type: ToastType.info,
+        );
+        // =======
         _showToast(
           "Please wait ${30 - diff.inSeconds}s to send another invite",
         );
-// >>>>>>> refector
+        // >>>>>>> refector
         return;
       }
     }
@@ -203,17 +200,22 @@ class _HomeFilterScreenState extends State<HomeFilterScreen> {
     });
     if (sent) {
       _chatCooldowns[userId] = now;
-      TopToast.show(context,
-          title: "Invite sent!",
-          message: "Your message has been delivered.",
-          type: ToastType.success);
+      TopToast.show(
+        context,
+        title: "Invite sent!",
+        message: "Your message has been delivered.",
+        type: ToastType.success,
+      );
     } else {
-      TopToast.show(context,
-          title: "Couldn't send invite",
-          message: "Please check your connection and try again.",
-          type: ToastType.error);
+      TopToast.show(
+        context,
+        title: "Couldn't send invite",
+        message: "Please check your connection and try again.",
+        type: ToastType.error,
+      );
     }
   }
+
   void _showToast(String msg, {ToastType type = ToastType.info}) {
     TopToast.show(context, title: msg, type: type);
   }

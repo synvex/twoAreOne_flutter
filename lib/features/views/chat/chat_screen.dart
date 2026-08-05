@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:intl/intl.dart'; // ADDED
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -10,35 +11,10 @@ import 'package:two_are_one/core/constants/app_icons.dart';
 import 'package:two_are_one/core/utils/random_color_picker_util.dart';
 import 'package:two_are_one/core/utils/skelton_util.dart';
 import 'package:two_are_one/core/utils/date_time_util.dart';
+import 'package:two_are_one/core/widgets/chat_bubble_widget.dart';
 import 'package:two_are_one/data/models/chat_history_model.dart';
 import 'package:two_are_one/data/services/presense_service.dart';
 import 'package:two_are_one/data/viewmodels/chat_viewmodel.dart';
-
-/// Simple text-only chat message.
-class _ChatMessage {
-  final bool isMe;
-  final String text;
-  final String time;
-
-  _ChatMessage({required this.isMe, required this.text, required this.time});
-
-  static _ChatMessage? fromChatHistory(
-    ChatHistoryModel data, {
-    required int currentUserId,
-  }) {
-    final message = data.message;
-
-    if (message == null || message.trim().isEmpty) {
-      return null;
-    }
-
-    return _ChatMessage(
-      isMe: data.user1 == currentUserId,
-      text: message,
-      time: data.messageTime,
-    );
-  }
-}
 
 class ChatScreen extends StatefulWidget {
   const ChatScreen({
@@ -62,27 +38,28 @@ class _ChatScreenState extends State<ChatScreen> {
   final TextEditingController _messageController = TextEditingController();
   final FocusNode _focusNode = FocusNode();
   int _currentUserId = 0;
-
   @override
   void initState() {
     super.initState();
 
-    // Call API when screen opens
     Future.microtask(() async {
       await _loadCurrentUser();
       await context.read<ChatViewModel>().fetchedChatHistory(widget.receiverId);
 
-      // Start live polling for this conversation once initial history is loaded
+      // Subscribe to the global socket for this conversation.
+      // Replaces the old startHistoryPolling().
       if (mounted) {
-        context.read<ChatViewModel>().startHistoryPolling(widget.receiverId);
+        context.read<ChatViewModel>().startListening(widget.receiverId);
       }
     });
   }
 
   @override
   void dispose() {
-    // Stop polling so it doesn't keep hitting the API after leaving the screen
-    context.read<ChatViewModel>().stopHistoryPolling();
+    // Unsubscribe from this conversation's messages. The global socket
+    // itself stays connected — other screens (presence, unread badges)
+    // still depend on it, same as RN.
+    context.read<ChatViewModel>().stopListening();
     _messageController.dispose();
     super.dispose();
   }
@@ -274,29 +251,25 @@ class _ChatScreenState extends State<ChatScreen> {
                         ? const Center(child: Text("No chat available"))
                         : ListView.builder(
                             controller: chatViewModel.scrollController,
+                            reverse: true,
 
                             padding: EdgeInsets.symmetric(horizontal: 16.w),
                             itemCount: chatViewModel.chatHistory.length,
                             itemBuilder: (context, index) {
-                              final raw = chatViewModel.chatHistory[index];
-
-                              final chatMsg = _ChatMessage.fromChatHistory(
-                                raw,
-                                currentUserId: _currentUserId,
-                              );
-
-                              if (chatMsg == null) {
-                                return const SizedBox.shrink();
-                              }
+                              final messageList = chatViewModel
+                                  .chatHistory
+                                  .reversed
+                                  .toList();
+                              final raw = messageList[index];
 
                               return Padding(
                                 padding: EdgeInsets.only(bottom: 20.h),
-                                child: _TextBubble(
-                                  isSending: chatViewModel.sendingMessageIds
-                                      .contains(raw.id),
-                                  msg: chatMsg,
-                                  avatarUrl: widget.avatarUrl,
-                                  name: widget.name,
+                                child: ChatBubble(
+                                  isMe: _currentUserId == raw.user2,
+                                  message: raw.message ?? '',
+                                  senderName: raw.senderName ?? '',
+                                  senderProfilePicture: widget.avatarUrl,
+                                  time: raw.time,
                                 ),
                               );
                             },
@@ -318,117 +291,6 @@ class _ChatScreenState extends State<ChatScreen> {
           ),
         ],
       ),
-    );
-  }
-}
-
-class _TextBubble extends StatelessWidget {
-  const _TextBubble({
-    required this.msg,
-    required this.avatarUrl,
-    required this.isSending,
-    required this.name,
-  });
-
-  final _ChatMessage msg;
-  final String avatarUrl;
-  final bool isSending;
-  final String name;
-
-  @override
-  Widget build(BuildContext context) {
-    final bubble = Column(
-      crossAxisAlignment: msg.isMe
-          ? CrossAxisAlignment.end
-          : CrossAxisAlignment.start,
-      children: [
-        Container(
-          constraints: BoxConstraints(maxWidth: 0.68.sw),
-          padding: EdgeInsets.symmetric(horizontal: 18.w, vertical: 14.h),
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
-              colors: msg.isMe
-                  ? [AppColors.grey1, AppColors.grey1]
-                  : [
-                      AppColors.mehroon.withValues(alpha: 0.8),
-                      AppColors.gradientFirst.withValues(alpha: 0.8),
-                    ],
-            ),
-            borderRadius: BorderRadius.circular(20.r),
-          ),
-          child: Text(
-            msg.text,
-            style: GoogleFonts.inriaSerif(
-              fontSize: 14.sp,
-              color: msg.isMe ? Colors.black : Colors.white,
-            ),
-          ),
-        ),
-        Padding(
-          padding: EdgeInsets.only(top: 4.h),
-          child: Text(
-            DateTimeUtil.utcToPkTime(msg.time), // msg.time,
-            // convertUtcTimestampToPakistanTime(int.parse(msg.time)).toString(),
-
-            // DateTimeFormatter.chatTime(msg.time),
-            style: GoogleFonts.inriaSerif(fontSize: 10.sp, color: Colors.grey),
-          ),
-        ),
-        Visibility(
-          visible: isSending,
-          child: Padding(
-            padding: EdgeInsets.only(top: 2.h),
-            child: Text(
-              'sending...',
-              style: GoogleFonts.inriaSerif(
-                fontSize: 10.sp,
-                color: Colors.grey,
-              ),
-            ),
-          ),
-        ),
-      ],
-    );
-
-    if (msg.isMe) {
-      return Align(alignment: Alignment.centerRight, child: bubble);
-    }
-
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        ClipOval(
-          child: Image.network(
-            avatarUrl,
-            height: 32.h,
-            width: 32.w,
-            fit: BoxFit.cover,
-            errorBuilder: (_, __, ___) {
-              final bgColor = RandomColorPickerUtil.getColor(name.toString());
-              return CircleAvatar(
-                radius: 14.r,
-                backgroundColor: bgColor,
-                child: Center(
-                  child: Text(
-                    name.toString().trim().isNotEmpty
-                        ? name.toString().trim()[0].toUpperCase()
-                        : "?",
-                    style: GoogleFonts.inter(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w500,
-                      color: Colors.white,
-                    ),
-                  ),
-                ),
-              );
-            },
-          ),
-        ),
-        SizedBox(width: 8.w),
-        bubble,
-      ],
     );
   }
 }

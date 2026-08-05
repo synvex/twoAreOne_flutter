@@ -247,7 +247,6 @@ class _QuestionnaireScreenState extends State<QuestionnaireScreen>
         backgroundColor: Colors.white,
         body: SafeArea(
           child: Stack(
-            // alignment: AlignmentGeometry.center,
             children: [
               SingleChildScrollView(
                 padding: const EdgeInsets.only(
@@ -255,7 +254,7 @@ class _QuestionnaireScreenState extends State<QuestionnaireScreen>
                 ),
                 child: Column(
                   children: [
-                    const SizedBox(height: 90),
+                    const SizedBox(height: 70),
                     // Progress Lottie
                     Center(
                       child: Stack(

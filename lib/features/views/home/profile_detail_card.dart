@@ -40,7 +40,9 @@ class ProfileDetailCard extends StatelessWidget {
         imageUrl.startsWith('http') &&
         !imageUrl.endsWith('/uploads/');
 
-    return GestureDetector(
+    return InkWell(
+      splashColor: Colors.blue.withOpacity(0.3),
+      highlightColor: Colors.blue.withOpacity(0.1),
       onTap: onPress,
       child: ClipRRect(
         borderRadius: BorderRadius.circular(40),

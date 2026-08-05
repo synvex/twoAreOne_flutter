@@ -11,13 +11,14 @@ import 'package:two_are_one/data/models/location_data.dart';
 class LocationSelectorField extends StatefulWidget {
   final String? labels;
   final int? fillColor;
+  final String? hintText;
   final Function(LocationData) onLocationSelected;
 
   const LocationSelectorField({
     super.key,
     this.labels,
     required this.onLocationSelected,
-    this.fillColor,
+    this.fillColor, this.hintText,
   });
 
   @override
@@ -29,9 +30,7 @@ class _LocationSelectorFieldState extends State<LocationSelectorField> {
   List<dynamic> _suggestions = [];
   bool _showSuggestions = false;
   bool _isLoading = false;
-
   static const String _apiKey = "AIzaSyCqZ38paEOdX0SnqU0u6wBlEasNIwKRNe0";
-
   Future<void> _onSearchChanged(String query) async {
     if (query.length < 2) {
       setState(() {
@@ -42,20 +41,8 @@ class _LocationSelectorFieldState extends State<LocationSelectorField> {
     }
     setState(() {
       _isLoading = true;
-      // _suggestions = _allLocations
-      //     .where(
-      //         (loc) => loc.toLowerCase().contains(
-      //             query.toLowerCase()))
-      //     .toList();
-      // _showSuggestions = _suggestions.isNotEmpty;
     });
-    //
     try {
-      // Free OpenStreetMap API (Nominatim)
-      // final url = Uri.parse(
-      //     "https://nominatim.openstreetmap.org/search?q=$query&format=json&addressdetails=1&limit=5"
-      // );
-
       final url = Uri.parse(
         "https://maps.googleapis.com/maps/api/place/autocomplete/json"
         "?input=${Uri.encodeComponent(query)}"
@@ -88,7 +75,6 @@ class _LocationSelectorFieldState extends State<LocationSelectorField> {
       if (mounted) setState(() => _isLoading = false);
     }
   }
-
   Future<void> _getPlaceDetails(String placeId, String displayName) async {
     try {
       final url = Uri.parse(
@@ -155,12 +141,11 @@ class _LocationSelectorFieldState extends State<LocationSelectorField> {
             padding: const EdgeInsets.only(left: 8.0),
             child: Images(
               imageStr: "assets/svg_images/locationImg.svg",
-
               height: 20,
               width: 20,
             ),
           ),
-          hintText: 'Search',
+          hintText:  widget.hintText ?? 'Search',
         ),
         // 3. Suggestions List
         if (_showSuggestions)

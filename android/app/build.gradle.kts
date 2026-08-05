@@ -7,7 +7,7 @@ plugins {
 }
 
 android {
-    namespace = "com.example.twoAreOne.app"
+    namespace = "com.twoareone.llc"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = flutter.ndkVersion
 
@@ -21,8 +21,8 @@ android {
     }
 
     defaultConfig {
-        applicationId = "com.example.two_are_one"
-//        applicationId = "com.twoAreOne.app"
+        applicationId = "com.twoareone.llc"
+//        applicationId = "com.twoareone.app"
         // You can update the following values to match your application needs.
         // For more information, see: https://flutter.dev/to/review-gradle-config.
         minSdk = flutter.minSdkVersion

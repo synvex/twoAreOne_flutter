@@ -8,8 +8,10 @@ class CustomDropdownField extends StatelessWidget {
   final String? value;
   final String imageStr;
   final List<String> items;
+  final int? weightColor;
   final ValueChanged<String?> onChanged;
   final String? errorText; // ADD THIS
+  final Color? bgColor;
 
   const CustomDropdownField({
     super.key,
@@ -19,6 +21,7 @@ class CustomDropdownField extends StatelessWidget {
     required this.items,
     required this.onChanged,
     this.errorText, // ADD THIS
+    this.bgColor,
   });
 
   @override
@@ -51,8 +54,8 @@ class CustomDropdownField extends StatelessWidget {
                   margin: const EdgeInsets.only(right: 10),
                   height: 40,
                   width: 40,
-                  decoration: const BoxDecoration(
-                    color: Color(0xFF77153C),
+                  decoration: BoxDecoration(
+                    color: bgColor,
                     shape: BoxShape.circle,
                   ),
                   padding: const EdgeInsets.all(8),
