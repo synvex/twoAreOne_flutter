@@ -174,7 +174,7 @@ class CustomBottomNavBar extends StatelessWidget {
 
                           index == 2
                               ? Positioned(
-                                  right: 32.w,
+                                  right: 14.w,
                                   top: 18.h,
                                   child: Visibility(
                                     visible:
