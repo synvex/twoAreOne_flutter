@@ -11,6 +11,7 @@ import 'package:two_are_one/core/constants/app_icons.dart';
 import 'package:two_are_one/core/utils/random_color_picker_util.dart';
 import 'package:two_are_one/core/utils/skelton_util.dart';
 import 'package:two_are_one/core/utils/date_time_util.dart';
+import 'package:two_are_one/core/widgets/chat_bubble_widget.dart';
 import 'package:two_are_one/data/models/chat_history_model.dart';
 import 'package:two_are_one/data/services/presense_service.dart';
 import 'package:two_are_one/data/viewmodels/chat_viewmodel.dart';
@@ -305,11 +306,16 @@ class _ChatScreenState extends State<ChatScreen> {
                         ? const Center(child: Text("No chat available"))
                         : ListView.builder(
                             controller: chatViewModel.scrollController,
+                            reverse: true,
 
                             padding: EdgeInsets.symmetric(horizontal: 16.w),
                             itemCount: chatViewModel.chatHistory.length,
                             itemBuilder: (context, index) {
-                              final raw = chatViewModel.chatHistory[index];
+                              final messageList = chatViewModel
+                                  .chatHistory
+                                  .reversed
+                                  .toList();
+                              final raw = messageList[index];
 
                               final chatMsg = _ChatMessage.fromChatHistory(
                                 raw,
@@ -322,15 +328,23 @@ class _ChatScreenState extends State<ChatScreen> {
 
                               return Padding(
                                 padding: EdgeInsets.only(bottom: 20.h),
-                                child: _TextBubble(
-                                  isSending: chatViewModel.sendingMessageIds
-                                      .contains(raw.id),
-                                  msg: chatMsg,
-                                  avatarUrl: widget.avatarUrl,
-                                  name: widget.name,
-                                  isFailed: chatViewModel.failedMessageIds
-                                      .contains(raw.id),
+                                child: ChatBubble(
+                                  isMe: _currentUserId == raw.user2,
+                                  message: raw.message ?? '',
+                                  senderName: raw.senderName ?? '',
+                                  senderProfilePicture:
+                                      raw.senderProfilePictureUrl ?? '',
+                                  time: raw.time,
                                 ),
+                                //  _TextBubble(
+                                //   isSending: chatViewModel.sendingMessageIds
+                                //       .contains(raw.id),
+                                //   msg: chatMsg,
+                                //   avatarUrl: widget.avatarUrl,
+                                //   name: widget.name,
+                                //   isFailed: chatViewModel.failedMessageIds
+                                //       .contains(raw.id),
+                                // ),
                               );
                             },
                           ),
