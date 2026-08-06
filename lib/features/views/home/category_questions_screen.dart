@@ -8,8 +8,6 @@
 
 import 'package:flutter/material.dart';
 import 'package:two_are_one/core/widgets/app_header_widget.dart';
-import 'package:two_are_one/core/widgets/texts.dart';
-import 'package:two_are_one/core/widgets/back_button.dart';
 import 'package:two_are_one/data/services/question_service.dart';
 import 'edit_single_question_screen.dart';
 
@@ -97,7 +95,7 @@ class _CategoryQuestionsScreenState extends State<CategoryQuestionsScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
 
             children: [
-              AppHeaderWidget( title: widget.categoryName,isTrailing: false,),
+              AppHeaderWidget(title: widget.categoryName, isTrailing: false),
               Expanded(
                 child: _loading
                     ? const Center(

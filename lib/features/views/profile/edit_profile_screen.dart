@@ -157,6 +157,7 @@ class _EditProfileScreenState extends State<EditProfileScreen>
     )..repeat(reverse: true);
     _loadUser();
   }
+
   @override
   void dispose() {
     _nameController.dispose();
@@ -165,6 +166,7 @@ class _EditProfileScreenState extends State<EditProfileScreen>
     _fadeController.dispose();
     super.dispose();
   }
+
   Future<void> _loadUser() async {
     final res = await _profileService.getUserInfo();
     if (!mounted) return;
@@ -178,8 +180,9 @@ class _EditProfileScreenState extends State<EditProfileScreen>
         _nameController.text = user.fullName;
         _bioController.text = user.bio;
         _workController.text = user.work;
-        _selectedGender =
-        user.gender.isNotEmpty ? user.gender.toLowerCase() : null;
+        _selectedGender = user.gender.isNotEmpty
+            ? user.gender.toLowerCase()
+            : null;
         _selectedAge = user.age.isNotEmpty ? user.age : null;
         _selectedHeight = user.height.isNotEmpty ? user.height : null;
         _selectedWeight = user.weight.isNotEmpty ? user.weight : null;
@@ -188,7 +191,7 @@ class _EditProfileScreenState extends State<EditProfileScreen>
           ..clear()
           ..addAll(
             user.allImages.map(
-                  (img) => _ImageEntry(id: img.id, networkUrl: _fullUrl(img.url)),
+              (img) => _ImageEntry(id: img.id, networkUrl: _fullUrl(img.url)),
             ),
           );
         _loadingUser = false;
@@ -203,10 +206,12 @@ class _EditProfileScreenState extends State<EditProfileScreen>
       );
     }
   }
+
   String _fullUrl(String? path) {
     if (path == null || path.isEmpty) return '';
     return path.startsWith('http') ? path : '$kEditProfileUploadBase$path';
   }
+
   Future<bool> _requestCameraPermission() async {
     final status = await Permission.camera.status;
     if (status.isGranted) return true;
@@ -265,6 +270,7 @@ class _EditProfileScreenState extends State<EditProfileScreen>
     );
     return result ?? false;
   }
+
   Future<void> _uploadAvatar(File file) async {
     setState(() {
       _pickedAvatarFile = file;
@@ -278,11 +284,12 @@ class _EditProfileScreenState extends State<EditProfileScreen>
         context,
         title: "Error",
         message:
-        res['error']?.toString() ?? "Something went wrong while uploading",
+            res['error']?.toString() ?? "Something went wrong while uploading",
         type: ToastType.error,
       );
     }
   }
+
   void _pickAvatar() {
     _openMediaSheet(
       isVideo: false,
@@ -308,9 +315,10 @@ class _EditProfileScreenState extends State<EditProfileScreen>
       },
     );
   }
+
   Future<void> _addImage(File file) async {
     setState(
-          () => _imageEntries.add(_ImageEntry(localFile: file, uploading: true)),
+      () => _imageEntries.add(_ImageEntry(localFile: file, uploading: true)),
     );
 
     final res = await _profileService.addUserPhoto(file);
@@ -330,6 +338,7 @@ class _EditProfileScreenState extends State<EditProfileScreen>
       );
     }
   }
+
   Future<void> _removeImage(_ImageEntry entry, int index) async {
     if (entry.id == null) return;
     setState(() => _removingIndex = index);
@@ -344,6 +353,7 @@ class _EditProfileScreenState extends State<EditProfileScreen>
       TopToast.show(context, title: "Error", type: ToastType.error);
     }
   }
+
   void _pickAdditionalImage() {
     if (_imageEntries.length == 6) {
       TopToast.show(
@@ -394,7 +404,7 @@ class _EditProfileScreenState extends State<EditProfileScreen>
       await tmp.initialize().timeout(const Duration(seconds: 6));
       final dur = tmp.value.duration;
       await tmp.dispose();
-      if (dur != null && dur.inSeconds > kMaxVideoSeconds) {
+      if (dur.inSeconds > kMaxVideoSeconds) {
         TopToast.show(
           context,
           title: "Video Too Long",
@@ -411,9 +421,9 @@ class _EditProfileScreenState extends State<EditProfileScreen>
       _videoUploading = true;
     });
     try {
-      final res = await _profileService.addUserVideo(file).timeout(
-        const Duration(seconds: 120),
-      );
+      final res = await _profileService
+          .addUserVideo(file)
+          .timeout(const Duration(seconds: 120));
       if (!mounted) return;
       if (res['success'] == true) {
         // re-sync profile from server to get canonical video record (and any server-side "uploading" flag)
@@ -426,13 +436,12 @@ class _EditProfileScreenState extends State<EditProfileScreen>
         //     _videoUploading = false;
         //   });
         // } else {
-          // keep the overlay if server says upload is still processing
-          // }
-          setState(() {
-            _pickedVideoFile = null;
-            _videoUploading = false;
-          });
-
+        // keep the overlay if server says upload is still processing
+        // }
+        setState(() {
+          _pickedVideoFile = null;
+          _videoUploading = false;
+        });
       } else {
         setState(() {
           _pickedVideoFile = null;
@@ -516,8 +525,7 @@ class _EditProfileScreenState extends State<EditProfileScreen>
     required bool isVideo,
     required Future<void> Function() onCamera,
     required Future<void> Function() onGallery,
-  })
-  {
+  }) {
     showModalBottomSheet(
       context: context,
       backgroundColor: Colors.white,
@@ -578,6 +586,7 @@ class _EditProfileScreenState extends State<EditProfileScreen>
       ),
     );
   }
+
   bool _validate() {
     final nameOk = RegExp(
       r'^[A-Za-z\s]+$',
@@ -644,7 +653,7 @@ class _EditProfileScreenState extends State<EditProfileScreen>
         context,
         title: "Error",
         message:
-        res['error']?.toString() ?? "Something went wrong while uploading",
+            res['error']?.toString() ?? "Something went wrong while uploading",
         type: ToastType.error,
       );
     }
@@ -752,10 +761,11 @@ class _EditProfileScreenState extends State<EditProfileScreen>
                         border: Border.all(color: _kFieldBorder),
                       ),
                       child: LocationSelectorField(
-                        hintText: (_user?.city.isNotEmpty == true &&
-                          _user?.country.isNotEmpty == true)
-                          ? "${_user?.city},${_user?.country}"
-                          : "Search",
+                        hintText:
+                            (_user?.city.isNotEmpty == true &&
+                                _user?.country.isNotEmpty == true)
+                            ? "${_user?.city},${_user?.country}"
+                            : "Search",
                         fillColor: 0xFFFFFFFF,
                         onLocationSelected: (loc) =>
                             setState(() => _pickedLocation = loc),
@@ -793,7 +803,8 @@ class _EditProfileScreenState extends State<EditProfileScreen>
                                   hint: "Age",
                                   value: _selectedAge,
                                   items: _ageOptions,
-                                  onChanged: (v) => setState(() => _selectedAge = v),
+                                  onChanged: (v) =>
+                                      setState(() => _selectedAge = v),
                                 ),
                               ),
                             ],
@@ -976,6 +987,7 @@ class _EditProfileScreenState extends State<EditProfileScreen>
       ),
     );
   }
+
   Widget _buildAvatarSection() {
     final avatarUrl = _fullUrl(_user?.profilePicture);
     return Center(
@@ -989,27 +1001,27 @@ class _EditProfileScreenState extends State<EditProfileScreen>
             decoration: BoxDecoration(
               shape: BoxShape.circle,
               border: Border.all(
-                color: Colors.grey.withOpacity(0.3),
+                color: Colors.grey.withValues(alpha: 0.3),
                 width: 4,
               ),
             ),
             child: ClipOval(
               child: _avatarUploading
                   ? const Center(
-                child: CircularProgressIndicator(color: _kMehroon),
-              )
+                      child: CircularProgressIndicator(color: _kMehroon),
+                    )
                   : _pickedAvatarFile != null
                   ? Image.file(_pickedAvatarFile!, fit: BoxFit.cover)
                   : (avatarUrl.isNotEmpty
-                  ? Image.network(
-                avatarUrl,
-                fit: BoxFit.cover,
-                errorBuilder: (context, e, s) => const Icon(
-                  Icons.person_outline_sharp,
-                  size: 80,
-                ),
-              )
-                  : const Icon(Icons.person_outline_sharp, size: 80)),
+                        ? Image.network(
+                            avatarUrl,
+                            fit: BoxFit.cover,
+                            errorBuilder: (context, e, s) => const Icon(
+                              Icons.person_outline_sharp,
+                              size: 80,
+                            ),
+                          )
+                        : const Icon(Icons.person_outline_sharp, size: 80)),
             ),
           ),
           Positioned(
@@ -1032,13 +1044,13 @@ class _EditProfileScreenState extends State<EditProfileScreen>
       ),
     );
   }
+
   Widget _buildDropdown({
     required String hint,
     required String? value,
     required List<_DropdownOption> items,
     required ValueChanged<String?> onChanged,
-  })
-  {
+  }) {
     final safeValue = (value != null && items.any((o) => o.value == value))
         ? value
         : null;
@@ -1068,19 +1080,20 @@ class _EditProfileScreenState extends State<EditProfileScreen>
           items: items
               .map(
                 (opt) => DropdownMenuItem(
-              value: opt.value,
-              child: Text(
-                opt.label,
-                style: const TextStyle(fontSize: 14, color: _kFieldText),
-              ),
-            ),
-          )
+                  value: opt.value,
+                  child: Text(
+                    opt.label,
+                    style: const TextStyle(fontSize: 14, color: _kFieldText),
+                  ),
+                ),
+              )
               .toList(),
           onChanged: onChanged,
         ),
       ),
     );
   }
+
   Widget _buildUpdateButton() {
     return MainButtonWidget(
       text: "Update",
@@ -1138,22 +1151,22 @@ class _EditProfileScreenState extends State<EditProfileScreen>
                       borderRadius: BorderRadius.circular(12),
                       child: entry.localFile != null
                           ? Image.file(
-                        entry.localFile!,
-                        width: 100,
-                        height: 100,
-                        fit: BoxFit.cover,
-                      )
+                              entry.localFile!,
+                              width: 100,
+                              height: 100,
+                              fit: BoxFit.cover,
+                            )
                           : Image.network(
-                        entry.networkUrl ?? '',
-                        width: 100,
-                        height: 100,
-                        fit: BoxFit.cover,
-                        errorBuilder: (c, e, s) => Container(
-                          width: 100,
-                          height: 100,
-                          color: const Color(0xFFECECEC),
-                        ),
-                      ),
+                              entry.networkUrl ?? '',
+                              width: 100,
+                              height: 100,
+                              fit: BoxFit.cover,
+                              errorBuilder: (c, e, s) => Container(
+                                width: 100,
+                                height: 100,
+                                color: const Color(0xFFECECEC),
+                              ),
+                            ),
                     ),
                     if (entry.uploading)
                       Positioned.fill(
@@ -1248,9 +1261,11 @@ class _EditProfileScreenState extends State<EditProfileScreen>
                   child: _pickedVideoFile != null
                       ? _LocalVideoPreview(file: _pickedVideoFile!)
                       : (_existingVideo?.url != null &&
-                      _existingVideo!.url.isNotEmpty
-                      ? InlineVideoPlayer(url: _fullUrl(_existingVideo?.url))
-                      : Container(color: Colors.black)),
+                                _existingVideo!.url.isNotEmpty
+                            ? InlineVideoPlayer(
+                                url: _fullUrl(_existingVideo?.url),
+                              )
+                            : Container(color: Colors.black)),
                 ),
               ),
               if (_videoUploading)
@@ -1285,15 +1300,15 @@ class _EditProfileScreenState extends State<EditProfileScreen>
                       backgroundColor: Colors.white,
                       child: _removingVideo
                           ? const SizedBox(
-                        width: 12,
-                        height: 12,
-                        child: CircularProgressIndicator(strokeWidth: 2),
-                      )
+                              width: 12,
+                              height: 12,
+                              child: CircularProgressIndicator(strokeWidth: 2),
+                            )
                           : const Icon(
-                        Icons.close,
-                        size: 16,
-                        color: Colors.red,
-                      ),
+                              Icons.close,
+                              size: 16,
+                              color: Colors.red,
+                            ),
                     ),
                   ),
                 ),
@@ -1340,7 +1355,7 @@ class _EditProfileScreenState extends State<EditProfileScreen>
         ),
         const SizedBox(height: 20),
         ...categories.map(
-              (category) => Padding(
+          (category) => Padding(
             padding: const EdgeInsets.only(bottom: 12),
             child: Column(
               children: [
@@ -1430,4 +1445,3 @@ class _LocalVideoPreviewState extends State<_LocalVideoPreview> {
     );
   }
 }
-

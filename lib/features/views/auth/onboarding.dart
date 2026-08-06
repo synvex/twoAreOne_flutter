@@ -211,9 +211,9 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 ),
                 SizedBox(height: 4.h),
                 MainButtonWidget(
-                  hex: AppColors.black.value,
+                  hex: AppColors.black.toARGB32(),
                   text: "Sign In",
-                  hexValue: AppColors.black.value,
+                  hexValue: AppColors.black.toARGB32(),
                   color: AppColors.black,
                   onTap: () {
                     Navigator.push(

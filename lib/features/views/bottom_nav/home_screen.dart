@@ -321,7 +321,7 @@ class _HomeScreenState extends State<HomeScreen> {
         mainAxisSpacing: 15,
         childAspectRatio: 0.7,
       ),
-      itemBuilder: (_, __) => _buildShimmerCard(),
+      itemBuilder: (_, _) => _buildShimmerCard(),
     );
   }
 
