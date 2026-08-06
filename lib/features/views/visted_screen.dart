@@ -21,7 +21,6 @@ class VisitedUserScreen extends StatefulWidget {
 class _VisitedUserScreenState extends State<VisitedUserScreen> {
   final _viewModel = VisitedUserViewModel();
   final _scrollController = ScrollController();
-
   @override
   void initState() {
     super.initState();
@@ -29,11 +28,9 @@ class _VisitedUserScreenState extends State<VisitedUserScreen> {
     _viewModel.fetchUsers(refresh: true);
     _scrollController.addListener(_onScroll);
   }
-
   void _onModelChanged() {
     if (mounted) setState(() {});
   }
-
   void _onScroll() {
     final pos = _scrollController.position;
     if (pos.pixels >= pos.maxScrollExtent - 150 &&
@@ -42,7 +39,6 @@ class _VisitedUserScreenState extends State<VisitedUserScreen> {
       _viewModel.fetchUsers();
     }
   }
-
   @override
   void dispose() {
     _viewModel.removeListener(_onModelChanged);
@@ -50,7 +46,6 @@ class _VisitedUserScreenState extends State<VisitedUserScreen> {
     _viewModel.dispose();
     super.dispose();
   }
-
   void _openMenu(VisitedBlockedUserModel user) {
     UserActionBottomSheet.show(
       context,
@@ -94,17 +89,12 @@ class _VisitedUserScreenState extends State<VisitedUserScreen> {
       ],
     );
   }
-
   @override
   Widget build(BuildContext context) {
     final vm = _viewModel;
     final showInitialLoader =
         (vm.isLoading || vm.isRefreshing) && vm.users.isEmpty;
     final showEmpty = !vm.isLoading && !vm.isRefreshing && vm.users.isEmpty;
-    // final vm = _viewModel;
-    // final showInitialLoader = vm.isLoading && vm.users.isEmpty;
-    // final showEmpty = !vm.isLoading && vm.users.isEmpty;
-
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
@@ -121,12 +111,11 @@ class _VisitedUserScreenState extends State<VisitedUserScreen> {
                   color: Colors.black,
                 ),
               ),
-
               Expanded(
                 child: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16),
                   child: showInitialLoader
-                      ? const Center(child: CircularProgressIndicator())
+                      ? const Center(child: CircularProgressIndicator(color: Colors.black,))
                       : RefreshIndicator(
                           onRefresh: () => vm.fetchUsers(refresh: true),
                           child: showEmpty

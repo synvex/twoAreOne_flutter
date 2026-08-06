@@ -30,6 +30,7 @@ class _FavouriteScreenState extends State<FavouriteScreen> {
   bool _refreshing = false; // pull to refresh
   bool _hasMore = true;
   final bool _blockUserLoading = false;
+  String? _blockingUserId;
   String? _unFavoriteLoaderId; // jis card ka star loading dikhana hai
   FilterMatchModel? _selectedItem;
   @override
@@ -130,11 +131,34 @@ class _FavouriteScreenState extends State<FavouriteScreen> {
     );
   }
 
+// ── Block Profile (bottom sheet ke "Block Profile" button ke liye) ──────
+  Future<void> _onBlockPress(FilterMatchModel item) async {
+    setState(() => _blockingUserId = item.id.toString());
+    try {
+      final success = await _favServices.blockUser(item.id);
+      if (!mounted) return;
+      if (success) {
+        setState(() {
+          _data.removeWhere((e) => e.id == item.id);
+          _blockingUserId = null;
+        });
+      } else {
+        setState(() => _blockingUserId = null);
+        _showError('Failed to block this user. Please try again.');
+      }
+    } catch (e) {
+      if (!mounted) return;
+      setState(() => _blockingUserId = null);
+      _showError(e.toString());
+    }
+  }
+
   void _onMenuPress(FilterMatchModel item, int userId) {
     setState(() => _selectedItem = item);
     showCustomBottomSheet(
       context,
       onViewProfile: () {
+        Navigator.pop(context); // close the bottom sheet first
         Navigator.push(
           context,
           MaterialPageRoute(
@@ -144,10 +168,30 @@ class _FavouriteScreenState extends State<FavouriteScreen> {
         );
       },
       onBlockProfile: () {
-        // _blockUser()
+        Navigator.pop(context); // close the bottom sheet first
+        _onBlockPress(item);
       },
     );
   }
+
+  // void _onMenuPress(FilterMatchModel item, int userId) {
+  //   setState(() => _selectedItem = item);
+  //   showCustomBottomSheet(
+  //     context,
+  //     onViewProfile: () {
+  //       Navigator.push(
+  //         context,
+  //         MaterialPageRoute(
+  //           settings: RouteSettings(arguments: item),
+  //           builder: (context) => ProfileDetailsScreen(userId: userId),
+  //         ),
+  //       );
+  //     },
+  //     onBlockProfile: () {
+  //
+  //     },
+  //   );
+  // }
 
   Widget _buildEmptyState() {
     return Center(
@@ -195,7 +239,6 @@ class _FavouriteScreenState extends State<FavouriteScreen> {
         ? person.imagePath
         : 'https://www.twoareone.love/uploads/${person.imagePath}';
     final bool isUnfavoriting = _unFavoriteLoaderId == person.id.toString();
-
     return Containers(
       margin: const EdgeInsets.only(bottom: 20),
       wHeight: 220,
