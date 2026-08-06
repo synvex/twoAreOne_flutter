@@ -201,7 +201,7 @@ class SkeletonEffect {
                     height: 115,
                     padding: const EdgeInsets.all(12),
                     decoration: BoxDecoration(
-                      color: highlightColor.withOpacity(.25),
+                      color: highlightColor.withValues(alpha: .25),
                       borderRadius: const BorderRadius.only(
                         bottomLeft: Radius.circular(30),
                         bottomRight: Radius.circular(30),

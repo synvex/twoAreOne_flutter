@@ -129,7 +129,7 @@ class CustomBottomNavBar extends StatelessWidget {
                   child: Container(
                     width: screenWidth,
                     height: _kBarHeight,
-                    color: const Color(0xFF77153C).withOpacity(0.12),
+                    color: const Color(0xFF77153C).withValues(alpha: 0.12),
                   ),
                 ),
               ),
@@ -322,7 +322,7 @@ class _ShadowPainter extends CustomPainter {
     canvas.drawPath(
       path.shift(const Offset(0, -1)),
       Paint()
-        ..color = const Color(0xFF77153C).withOpacity(0.14)
+        ..color = const Color(0xFF77153C).withValues(alpha: 0.14)
         ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 4)
         ..style = PaintingStyle.fill,
     );

@@ -442,7 +442,6 @@
 //   }
 // }
 
-
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
@@ -450,7 +449,8 @@ import 'full_scre_video_page.dart';
 
 class InlineVideoPlayer extends StatefulWidget {
   final String url;
-  final String? thumbnailUrl; // thumbnail to show when `endWithThumbnail` is true
+  final String?
+  thumbnailUrl; // thumbnail to show when `endWithThumbnail` is true
   final bool showDuration; // matches RN `showDuration`
   final bool endWithThumbnail; // matches RN `endWithThumbnail`
   final bool showMuteButton;
@@ -517,8 +517,7 @@ class _InlineVideoPlayerState extends State<InlineVideoPlayer> {
 
   Future<void> _startPlayback() async {
     if (_loading || _initialized) return;
-    final cleanUrl =
-    widget.url.trim().replaceAll(RegExp(r'(?<!:)/{2,}'), '/');
+    final cleanUrl = widget.url.trim().replaceAll(RegExp(r'(?<!:)/{2,}'), '/');
 
     setState(() {
       _started = true;
@@ -533,8 +532,9 @@ class _InlineVideoPlayerState extends State<InlineVideoPlayer> {
     const maxRetries = 2;
     while (retry <= maxRetries) {
       try {
-        final controller =
-        VideoPlayerController.networkUrl(Uri.parse(cleanUrl));
+        final controller = VideoPlayerController.networkUrl(
+          Uri.parse(cleanUrl),
+        );
         _controller = controller;
         await controller.initialize().timeout(
           const Duration(seconds: 20),
@@ -579,6 +579,7 @@ class _InlineVideoPlayerState extends State<InlineVideoPlayer> {
       }
     });
   }
+
   void _togglePlay() {
     if (!_started) {
       _startPlayback();
@@ -607,6 +608,7 @@ class _InlineVideoPlayerState extends State<InlineVideoPlayer> {
       _autoHideControls();
     }
   }
+
   void _toggleMute() {
     final controller = _controller;
     if (controller == null || !_initialized) return;
@@ -615,23 +617,25 @@ class _InlineVideoPlayerState extends State<InlineVideoPlayer> {
       controller.setVolume(_isMuted ? 0 : 1);
     });
   }
+
   String _formatDuration(Duration? d) {
     if (d == null) return "00:00";
     final m = d.inMinutes.remainder(60).toString().padLeft(2, '0');
     final s = d.inSeconds.remainder(60).toString().padLeft(2, '0');
     return "$m:$s";
   }
+
   Future<void> _openFullscreen() async {
     if (_controller == null || !_initialized) return;
     await Navigator.of(context).push(
       MaterialPageRoute(
-        builder: (_) => FullscreenVideoPage(
-            controller: _controller!),
+        builder: (_) => FullscreenVideoPage(controller: _controller!),
         fullscreenDialog: true,
       ),
     );
     if (mounted) setState(() {});
   }
+
   @override
   Widget build(BuildContext context) {
     final borderRadius = widget.borderRadius ?? BorderRadius.circular(12);
@@ -642,10 +646,7 @@ class _InlineVideoPlayerState extends State<InlineVideoPlayer> {
         color: Colors.black,
         borderRadius: borderRadius,
       ),
-      child: ClipRRect(
-        borderRadius: borderRadius,
-        child: _buildContent(),
-      ),
+      child: ClipRRect(borderRadius: borderRadius, child: _buildContent()),
     );
   }
 
@@ -669,8 +670,10 @@ class _InlineVideoPlayerState extends State<InlineVideoPlayer> {
               children: const [
                 Icon(Icons.error_outline, color: Colors.white54, size: 36),
                 SizedBox(height: 6),
-                Text('Tap to retry',
-                    style: TextStyle(color: Colors.white54, fontSize: 12)),
+                Text(
+                  'Tap to retry',
+                  style: TextStyle(color: Colors.white54, fontSize: 12),
+                ),
               ],
             ),
           ),
@@ -690,7 +693,7 @@ class _InlineVideoPlayerState extends State<InlineVideoPlayer> {
               width: 56,
               height: 56,
               decoration: BoxDecoration(
-                color: Colors.black.withOpacity(0.5),
+                color: Colors.black.withValues(alpha: 0.5),
                 shape: BoxShape.circle,
               ),
               child: const Icon(
@@ -713,19 +716,21 @@ class _InlineVideoPlayerState extends State<InlineVideoPlayer> {
             Image.network(
               widget.thumbnailUrl!,
               fit: BoxFit.cover,
-              errorBuilder: (_, __, ___) => Container(
-                  color: Colors.black),
+              errorBuilder: (_, _, _) => Container(color: Colors.black),
             ),
             Center(
               child: Container(
                 width: 56,
                 height: 56,
                 decoration: BoxDecoration(
-                  color: Colors.black.withOpacity(0.5),
+                  color: Colors.black.withValues(alpha: 0.5),
                   shape: BoxShape.circle,
                 ),
-                child: const Icon(Icons.play_arrow_rounded,
-                    color: Colors.white, size: 40),
+                child: const Icon(
+                  Icons.play_arrow_rounded,
+                  color: Colors.white,
+                  size: 40,
+                ),
               ),
             ),
           ],
@@ -776,7 +781,7 @@ class _InlineVideoPlayerState extends State<InlineVideoPlayer> {
                   width: 56,
                   height: 56,
                   decoration: BoxDecoration(
-                    color: Colors.black.withOpacity(0.5),
+                    color: Colors.black.withValues(alpha: 0.5),
                     shape: BoxShape.circle,
                   ),
                   child: const Icon(
@@ -793,7 +798,7 @@ class _InlineVideoPlayerState extends State<InlineVideoPlayer> {
               right: 10,
               bottom: 10,
               child: Container(
-                color: Colors.black.withOpacity(0.45),
+                color: Colors.black.withValues(alpha: 0.45),
                 // padding:
                 // const EdgeInsets.symmetric(
                 //     horizontal: 10, vertical: 6),
@@ -864,6 +869,7 @@ class _InlineVideoPlayerState extends State<InlineVideoPlayer> {
     );
   }
 }
+
 // import 'dart:async';
 // import 'package:flutter/material.dart';
 // import 'package:video_player/video_player.dart';

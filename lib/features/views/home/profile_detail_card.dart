@@ -41,8 +41,8 @@ class ProfileDetailCard extends StatelessWidget {
         !imageUrl.endsWith('/uploads/');
 
     return InkWell(
-      splashColor: Colors.blue.withOpacity(0.3),
-      highlightColor: Colors.blue.withOpacity(0.1),
+      splashColor: Colors.blue.withValues(alpha: 0.3),
+      highlightColor: Colors.blue.withValues(alpha: 0.1),
       onTap: onPress,
       child: ClipRRect(
         borderRadius: BorderRadius.circular(40),

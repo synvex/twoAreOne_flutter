@@ -4,13 +4,10 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:two_are_one/core/constants/app_colors.dart';
 import 'package:two_are_one/core/constants/app_icons.dart';
 import 'package:two_are_one/core/widgets/app_header_widget.dart';
-import 'package:two_are_one/core/widgets/back_button.dart';
-import 'package:two_are_one/core/widgets/my_icons.dart';
 import 'package:two_are_one/core/widgets/textfield.dart';
 import 'package:two_are_one/core/widgets/texts.dart';
 import 'package:two_are_one/data/services/auth_service.dart';
 import 'package:two_are_one/core/widgets/main_button_widget.dart';
-import 'package:two_are_one/core/widgets/containers.dart';
 import 'package:two_are_one/core/widgets/failed.dart';
 import 'email_otp_verification.dart';
 
@@ -33,6 +30,7 @@ class _ForgetPasswordState extends State<ForgetPassword> {
     _emailController.dispose();
     super.dispose();
   }
+
   void _handleContinue() async {
     final email = _emailController.text.trim();
 

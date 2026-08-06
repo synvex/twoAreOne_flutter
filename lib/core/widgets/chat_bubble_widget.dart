@@ -43,7 +43,7 @@ class ChatBubble extends StatelessWidget {
                     height: 24.h,
                     width: 24.w,
                     fit: BoxFit.cover,
-                    errorBuilder: (_, __, ___) {
+                    errorBuilder: (_, _, _) {
                       return CircleAvatar(
                         radius: 12.r,
                         backgroundColor: AppColors.grayColor,

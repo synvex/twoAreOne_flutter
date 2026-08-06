@@ -29,7 +29,7 @@ class _FavouriteScreenState extends State<FavouriteScreen> {
   bool _loading = false; // pehli/subsequent page load
   bool _refreshing = false; // pull to refresh
   bool _hasMore = true;
-  bool _blockUserLoading = false;
+  final bool _blockUserLoading = false;
   String? _unFavoriteLoaderId; // jis card ka star loading dikhana hai
   FilterMatchModel? _selectedItem;
   @override
@@ -130,7 +130,7 @@ class _FavouriteScreenState extends State<FavouriteScreen> {
     );
   }
 
-  void _onMenuPress(FilterMatchModel item, int user_id) {
+  void _onMenuPress(FilterMatchModel item, int userId) {
     setState(() => _selectedItem = item);
     showCustomBottomSheet(
       context,
@@ -139,7 +139,7 @@ class _FavouriteScreenState extends State<FavouriteScreen> {
           context,
           MaterialPageRoute(
             settings: RouteSettings(arguments: item),
-            builder: (context) => ProfileDetailsScreen(userId: user_id),
+            builder: (context) => ProfileDetailsScreen(userId: userId),
           ),
         );
       },

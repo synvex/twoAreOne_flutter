@@ -172,7 +172,7 @@ class _ChatScreenState extends State<ChatScreen> {
                             height: 60.h,
                             width: 60.w,
                             fit: BoxFit.cover,
-                            errorBuilder: (_, __, ___) {
+                            errorBuilder: (_, _, _) {
                               final bgColor = RandomColorPickerUtil.getColor(
                                 widget.name.toString(),
                               );

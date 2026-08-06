@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -204,17 +203,16 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                   onTap: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) =>
-                          NoVerification()),
+                      MaterialPageRoute(builder: (context) => NoVerification()),
                     );
                     // Navigator.pushNamed(context, '/signup');
                   },
                 ),
                 SizedBox(height: 4.h),
                 MainButtonWidget(
-                  hex: AppColors.black.value,
+                  hex: AppColors.black.toARGB32(),
                   text: "Sign In",
-                  hexValue: AppColors.black.value,
+                  hexValue: AppColors.black.toARGB32(),
                   color: AppColors.black,
                   onTap: () {
                     Navigator.push(
