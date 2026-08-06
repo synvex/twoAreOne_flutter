@@ -10,7 +10,6 @@ import 'package:two_are_one/data/models/details_screen_model.dart';
 import 'package:two_are_one/data/models/user_match_model.dart';
 import 'package:two_are_one/data/models/visited_blocked_model.dart';
 import 'package:two_are_one/data/services/home_service.dart';
-import 'package:two_are_one/features/views/notification/notification_screen.dart';
 import 'package:two_are_one/features/views/report/report_screen.dart';
 import '../../../data/models/favourite_model.dart';
 import 'package:two_are_one/data/models/interested_model.dart';
@@ -57,8 +56,7 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
 
     if (args is FilterMatchModel) {
       _cardUser = args;
-    }
-    else if (args is FavouriteUserModel) {
+    } else if (args is FavouriteUserModel) {
       _cardUser = FilterMatchModel(
         id: args.id,
         name: args.fullName,
@@ -68,8 +66,7 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
         city: '',
         matchPercent: '0%',
       );
-    }
-    else if (args is InterestedUserModel) {
+    } else if (args is InterestedUserModel) {
       _cardUser = FilterMatchModel(
         id: args.id,
         name: args.fullName,
@@ -79,8 +76,7 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
         city: '',
         matchPercent: '0%',
       );
-    }
-    else if (args is VisitedBlockedUserModel) {
+    } else if (args is VisitedBlockedUserModel) {
       _cardUser = FilterMatchModel(
         id: args.profileId,
         name: args.fullName,
@@ -91,8 +87,7 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
         matchPercent: '0%',
       );
       _blocked = true;
-    }
-    else if (args is Map) {
+    } else if (args is Map) {
       final u = args['user'];
       _blocked = args['blocked'] == true;
 
@@ -172,6 +167,7 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
       setState(() => _loading = false);
     }
   }
+
   // ── utils ────────────────────────────────────────────────────────────
   String _capitalize(String? text) {
     if (text == null || text.isEmpty) return '';
@@ -244,6 +240,7 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
 
     setState(() => _chatLoading = false);
   }
+
   Future<void> _onBlockPress() async {
     final id = _userId;
     if (id == null) return;
@@ -270,6 +267,7 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
       );
     }
   }
+
   Future<void> _onLikePress() async {
     final id = _userId;
     if (id == null || _details == null) return;
@@ -286,6 +284,7 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
     }
     setState(() => _heartLoading = false);
   }
+
   Future<void> _onStarPress() async {
     final id = _userId;
     if (id == null || _details == null) return;
@@ -317,6 +316,7 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
       ],
     );
   }
+
   Widget _buildScreen(BuildContext context) {
     final details = _details;
     final screenWidth = MediaQuery.of(context).size.width;
@@ -602,6 +602,7 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
       ),
     );
   }
+
   Widget _buildFullScreenImageViewer() {
     return Scaffold(
       body: GestureDetector(
@@ -656,6 +657,7 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
       ),
     );
   }
+
   Widget _buildGetToKnowButton(ProfileDetailModel? details) {
     return GestureDetector(
       onTap: _chatLoading ? null : _handleSilentChat,
@@ -707,6 +709,7 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
       ),
     );
   }
+
   Widget _sectionTitle(String text) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 6),
@@ -720,6 +723,7 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
       ),
     );
   }
+
   Widget _infoBadge(String label, String? value) {
     return SizedBox(
       width: (MediaQuery.of(context).size.width * 0.92) / 2,

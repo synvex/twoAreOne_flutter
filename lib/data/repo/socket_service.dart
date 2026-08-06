@@ -61,8 +61,9 @@ class SocketService extends ChangeNotifier {
       _channel = channel;
       channel.ready
           .then((_) {
-            if (_channel != channel)
+            if (_channel != channel) {
               return; // superseded by a newer connect/disconnect
+            }
             channel.sink.add(jsonEncode({'action': 'auth', 'token': _token}));
             _isConnected = true;
             notifyListeners();

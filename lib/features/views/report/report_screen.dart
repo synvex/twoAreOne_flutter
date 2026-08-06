@@ -19,7 +19,7 @@ class ReportScreen extends StatefulWidget {
 }
 
 class _ReportScreenState extends State<ReportScreen> {
-  bool _isLoading = false;
+  final bool _isLoading = false;
 
   final TextEditingController commentController = TextEditingController();
 
