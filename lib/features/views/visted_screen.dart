@@ -98,8 +98,12 @@ class _VisitedUserScreenState extends State<VisitedUserScreen> {
   @override
   Widget build(BuildContext context) {
     final vm = _viewModel;
-    final showInitialLoader = vm.isLoading && vm.users.isEmpty;
-    final showEmpty = !vm.isLoading && vm.users.isEmpty;
+    final showInitialLoader =
+        (vm.isLoading || vm.isRefreshing) && vm.users.isEmpty;
+    final showEmpty = !vm.isLoading && !vm.isRefreshing && vm.users.isEmpty;
+    // final vm = _viewModel;
+    // final showInitialLoader = vm.isLoading && vm.users.isEmpty;
+    // final showEmpty = !vm.isLoading && vm.users.isEmpty;
 
     return Scaffold(
       backgroundColor: Colors.white,
