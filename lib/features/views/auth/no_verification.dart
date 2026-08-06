@@ -11,7 +11,6 @@ import 'package:two_are_one/core/widgets/main_button_widget.dart';
 import 'package:two_are_one/core/widgets/textfield.dart';
 import 'package:two_are_one/core/widgets/texts.dart';
 import 'package:two_are_one/data/services/auth_service.dart';
-
 import 'no_otp_verification.dart';
 
 class NoVerification extends StatefulWidget {
