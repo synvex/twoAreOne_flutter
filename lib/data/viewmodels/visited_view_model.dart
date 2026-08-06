@@ -77,8 +77,7 @@ class VisitedUserViewModel extends ChangeNotifier {
       } else {
         error = res['error']?.toString() ?? "Failed to load visited users";
       }
-    } catch (e)
-    {
+    } catch (e) {
       debugPrint("fetchUsers Error: $e");
       error = "Connection error. Please try again.";
     }
@@ -138,6 +137,7 @@ class VisitedUserViewModel extends ChangeNotifier {
     return false;
   }
 }
+
 // class VisitedUserViewModel extends ChangeNotifier {
 //   final UserRelationsService _service = UserRelationsService();
 //

@@ -10,6 +10,7 @@ import 'package:two_are_one/data/services/presense_service.dart';
 import 'package:two_are_one/data/viewmodels/chat_viewmodel.dart';
 import 'package:two_are_one/data/viewmodels/notification_view_model.dart';
 import 'package:two_are_one/data/viewmodels/report_viewmodel.dart';
+import 'package:two_are_one/data/viewmodels/visited_view_model.dart';
 import 'package:two_are_one/features/provider/password_visibility_provider.dart';
 import 'package:two_are_one/features/views/Interested/interrested_user_screen.dart';
 import 'package:two_are_one/features/views/Settings/settings_screen.dart';
@@ -34,6 +35,7 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
+
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
   runApp(
@@ -42,6 +44,7 @@ void main() async {
         ChangeNotifierProvider(create: (_) => ChatViewModel()),
         ChangeNotifierProvider(create: (_) => NotificationViewModel()),
         ChangeNotifierProvider(create: (_) => ReportViewModel()),
+        ChangeNotifierProvider(create: (_) => VisitedUserViewModel()),
 
         ChangeNotifierProvider(create: (_) => PresenceService()..connect()),
         // .value, not create: - this must be the same instance ApiManager
