@@ -7,7 +7,8 @@ class FavouriteServices {
   Future<List<FavouriteUserModel>> fetchFavouritedYou({
     required int page,
     required int perPage,
-  }) async {
+  })
+  async {
     final result = await _apiManager.fetch(
       Api(url: 'user/favourites/you-fav.php', method: 'GET'),
       {'page': page, 'per_page': perPage},
