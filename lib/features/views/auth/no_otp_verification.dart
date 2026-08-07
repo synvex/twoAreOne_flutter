@@ -25,6 +25,7 @@ class NoOtpVerification extends StatefulWidget {
   @override
   State<NoOtpVerification> createState() => _NoOtpVerificationState();
 }
+
 class _NoOtpVerificationState extends State<NoOtpVerification> {
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
   final AuthService _authService = AuthService();
@@ -91,8 +92,10 @@ class _NoOtpVerificationState extends State<NoOtpVerification> {
       );
     } on FirebaseAuthException catch (e) {
       setState(() => _errorMessage = "Invalid OTP");
+      debugPrint(e.message);
     } catch (e) {
       setState(() => _errorMessage = "An unexpected error occurred");
+      debugPrint(e.toString());
     } finally {
       if (mounted) setState(() => _isLoading = false);
     }
@@ -100,7 +103,6 @@ class _NoOtpVerificationState extends State<NoOtpVerification> {
   void _resendOtp() async {
     if (!_canResend) return;
     setState(() => _isLoading = true);
-
     await _authService.verifyPhoneNumber(
       phoneNumber: widget.phoneNumber,
       onCodeSent: (newVerificationId) {
@@ -114,7 +116,8 @@ class _NoOtpVerificationState extends State<NoOtpVerification> {
       onVerificationFailed: (e) {
         if (!mounted) return;
         setState(() => _isLoading = false);
-        setState(() => _errorMessage = e.message ?? "Failed to resend OTP");
+        setState(() => _errorMessage = "Failed to resend OTP");
+        debugPrint(e.message);
       },
     );
   }
@@ -188,7 +191,7 @@ class _NoOtpVerificationState extends State<NoOtpVerification> {
                         size: 13,
                         fontWeight: FontWeight.w500,
                       ),
-                      SizedBox(height: 40.h),
+                      SizedBox(height: 20.h),
                       CircleField(controller: _otpController),
                       SizedBox(height: 25.h),
                       if (_errorMessage != null)
@@ -198,7 +201,7 @@ class _NoOtpVerificationState extends State<NoOtpVerification> {
                           size: 13,
                           fontWeight: FontWeight.w500,
                         ),
-                      SizedBox(height: 25.h),
+                      SizedBox(height: 20.h),
                       Texts(
                         text:
                             "00:${_secondsRemaining.toString().padLeft(2, '0')}",

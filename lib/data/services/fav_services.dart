@@ -9,7 +9,8 @@ class FavServices {
   Future<List<FilterMatchModel>> getFavouritedList({
     int page = 1,
     int perPage = 10,
-  }) async {
+  }) async
+  {
     final res = await _api.fetch(
       Api(url: "user/user-favourites.php", method: "GET"),
       {
@@ -30,7 +31,8 @@ class FavServices {
   Future<List<FilterMatchModel>> getYouFavList({
     int page = 1,
     int perPage = 10,
-  }) async {
+  }) async
+  {
     final res = await _api.fetch(
       Api(url: "user/favourites/you-fav.php", method: "GET"),
       {
@@ -77,6 +79,18 @@ class FavServices {
   Future<bool> removeFavourite({required String profileUserId}) async {
     final res = await _api.fetch(
       Api(url: "user/user-unfavourite.php", method: "POST"),
+      {
+        "profile_user_id": profileUserId,
+      },
+    );
+
+    return res['success'] == true || res['error'] == false;
+  }
+  // ── POST /user/user-add-block-profile.php ───────────────────────────────
+// Kisi profile ko block karna (favorites list se bhi hata dena chahiye)
+  Future<bool> blockUser(int profileUserId) async {
+    final res = await _api.fetch(
+      Api(url: "user/user-add-block-profile.php", method: "POST"),
       {
         "profile_user_id": profileUserId,
       },
