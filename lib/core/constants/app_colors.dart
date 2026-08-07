@@ -41,4 +41,5 @@ class AppColors {
 
   // onboarding screen
   static const Color onboardingCircleBlue = Color(0xFF7EA3CC);
+  static const Color weightColor = Color(0xFF1B63B1);
 }

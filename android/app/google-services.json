@@ -7,9 +7,9 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:525365788008:android:3af3f26952898022152add",
+        "mobilesdk_app_id": "1:525365788008:android:fdb44c6bf2119c25152add",
         "android_client_info": {
-          "package_name": "com.example.two_are_one"
+          "package_name": "com.twoAreOne.app"
         }
       },
       "oauth_client": [],
@@ -26,9 +26,9 @@
     },
     {
       "client_info": {
-        "mobilesdk_app_id": "1:525365788008:android:fdb44c6bf2119c25152add",
+        "mobilesdk_app_id": "1:525365788008:android:745f45ce5afb8482152add",
         "android_client_info": {
-          "package_name": "com.twoAreOne.app"
+          "package_name": "com.twoareone.llc"
         }
       },
       "oauth_client": [],

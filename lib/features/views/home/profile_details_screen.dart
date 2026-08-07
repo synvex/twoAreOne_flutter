@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:provider/provider.dart';
 import 'package:two_are_one/core/widgets/app_header_widget.dart';
 import 'package:two_are_one/core/widgets/image.dart';
 import 'package:two_are_one/core/widgets/texts.dart';
@@ -9,9 +10,10 @@ import 'package:two_are_one/data/models/details_screen_model.dart';
 import 'package:two_are_one/data/models/user_match_model.dart';
 import 'package:two_are_one/data/models/visited_blocked_model.dart';
 import 'package:two_are_one/data/services/home_service.dart';
-import 'package:two_are_one/features/views/notification/notification_screen.dart';
+import 'package:two_are_one/features/views/report/report_screen.dart';
 import '../../../data/models/favourite_model.dart';
 import 'package:two_are_one/data/models/interested_model.dart';
+import '../../../data/repo/socket_service.dart';
 import 'category_questions_screen.dart';
 import 'inline_video_player.dart';
 import 'profile_detail_card.dart';
@@ -128,6 +130,7 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
     _visitedUser();
     _getUserDetails();
   }
+
   int? get _userId => _details?.userId ?? _cardUser?.id;
   // ── API ──────────────────────────────────────────────────────────────
   Future<void> _visitedUser() async {
@@ -140,6 +143,7 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
     final res = await _homeService.addVisitedUser(id);
     debugPrint("visited/add.php -> $res");
   }
+
   Future<void> _getUserDetails() async {
     final id = _cardUser?.id ?? widget.userId;
     if (id == null) {
@@ -158,10 +162,12 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
         );
         _loading = false;
       });
+      debugPrint("RAW API DATA: ${res['data']}");
     } else {
       setState(() => _loading = false);
     }
   }
+
   // ── utils ────────────────────────────────────────────────────────────
   String _capitalize(String? text) {
     if (text == null || text.isEmpty) return '';
@@ -172,19 +178,27 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
     if (path == null || path.isEmpty) return '';
     return path.startsWith('http') ? path : '$kProfileUploadImagesBase$path';
   }
+
   String get _truncatedBio {
     final bio = _details?.bio ?? '';
     return bio.length > 200 ? bio.substring(0, 200) : bio;
   }
+
   // ── actions ──────────────────────────────────────────────────────────
   void _handleSilentChat() {
     if (_chatLoading) return;
-    final id = (_userId ?? 0).toString();
+
+    // 1. Get the target user ID
+    final targetUserId = _userId;
+    if (targetUserId == null) return;
+
+    final idStr = targetUserId.toString();
     final now = DateTime.now();
 
-    if (_chatCooldowns.containsKey(id) &&
-        now.difference(_chatCooldowns[id]!).inSeconds < 60) {
-      final left = 60 - now.difference(_chatCooldowns[id]!).inSeconds;
+    // 2. Cooldown check (prevent spamming)
+    if (_chatCooldowns.containsKey(idStr) &&
+        now.difference(_chatCooldowns[idStr]!).inSeconds < 60) {
+      final left = 60 - now.difference(_chatCooldowns[idStr]!).inSeconds;
       TopToast.show(
         context,
         title: "Please wait",
@@ -193,21 +207,40 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
       );
       return;
     }
-    _chatCooldowns[id] = now;
 
     setState(() => _chatLoading = true);
-    // TODO: wire actual socket sendMessage() call here (RN: useChatSocket).
-    Future.delayed(const Duration(milliseconds: 1500), () {
-      if (!mounted) return;
-      setState(() => _chatLoading = false);
+
+    // 3. Send the message via SocketService
+    // We use context.read because this is a one-time action (callback)
+    final sent = context.read<SocketService>().sendMessage({
+      'action': 'send_message',
+      'to': targetUserId,
+      'text': "Let's Get To Know Each Other",
+    });
+
+    // 4. Handle result
+    if (sent) {
+      _chatCooldowns[idStr] = now;
       TopToast.show(
         context,
         title: "Invite sent!",
         message: "Your message has been delivered.",
         type: ToastType.success,
       );
-    });
+    } else {
+      TopToast.show(
+        context,
+        title: "Couldn't send invite",
+        message: "Please check your connection and try again.",
+        type: ToastType.error,
+      );
+      // Optional: Attempt to reconnect if socket is down
+      context.read<SocketService>().reconnect();
+    }
+
+    setState(() => _chatLoading = false);
   }
+
   Future<void> _onBlockPress() async {
     final id = _userId;
     if (id == null) return;
@@ -234,6 +267,7 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
       );
     }
   }
+
   Future<void> _onLikePress() async {
     final id = _userId;
     if (id == null || _details == null) return;
@@ -250,6 +284,7 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
     }
     setState(() => _heartLoading = false);
   }
+
   Future<void> _onStarPress() async {
     final id = _userId;
     if (id == null || _details == null) return;
@@ -277,10 +312,11 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
     return Stack(
       children: [
         _buildScreen(context),
-        if (_selectedImage != null)_buildFullScreenImageViewer(),
+        if (_selectedImage != null) _buildFullScreenImageViewer(),
       ],
     );
   }
+
   Widget _buildScreen(BuildContext context) {
     final details = _details;
     final screenWidth = MediaQuery.of(context).size.width;
@@ -300,7 +336,8 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => const NotificationScreen(),
+                        builder: (context) =>
+                            ReportScreen(reportId: details!.userId),
                       ),
                     );
                   },
@@ -309,10 +346,10 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
                     wHeight: 45,
                     shape: BoxShape.circle,
                     hexValue: 0xFFFFFFFF,
-                    border:  Border.all(color: Colors.black12),
+                    border: Border.all(color: Colors.black12),
                     alignment: Alignment.center,
                     child: const Images(
-                      imageStr: "assets/svg_images/notification.svg",
+                      imageStr: "assets/svg_images/report.svg",
                     ),
                   ),
                 ),
@@ -565,6 +602,7 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
       ),
     );
   }
+
   Widget _buildFullScreenImageViewer() {
     return Scaffold(
       body: GestureDetector(

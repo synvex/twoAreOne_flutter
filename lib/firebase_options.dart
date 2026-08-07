@@ -48,18 +48,18 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions android = FirebaseOptions(
     apiKey: 'AIzaSyDROQ8RTiKhmgjRFI5inqYv0F_ZdzfcAVA',
-    appId: '1:525365788008:android:3af3f26952898022152add',
+    appId: '1:525365788008:android:745f45ce5afb8482152add',
     messagingSenderId: '525365788008',
     projectId: 'two-are-one-llc-36899',
     storageBucket: 'two-are-one-llc-36899.firebasestorage.app',
   );
   static const FirebaseOptions ios = FirebaseOptions(
     apiKey: 'AIzaSyCUFpVi8oic4AUrJxqMQYEbzU3KI4ARTRw',
-    appId: '1:525365788008:ios:4ad35551b3840474152add',
+    appId: '1:525365788008:ios:c7f13ab6e8f36699152add',
     messagingSenderId: '525365788008',
     projectId: 'two-are-one-llc-36899',
     storageBucket: 'two-are-one-llc-36899.firebasestorage.app',
-    iosBundleId: 'com.example.twoAreOne.app',
+    iosBundleId: 'com.twoareone.llc',
   );
   static const FirebaseOptions web = FirebaseOptions(
     apiKey: 'AIzaSyDriHKUxp5U66IiOUyHM4mkh9GuWfEs8aE',

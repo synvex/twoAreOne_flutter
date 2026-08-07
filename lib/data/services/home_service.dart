@@ -45,7 +45,6 @@ class HomeService {
     );
     return res['success'] == true;
   }
-
   Future<bool> blockUser(int id) async {
     final res = await _api.fetch(
       Api(url: "user/user-add-block-profile.php", method: "POST"), // ✅ was user-block.php
@@ -65,7 +64,6 @@ class HomeService {
       {"user_id": userId},
     );
   }
-  // Matches RN AddUserVisitedService: POST user/visited/add.php
   Future<Map<String, dynamic>> addVisitedUser(int userId) async {
     return await _api.fetch(
       Api(url: "user/visited/add.php", method: "POST"),
@@ -95,7 +93,7 @@ class HomeService {
 
     if (profilePicturePath != null)   {
       formData.files.add(MapEntry(
-        'profile_picture', // ✅ must match RN field name
+        'profile_picture',
         await MultipartFile.fromFile(profilePicturePath),
       ));
     }

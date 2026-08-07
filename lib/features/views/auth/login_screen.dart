@@ -14,9 +14,7 @@ import 'package:two_are_one/data/services/auth_service.dart';
 import 'package:two_are_one/core/widgets/main_button_widget.dart';
 import 'package:two_are_one/core/widgets/failed.dart';
 import 'package:two_are_one/features/views/auth/onboarding.dart';
-import 'package:two_are_one/features/views/bottom_nav/custom_nav_bar.dart';
 import 'package:two_are_one/features/views/auth/forget_password.dart';
-
 import '../../../core/routes/flow_router.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -30,9 +28,7 @@ class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final AuthService _authService = AuthService();
-  late final bool isLandscape =
-      MediaQuery.of(context).orientation == Orientation.landscape;
-
+  late final bool isLandscape = MediaQuery.of(context).orientation == Orientation.landscape;
   bool _isLoading = false;
   bool _obscurePassword = true;
   String? _emailError;
@@ -47,14 +43,12 @@ class _LoginScreenState extends State<LoginScreen> {
       () => setState(() => _passwordError = null),
     );
   }
-
   @override
   void dispose() {
     _emailController.dispose();
     _passwordController.dispose();
     super.dispose();
   }
-
   void _handleLogin() async {
     final email = _emailController.text.trim();
     final password = _passwordController.text.trim();
@@ -191,7 +185,6 @@ class _LoginScreenState extends State<LoginScreen> {
       if (mounted) setState(() => _isLoading = false);
     }
   }
-
   String? _validateEmail(String email) {
     if (email.isEmpty) return "Email is required";
 
@@ -202,12 +195,10 @@ class _LoginScreenState extends State<LoginScreen> {
 
     return null; // valid
   }
-
   String? _validatePassword(String password) {
     if (password.isEmpty) return "Password is required";
     return null; // valid
   }
-
   void _showErrorDialog(String message) {
     showDialog(
       context: context,
@@ -294,7 +285,6 @@ class _LoginScreenState extends State<LoginScreen> {
                   fontWeight: FontWeight.w500,
                 ),
               ),
-
               SizedBox(height: 12.h),
               Text(
                 "Reconnect with your matches and\nexplore exciting new connections.",
@@ -305,7 +295,6 @@ class _LoginScreenState extends State<LoginScreen> {
                   color: AppColors.primaryText,
                 ),
               ),
-
               SizedBox(height: 35.h),
               // Email Section
               const Align(
@@ -366,7 +355,6 @@ class _LoginScreenState extends State<LoginScreen> {
                 },
               ),
               SizedBox(height: 16.h),
-
               if (_passwordError != null)
                 Align(
                   alignment: Alignment.centerLeft,
@@ -380,7 +368,6 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                   ),
                 ),
-              // Checkbox and Forget Password Row
               Align(
                 alignment: Alignment.centerRight,
                 child: GestureDetector(

@@ -9,6 +9,8 @@ import 'package:two_are_one/data/repo/socket_service.dart';
 import 'package:two_are_one/data/services/presense_service.dart';
 import 'package:two_are_one/data/viewmodels/chat_viewmodel.dart';
 import 'package:two_are_one/data/viewmodels/notification_view_model.dart';
+import 'package:two_are_one/data/viewmodels/report_viewmodel.dart';
+import 'package:two_are_one/data/viewmodels/visited_view_model.dart';
 import 'package:two_are_one/features/provider/password_visibility_provider.dart';
 import 'package:two_are_one/features/views/Interested/interrested_user_screen.dart';
 import 'package:two_are_one/features/views/Settings/settings_screen.dart';
@@ -17,6 +19,7 @@ import 'package:two_are_one/features/views/home/profile_details_screen.dart';
 import 'package:two_are_one/features/views/profile/edit_profile_screen.dart';
 import 'core/routes/flow_router.dart';
 import 'core/routes/routes.dart';
+import 'data/viewmodels/user_stats_view_model.dart';
 import 'features/views/Blocked/blocked_screen.dart';
 import 'features/views/Settings/add_new_email_screen.dart';
 import 'features/views/Settings/change_email_otp_screen.dart';
@@ -33,6 +36,7 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
+
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
   runApp(
@@ -40,13 +44,11 @@ void main() async {
       providers: [
         ChangeNotifierProvider(create: (_) => ChatViewModel()),
         ChangeNotifierProvider(create: (_) => NotificationViewModel()),
-
+        ChangeNotifierProvider(create: (_) => ReportViewModel()),
+        ChangeNotifierProvider(create: (_) => VisitedUserViewModel()),
+        ChangeNotifierProvider(create: (_) => UserStatsViewModel()),
         ChangeNotifierProvider(create: (_) => PresenceService()..connect()),
-        // .value, not create: - this must be the same instance ApiManager
-        // drives via SocketService.instance, so widgets that watch it
         ChangeNotifierProvider(create: (_) => PasswordVisibilityProvider()),
-
-        // (e.g. online-status dots) see the real connection state.
         ChangeNotifierProvider.value(value: SocketService.instance),
       ],
 
@@ -139,6 +141,7 @@ class MyApp extends StatelessWidget {
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return const Scaffold(
+                backgroundColor: Colors.white,
                 body: Center(child: CircularProgressIndicator()),
               );
             }

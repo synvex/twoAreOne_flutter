@@ -29,11 +29,10 @@ class SelectionCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Color displayColor = isSelected ? Color(0xFFC8375E) : const Color(0xFFCDCDCD);
-    double width = MediaQuery.sizeOf(context).width;
     return GestureDetector(
       onTap: onTap,
       child: Containers(
-        wHeight: 65,
+        wHeight: 60,
         wWidth: double.infinity,
         border: Border.all(
           color: isSelected ? Color(0xFFC8375E) : Colors.grey.shade200,
@@ -47,9 +46,9 @@ class SelectionCard extends StatelessWidget {
             const SizedBox(width: 15),
             // Left icon circle
             Containers(
-              padding: EdgeInsets.all(7),
-              wWidth: 38,
-              wHeight: 38,
+              padding: EdgeInsets.all(8),
+              wWidth: 36,
+              wHeight: 36,
                 hexValue: leftCircleColor,
                 shape: BoxShape.circle,
               child: Images(imageStr: leftIcon),
@@ -57,8 +56,8 @@ class SelectionCard extends StatelessWidget {
             // Right icon circle — slightly overlapping
             const SizedBox(width: 4),
             Containers(
-                wWidth: 38,
-                wHeight: 38,
+                wWidth: 36,
+                wHeight: 36,
                   padding: EdgeInsets.all(8),
                   hexValue: rightCircleColor,
                   shape: BoxShape.circle,
@@ -71,10 +70,9 @@ class SelectionCard extends StatelessWidget {
                 text: label,
                 size: 14,
                 colorHexValue: isSelected ? 0xFFC8375E : 0xFF000000,
-                fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
+                fontWeight: isSelected ? FontWeight.w500 : FontWeight.w400,
               ),
             ),
-            const Spacer(),
             MyIcons(
                 iconData: isSelected ? Icons.radio_button_checked : Icons.radio_button_off,
               color: displayColor,

@@ -7,6 +7,7 @@ class AppHeader extends StatelessWidget implements PreferredSizeWidget {
   final VoidCallback onBackPressed;
   final Widget? trailing;
   final Widget? leadingIcon;
+  final Color? color;
 
   const AppHeader({
     super.key,
@@ -14,6 +15,7 @@ class AppHeader extends StatelessWidget implements PreferredSizeWidget {
     required this.onBackPressed,
     this.trailing,
     this.leadingIcon,
+    this.color,
   });
 
   @override
@@ -22,7 +24,7 @@ class AppHeader extends StatelessWidget implements PreferredSizeWidget {
       padding: const EdgeInsets.only(left: 16, top: 25, bottom: 18),
       margin: const EdgeInsets.symmetric(vertical: 16), //
       decoration: BoxDecoration(
-        color: AppColors.headerBackground,
+        color: color ?? AppColors.headerBackground,
         border: Border(
           bottom: BorderSide(
             color: Color(0xFF000000).withValues(alpha: 0.8),

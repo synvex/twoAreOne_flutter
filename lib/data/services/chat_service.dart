@@ -33,14 +33,10 @@ class ChatService {
 
       if (response.statusCode == 200) {
         final data = response.data;
-        print("✅ Fetched ${data['data'].length} chat members successfully.");
-        print("✅ Fetched chat history for receiverId $data");
-
         return (data['data'] as List)
             .map((e) => ChatHistoryModel.fromJson(e))
             .toList();
       } else {
-        print("**************************");
         throw Exception("Failed to fetch chat members: ${response.statusCode}");
       }
     } catch (e) {
@@ -48,10 +44,6 @@ class ChatService {
       rethrow;
     }
   }
-
-  // ============================================================
-  // GET CHAT MEMBERS
-  // ============================================================
 
   Future<List<ChatMemberModel>> fetchChatMembers() async {
     try {
@@ -62,8 +54,6 @@ class ChatService {
 
       if (response.statusCode == 200) {
         final data = response.data;
-        print("✅ Fetched ${data['data'].length} chat members successfully.");
-
         return (data['data'] as List)
             .map((e) => ChatMemberModel.fromJson(e))
             .toList();
@@ -76,41 +66,8 @@ class ChatService {
     }
   }
 
-  // ============================================================
-  // SEND MESSAGE
-  // ============================================================
-
-  Future<Map<String, dynamic>> sendMessage({
-    required int receiverId,
-    required String message,
-  }) async {
-    try {
-      final response = await _dio.post(
-        "$baseUrl/user/messages/send.php",
-        options: Options(headers: await _headers()),
-        data: {"receiver_id": receiverId, "message": message},
-      );
-
-      print("******************************");
-      print("Send Message Response: ${response.data}");
-      print(response);
-
-      final data = response.data;
-
-      if (data is Map<String, dynamic>) {
-        return data;
-      }
-
-      return {};
-    } catch (e) {
-      debugPrint("❌ sendMessage Error: $e");
-      rethrow;
-    }
-  }
-
-  // ============================================================
-  // MARK MESSAGE READ
-  // ============================================================
+  // sendMessage() removed — sending now goes through SocketService
+  // ({"action": "send_message", ...}), matching RN's active send path.
 
   Future<Map<String, dynamic>> markMessagesRead({
     required int partnerId,
@@ -122,14 +79,10 @@ class ChatService {
         data: {"partner_id": partnerId},
       );
 
-      print(response);
-
       final data = response.data;
-
       if (data is Map<String, dynamic>) {
         return data;
       }
-
       return {};
     } catch (e) {
       debugPrint("❌ markMessagesRead Error: $e");
