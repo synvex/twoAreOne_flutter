@@ -87,9 +87,9 @@ class _BlockedUserScreenState extends State<BlockedUserScreen> {
   @override
   Widget build(BuildContext context) {
     final vm = _viewModel;
-    final showInitialLoader = vm.isLoading && vm.users.isEmpty;
-    final showEmpty = !vm.isLoading && vm.users.isEmpty;
-
+    final showInitialLoader =
+    (vm.isLoading || vm.isRefreshing) && vm.users.isEmpty;
+    final showEmpty = !vm.isLoading && !vm.isRefreshing && vm.users.isEmpty;
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
@@ -106,12 +106,11 @@ class _BlockedUserScreenState extends State<BlockedUserScreen> {
                 ),
                 isTrailing: false,
               ),
-
               Expanded(
                 child: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16),
                   child: showInitialLoader
-                      ? const Center(child: CircularProgressIndicator())
+                      ? const Center(child: CircularProgressIndicator(color: Colors.black,))
                       : RefreshIndicator(
                           onRefresh: () => vm.fetchUsers(refresh: true),
                           child: showEmpty

@@ -19,6 +19,7 @@ import 'package:two_are_one/features/views/home/profile_details_screen.dart';
 import 'package:two_are_one/features/views/profile/edit_profile_screen.dart';
 import 'core/routes/flow_router.dart';
 import 'core/routes/routes.dart';
+import 'data/viewmodels/user_stats_view_model.dart';
 import 'features/views/Blocked/blocked_screen.dart';
 import 'features/views/Settings/add_new_email_screen.dart';
 import 'features/views/Settings/change_email_otp_screen.dart';
@@ -45,13 +46,9 @@ void main() async {
         ChangeNotifierProvider(create: (_) => NotificationViewModel()),
         ChangeNotifierProvider(create: (_) => ReportViewModel()),
         ChangeNotifierProvider(create: (_) => VisitedUserViewModel()),
-
+        ChangeNotifierProvider(create: (_) => UserStatsViewModel()),
         ChangeNotifierProvider(create: (_) => PresenceService()..connect()),
-        // .value, not create: - this must be the same instance ApiManager
-        // drives via SocketService.instance, so widgets that watch it
         ChangeNotifierProvider(create: (_) => PasswordVisibilityProvider()),
-
-        // (e.g. online-status dots) see the real connection state.
         ChangeNotifierProvider.value(value: SocketService.instance),
       ],
 

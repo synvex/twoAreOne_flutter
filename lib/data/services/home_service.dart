@@ -45,7 +45,6 @@ class HomeService {
     );
     return res['success'] == true;
   }
-
   Future<bool> blockUser(int id) async {
     final res = await _api.fetch(
       Api(url: "user/user-add-block-profile.php", method: "POST"), // ✅ was user-block.php
