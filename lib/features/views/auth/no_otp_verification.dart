@@ -92,8 +92,10 @@ class _NoOtpVerificationState extends State<NoOtpVerification> {
       );
     } on FirebaseAuthException catch (e) {
       setState(() => _errorMessage = "Invalid OTP");
+      debugPrint(e.message);
     } catch (e) {
       setState(() => _errorMessage = "An unexpected error occurred");
+      debugPrint(e.toString());
     } finally {
       if (mounted) setState(() => _isLoading = false);
     }
@@ -101,7 +103,6 @@ class _NoOtpVerificationState extends State<NoOtpVerification> {
   void _resendOtp() async {
     if (!_canResend) return;
     setState(() => _isLoading = true);
-
     await _authService.verifyPhoneNumber(
       phoneNumber: widget.phoneNumber,
       onCodeSent: (newVerificationId) {
@@ -115,7 +116,8 @@ class _NoOtpVerificationState extends State<NoOtpVerification> {
       onVerificationFailed: (e) {
         if (!mounted) return;
         setState(() => _isLoading = false);
-        setState(() => _errorMessage = e.message ?? "Failed to resend OTP");
+        setState(() => _errorMessage = "Failed to resend OTP");
+        debugPrint(e.message);
       },
     );
   }
