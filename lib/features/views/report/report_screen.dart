@@ -146,7 +146,8 @@ class _ReportScreenState extends State<ReportScreen> {
                                   });
                                 },
                                 activeColor: const Color(0xffD61E6E),
-                                controlAffinity: ListTileControlAffinity.leading,
+                                controlAffinity:
+                                    ListTileControlAffinity.leading,
                                 contentPadding: EdgeInsets.symmetric(
                                   horizontal: 8.w,
                                 ),

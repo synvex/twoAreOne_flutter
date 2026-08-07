@@ -11,4 +11,6 @@ class AppIcons {
   static const String send_file = 'assets/svg_images/send_file.svg';
   static const String send_msg = 'assets/svg_images/send_msg.svg';
   static const String notification = "assets/svg_images/notification.svg";
+  static const String profileIcon =
+      "assets/svg_images/Favorite/viewProfile.svg";
 }
