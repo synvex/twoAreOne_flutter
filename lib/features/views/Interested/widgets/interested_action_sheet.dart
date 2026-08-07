@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
+import 'package:two_are_one/core/constants/app_icons.dart';
 import '../../../../data/viewmodels/interested_view_model.dart';
 import 'bottom_sheet_menu_item.dart';
+
 class InterestedActionSheet extends StatelessWidget {
   final VoidCallback onViewProfile;
 
@@ -17,7 +20,7 @@ class InterestedActionSheet extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               BottomSheetMenuItem(
-                icon: const Icon(Icons.person_outline, size: 24),
+                icon: SvgPicture.asset(AppIcons.profileIcon),
                 label: 'View Profile',
                 onPressed: onViewProfile,
               ),
