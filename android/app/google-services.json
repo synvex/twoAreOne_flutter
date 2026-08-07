@@ -1,48 +1,48 @@
 {
-    "project_info": {
-        "project_number": "525365788008",
-        "project_id": "two-are-one-llc-36899",
-        "storage_bucket": "two-are-one-llc-36899.firebasestorage.app"
-    },
-    "client": [
-        {
-            "client_info": {
-                "mobilesdk_app_id": "1:525365788008:android:fdb44c6bf2119c25152add",
-                "android_client_info": {
-                    "package_name": "com.twoAreOne.app"
-                }
-            },
-            "oauth_client": [],
-            "api_key": [
-                {
-                    "current_key": "AIzaSyDROQ8RTiKhmgjRFI5inqYv0F_ZdzfcAVA"
-                }
-            ],
-            "services": {
-                "appinvite_service": {
-                    "other_platform_oauth_client": []
-                }
-            }
-        },
-        {
-            "client_info": {
-                "mobilesdk_app_id": "1:525365788008:android:745f45ce5afb8482152add",
-                "android_client_info": {
-                    "package_name": "com.twoareone.llc"
-                }
-            },
-            "oauth_client": [],
-            "api_key": [
-                {
-                    "current_key": "AIzaSyDROQ8RTiKhmgjRFI5inqYv0F_ZdzfcAVA"
-                }
-            ],
-            "services": {
-                "appinvite_service": {
-                    "other_platform_oauth_client": []
-                }
-            }
+  "project_info": {
+    "project_number": "525365788008",
+    "project_id": "two-are-one-llc-36899",
+    "storage_bucket": "two-are-one-llc-36899.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:525365788008:android:fdb44c6bf2119c25152add",
+        "android_client_info": {
+          "package_name": "com.twoAreOne.app"
         }
-    ],
-    "configuration_version": "1"
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDROQ8RTiKhmgjRFI5inqYv0F_ZdzfcAVA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:525365788008:android:745f45ce5afb8482152add",
+        "android_client_info": {
+          "package_name": "com.twoareone.llc"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDROQ8RTiKhmgjRFI5inqYv0F_ZdzfcAVA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
 }
