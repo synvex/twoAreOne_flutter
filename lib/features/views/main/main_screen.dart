@@ -7,31 +7,25 @@ import 'package:two_are_one/core/widgets/selection_card.dart';
 import 'package:two_are_one/core/widgets/texts.dart';
 import 'package:two_are_one/data/models/user_profile_model.dart';
 import 'package:two_are_one/data/services/auth_service.dart';
-
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
-
   @override
   State<MainScreen> createState() => _MainScreenState();
 }
-
 class _MainScreenState extends State<MainScreen> {
   int _selectedIndex = -1;
   bool _isLoading = false;
-
   final AuthService _authService = AuthService();
-
   final List<UserPreference> _preferences = const [
     UserPreference(gender: "male", lookingFor: "female"),
     UserPreference(gender: "female", lookingFor: "male"),
     UserPreference(gender: "male", lookingFor: "male"),
     UserPreference(gender: "female", lookingFor: "female"),
   ];
-
   final List<Map<String, dynamic>> _options = const [
     {
       'label': 'Male seeking female',
-      'leftIcon': 'assets/svg_images/user2.svg',
+      'leftIcon': 'assets/svg_images/user_img.svg',
       'rightIcon': 'assets/svg_images/Frame.svg',
       'leftColor': 0xFF1B63B1,
       'rightColor': 0xFF77153C,
@@ -39,14 +33,15 @@ class _MainScreenState extends State<MainScreen> {
     {
       'label': 'Female seeking male',
       'leftIcon': 'assets/svg_images/Frame.svg',
-      'rightIcon': 'assets/svg_images/user2.svg',
+      'rightIcon': 'assets/svg_images/user_img.svg',
+      // 'assets/svg_images/user2.svg',
       'leftColor': 0xFF77153C,
       'rightColor': 0xFF1B63B1,
     },
     {
       'label': 'Male seeking male',
-      'leftIcon': 'assets/svg_images/user2.svg',
-      'rightIcon': 'assets/svg_images/user2.svg',
+      'leftIcon': 'assets/svg_images/user_img.svg',
+      'rightIcon': 'assets/svg_images/user_img.svg',
       'leftColor': 0xFF1B63B1,
       'rightColor': 0xFF1B63B1,
     },
@@ -60,11 +55,8 @@ class _MainScreenState extends State<MainScreen> {
   ];
   Future<void> _onNextTapped() async {
     if (_selectedIndex == -1 || _isLoading) return;
-
     setState(() => _isLoading = true);
-
     final pref = _preferences[_selectedIndex];
-
     final result = await _authService.updateIntroduce(
       genderId: pref.gender,
       sexualityId: pref.lookingFor,
@@ -78,13 +70,10 @@ class _MainScreenState extends State<MainScreen> {
       await prefs.setString('cached_screen_type', '1');
       await prefs.setString('cached_gender', pref.gender);
       await prefs.setString('cached_sexuality', pref.lookingFor);
-
-      // Build the profile model and carry it forward to the next screen.
       final profileModel = UserProfileModel(
         gender: pref.gender,
         sexuality: pref.lookingFor,
       );
-
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
@@ -95,7 +84,6 @@ class _MainScreenState extends State<MainScreen> {
       _showError(result['error'] ?? "Something went wrong. Please try again.");
     }
   }
-
   void _showError(String message) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
@@ -105,17 +93,14 @@ class _MainScreenState extends State<MainScreen> {
       ),
     );
   }
-
-  // ── Build ────────────────────────────────────────────────────────────────
   @override
   Widget build(BuildContext context) {
     final isLandscape =
         MediaQuery.of(context).orientation == Orientation.landscape;
-
     return PopScope(
-canPop: false, // Prevents back navigation
-onPopInvoked: (didPop) {
-if (didPop) return;},
+  canPop: false,
+  onPopInvoked: (didPop) {
+  if (didPop) return;},
       child: Scaffold(
         backgroundColor: Colors.white,
         body: SingleChildScrollView(
@@ -125,7 +110,7 @@ if (didPop) return;},
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              const SizedBox(height: 55),
+              const SizedBox(height: 45),
               const StackedUserCards(),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20.0),
@@ -151,7 +136,7 @@ if (didPop) return;},
                       child: Texts(
                         text: "I am a",
                         size: 16,
-                        fontWeight: FontWeight.w700,
+                        fontWeight: FontWeight.w600,
                         edgeInsets: EdgeInsets.only(left: 8),
                       ),
                     ),
@@ -172,7 +157,7 @@ if (didPop) return;},
                         ),
                       );
                     }),
-                    const SizedBox(height: 30),
+                    const SizedBox(height: 20),
                     MainButtonWidget(
                       text: "Next",
                       isLoading: _isLoading,
@@ -194,7 +179,6 @@ if (didPop) return;},
     );
   }
 }
-
 class UserPreference {
   final String gender;
   final String lookingFor;

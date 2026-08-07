@@ -16,7 +16,6 @@ import 'package:two_are_one/core/widgets/containers.dart';
 class NoOtpVerification extends StatefulWidget {
   final String phoneNumber;
   final String verificationId;
-
   const NoOtpVerification({
     super.key,
     required this.phoneNumber,
@@ -26,11 +25,9 @@ class NoOtpVerification extends StatefulWidget {
   @override
   State<NoOtpVerification> createState() => _NoOtpVerificationState();
 }
-
 class _NoOtpVerificationState extends State<NoOtpVerification> {
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
   final AuthService _authService = AuthService();
-
   late String _currentVerificationId;
   bool _isLoading = false;
   Timer? _timer;
@@ -39,14 +36,12 @@ class _NoOtpVerificationState extends State<NoOtpVerification> {
   final TextEditingController _otpController = TextEditingController();
   String? _errorMessage;
   final bool _isError = true;
-
   @override
   void initState() {
     super.initState();
     _currentVerificationId = widget.verificationId;
     _startTimer();
   }
-
   void _startTimer() {
     setState(() {
       _secondsRemaining = 60;
@@ -64,37 +59,29 @@ class _NoOtpVerificationState extends State<NoOtpVerification> {
       }
     });
   }
-
   @override
   void dispose() {
     _timer?.cancel();
     _otpController.dispose();
     super.dispose();
   }
-
   void _verifyOtp() async {
     String otp = _otpController.text.trim();
     if (otp.length != 6) {
       setState(() => _errorMessage = "Invalid OTP");
       return;
     }
-
     setState(() {
       _errorMessage = null;
       _isLoading = true;
     });
-
     try {
       final credential = PhoneAuthProvider.credential(
         verificationId: _currentVerificationId,
         smsCode: otp,
       );
-
       await _firebaseAuth.signInWithCredential(credential);
-
       if (!mounted) return;
-
-      // FIX: Pass the actual phone number, NOT the verificationId
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
@@ -103,14 +90,13 @@ class _NoOtpVerificationState extends State<NoOtpVerification> {
         ),
       );
     } on FirebaseAuthException catch (e) {
-      setState(() => _errorMessage = e.message ?? "Invalid OTP");
+      setState(() => _errorMessage = "Invalid OTP");
     } catch (e) {
       setState(() => _errorMessage = "An unexpected error occurred");
     } finally {
       if (mounted) setState(() => _isLoading = false);
     }
   }
-
   void _resendOtp() async {
     if (!_canResend) return;
     setState(() => _isLoading = true);
@@ -132,7 +118,6 @@ class _NoOtpVerificationState extends State<NoOtpVerification> {
       },
     );
   }
-
   @override
   Widget build(BuildContext context) {
     final double screenHeight = MediaQuery.of(context).size.height;
@@ -141,7 +126,7 @@ class _NoOtpVerificationState extends State<NoOtpVerification> {
     return Scaffold(
       body: SafeArea(
         child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 40.h),
+          padding: EdgeInsets.only(left: 20.w, top: 40.h, right: 20.w),
           child: SingleChildScrollView(
             child: Column(
               children: [
@@ -149,6 +134,7 @@ class _NoOtpVerificationState extends State<NoOtpVerification> {
                 Containers(
                   hexValue: 0xFF77153C,
                   opacityValue: 0.15,
+                  padding: EdgeInsets.symmetric(horizontal: 15),
                   radius: BorderRadius.circular(70.r),
                   wHeight: 470.h,
                   wWidth: screenWidth / 1.15.w,
@@ -156,6 +142,7 @@ class _NoOtpVerificationState extends State<NoOtpVerification> {
                     children: [
                       SizedBox(height: 25.h),
                       Containers(
+                        padding: EdgeInsets.symmetric(horizontal: 8.w),
                         wHeight: 70.h,
                         wWidth: 70.w,
                         hexValue: 0xFF77153C,
@@ -177,7 +164,6 @@ class _NoOtpVerificationState extends State<NoOtpVerification> {
                           fontWeight: FontWeight.w600,
                         ),
                       ),
-
                       SizedBox(height: 15.h),
                       Text(
                         "We've sent a 6 digit OTP to your",
@@ -187,7 +173,6 @@ class _NoOtpVerificationState extends State<NoOtpVerification> {
                           color: AppColors.forgettext,
                         ),
                       ),
-
                       Texts(
                         text: widget.phoneNumber,
                         colorHexValue: 0xFF000000,
@@ -195,6 +180,7 @@ class _NoOtpVerificationState extends State<NoOtpVerification> {
                         fontWeight: FontWeight.w500,
                       ),
                       const Texts(
+                        textAlign: TextAlign.center,
                         edgeInsets: EdgeInsets.only(top: 3),
                         text:
                             "Enter the code below to confirm that it's really you",
@@ -249,15 +235,6 @@ class _NoOtpVerificationState extends State<NoOtpVerification> {
                 ),
                 Padding(
                   padding: EdgeInsets.only(top: screenHeight * .14),
-                  // child: Buttons(
-                  //         text: "Verify",
-                  //         onTap: _verifyOtp,
-                  //         isLoading: _isLoading,
-                  //         gradient: const LinearGradient(colors: [Color(0xFF77153C), Color(0xFFDD276F)]),
-                  //   child: _isLoading
-                  //     ? const CircularProgressIndicator(
-                  //         color: Color(0xFF77153C),
-                  //       )
                   child: MainButtonWidget(
                     text: "Verify",
                     onTap: _verifyOtp,
@@ -278,7 +255,6 @@ class _NoOtpVerificationState extends State<NoOtpVerification> {
                         color: AppColors.mehroon,
                       ),
                     ),
-
                     GestureDetector(
                       onTap: () {
                         Navigator.push(
@@ -298,6 +274,7 @@ class _NoOtpVerificationState extends State<NoOtpVerification> {
                     ),
                   ],
                 ),
+                SizedBox(height: 20.h),
               ],
             ),
           ),

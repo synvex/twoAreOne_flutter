@@ -5,7 +5,6 @@ import 'package:http/http.dart' as http;
 import 'package:two_are_one/core/widgets/image.dart';
 import 'package:two_are_one/core/widgets/main_button_widget.dart';
 import 'package:two_are_one/core/widgets/containers.dart';
-import 'package:two_are_one/core/widgets/textfield.dart';
 import 'package:two_are_one/core/widgets/texts.dart';
 
 const String kGoogleApiKey = "AIzaSyCqZ38paEOdX0SnqU0u6wBlEasNIwKRNe0";
@@ -224,7 +223,9 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
                     radius: BorderRadius.circular(30),
                     child: Row(
                       children: [
-                        const Images(imageStr: 'assets/svg_images/locationImg.svg'),
+                        const Images(
+                          imageStr: 'assets/svg_images/locationImg.svg',
+                        ),
                         const SizedBox(width: 10),
                         Expanded(
                           child: TextField(
