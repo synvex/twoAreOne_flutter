@@ -60,12 +60,13 @@ class _ChangePhoneScreenState extends State<ChangePhoneScreen> {
             : 'This Number is already linked to another account. Please use a different number',
       );
     } catch (_) {
-      if (mounted)
+      if (mounted) {
         await CustomAlert.showMessage(
           context,
           title: 'Error',
           message: 'Failed to send OTP. Please try again.',
         );
+      }
     } finally {
       if (mounted) setState(() => _loading = false);
     }

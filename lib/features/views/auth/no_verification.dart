@@ -11,7 +11,6 @@ import 'package:two_are_one/core/widgets/main_button_widget.dart';
 import 'package:two_are_one/core/widgets/textfield.dart';
 import 'package:two_are_one/core/widgets/texts.dart';
 import 'package:two_are_one/data/services/auth_service.dart';
-
 import 'no_otp_verification.dart';
 
 class NoVerification extends StatefulWidget {
@@ -148,9 +147,10 @@ class _NoVerificationState extends State<NoVerification> {
 
         setState(() {
           _isLoading = false;
-        });
 
-        _showError(e.message ?? "Firebase could not send OTP");
+          // Show your custom message for Firebase phone validation errors
+          _errorMessage = "Please enter a valid phone number";
+        });
       },
     );
   }
@@ -195,7 +195,7 @@ class _NoVerificationState extends State<NoVerification> {
                       showCountryOnly: false,
                       showOnlyCountryWhenClosed: false,
                       alignLeft: true,
-                      padding: EdgeInsets.only(top: 10,left: 0),
+                      padding: EdgeInsets.only(top: 10, left: 0),
                       textStyle: GoogleFonts.poppins(
                         fontSize: 14.sp,
                         fontWeight: FontWeight.w600,

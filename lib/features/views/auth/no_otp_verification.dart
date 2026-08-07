@@ -16,7 +16,6 @@ import 'package:two_are_one/core/widgets/containers.dart';
 class NoOtpVerification extends StatefulWidget {
   final String phoneNumber;
   final String verificationId;
-
   const NoOtpVerification({
     super.key,
     required this.phoneNumber,
@@ -91,7 +90,7 @@ class _NoOtpVerificationState extends State<NoOtpVerification> {
         ),
       );
     } on FirebaseAuthException catch (e) {
-      setState(() => _errorMessage = e.message ?? "Invalid OTP");
+      setState(() => _errorMessage = "Invalid OTP");
     } catch (e) {
       setState(() => _errorMessage = "An unexpected error occurred");
     } finally {
@@ -181,6 +180,7 @@ class _NoOtpVerificationState extends State<NoOtpVerification> {
                         fontWeight: FontWeight.w500,
                       ),
                       const Texts(
+                        textAlign: TextAlign.center,
                         edgeInsets: EdgeInsets.only(top: 3),
                         text:
                             "Enter the code below to confirm that it's really you",

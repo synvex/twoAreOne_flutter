@@ -5,7 +5,6 @@ import 'package:provider/provider.dart';
 import 'package:two_are_one/core/constants/app_colors.dart';
 import 'package:two_are_one/core/widgets/app_header_widget.dart';
 import 'package:two_are_one/core/widgets/error_view.dart';
-import 'package:two_are_one/core/widgets/header.dart';
 import 'package:two_are_one/core/widgets/loading_indicator.dart';
 import 'package:two_are_one/data/end_points.dart';
 import 'package:two_are_one/data/models/t_and_c_model.dart';

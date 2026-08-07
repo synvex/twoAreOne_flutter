@@ -220,8 +220,9 @@ class _ChangeEmailOtpScreenState extends State<ChangeEmailOtpScreen> {
                             ),
                             onChanged: (v) {
                               setState(() {});
-                              if (v.isNotEmpty && i < 5)
+                              if (v.isNotEmpty && i < 5) {
                                 FocusScope.of(context).nextFocus();
+                              }
                             },
                           ),
                         );

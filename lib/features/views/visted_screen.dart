@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:two_are_one/core/constants/app_icons.dart';
 import 'package:two_are_one/core/widgets/app_header_widget.dart';
-import 'package:two_are_one/core/widgets/back_button.dart';
 import 'package:two_are_one/core/widgets/image.dart';
 import 'package:two_are_one/data/models/visited_blocked_model.dart';
 import '../../data/viewmodels/visited_view_model.dart';
@@ -58,7 +58,7 @@ class _VisitedUserScreenState extends State<VisitedUserScreen> {
       sheetHeight: 300,
       children: [
         SheetMenuItem(
-          icon: Images(imageStr: 'assets/svg_images/Profile/view_profile.svg'),
+          icon: Images(imageStr: AppIcons.profileIcon),
           label: "View Profile",
           onTap: () {
             Navigator.of(context).pop();
@@ -99,8 +99,12 @@ class _VisitedUserScreenState extends State<VisitedUserScreen> {
   @override
   Widget build(BuildContext context) {
     final vm = _viewModel;
-    final showInitialLoader = vm.isLoading && vm.users.isEmpty;
-    final showEmpty = !vm.isLoading && vm.users.isEmpty;
+    final showInitialLoader =
+        (vm.isLoading || vm.isRefreshing) && vm.users.isEmpty;
+    final showEmpty = !vm.isLoading && !vm.isRefreshing && vm.users.isEmpty;
+    // final vm = _viewModel;
+    // final showInitialLoader = vm.isLoading && vm.users.isEmpty;
+    // final showEmpty = !vm.isLoading && vm.users.isEmpty;
 
     return Scaffold(
       backgroundColor: Colors.white,
