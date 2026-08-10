@@ -19,15 +19,12 @@ class NoVerification extends StatefulWidget {
   @override
   State<NoVerification> createState() => _NoVerificationState();
 }
-
 class _NoVerificationState extends State<NoVerification> {
   final TextEditingController _phoneController = TextEditingController();
   final AuthService _authService = AuthService();
-
   bool _isLoading = false;
   String _selectedCountryCode = "+92";
   String _selectedCountryName = "PK";
-
   String? _errorMessage;
 
   void _verifyPhoneNo() async {
@@ -36,18 +33,14 @@ class _NoVerificationState extends State<NoVerification> {
       RegExp(r'\D'),
       '',
     );
-
     String localNumber = inputDigits;
-
     if (inputDigits.startsWith(selectedCodeDigits) &&
         inputDigits.length > selectedCodeDigits.length) {
       localNumber = inputDigits.substring(selectedCodeDigits.length);
     }
-
     if (localNumber.startsWith('0')) {
       localNumber = localNumber.substring(1);
     }
-
     if (localNumber.length < 9 || localNumber.length > 11) {
       setState(() {
         _errorMessage = "Please enter a valid phone number";
@@ -63,9 +56,7 @@ class _NoVerificationState extends State<NoVerification> {
     });
 
     try {
-      final result = await _authService.checkPhoneExists(
-        phoneNo: phoneNoWithCode,
-      );
+      final result = await _authService.checkPhoneExists(phoneNo: phoneNoWithCode);
 
       if (!mounted) return;
 
@@ -76,48 +67,41 @@ class _NoVerificationState extends State<NoVerification> {
           _isLoading = false;
         });
 
-        String errorMsg = result['error']?.toString() ?? "";
+        final errorMsg = (result['error'] ?? '').toString().toLowerCase();
 
-        if (errorMsg.toLowerCase().contains("already exists") ||
-            errorMsg.contains("linked")) {
-          _showResultPopup(phoneNoWithCode);
-        } else if (errorMsg == "no_internet") {
+        if (errorMsg.contains("already exists") || errorMsg.contains("linked")) {
           _showError(
-            "No internet connection. Please check your network and try again.",
+            "This Number is already linked to another account. Please use a different phone number",
           );
+        } else if (errorMsg == "no_internet") {
+          _showError("No internet connection. Please check your network and try again.");
         } else if (errorMsg == "timeout") {
           _showError("Server is taking too long. Please try again.");
         } else if (errorMsg == "something_went_wrong") {
           _showError("Something went wrong. Please try again.");
         } else {
-          _showError(errorMsg.isEmpty ? "Verification check failed" : errorMsg);
+          _showError(
+            errorMsg.isEmpty ? "Verification check failed" : result['error'].toString(),
+          );
         }
       }
     } on SocketException {
       if (!mounted) return;
-
       setState(() {
         _isLoading = false;
       });
-
-      _showError(
-        "No internet connection. Please check your network and try again.",
-      );
+      _showError("No internet connection. Please check your network and try again.");
     } on TimeoutException {
       if (!mounted) return;
-
       setState(() {
         _isLoading = false;
       });
-
       _showError("Server is taking too long. Please try again.");
     } catch (e) {
       if (!mounted) return;
-
       setState(() {
         _isLoading = false;
       });
-
       _showError("Something went wrong. Please try again.");
     }
   }
@@ -147,14 +131,139 @@ class _NoVerificationState extends State<NoVerification> {
 
         setState(() {
           _isLoading = false;
-
-          // Show your custom message for Firebase phone validation errors
-          _errorMessage = "Please enter a valid phone number";
+          _errorMessage = e.message ?? "Failed to send OTP. Please try again.";
         });
       },
     );
   }
 
+  void _showError(String msg) {
+    setState(() {
+      _errorMessage = msg;
+    });
+  }
+
+  // void _verifyPhoneNo() async {
+  //   String inputDigits = _phoneController.text.replaceAll(RegExp(r'\D'), '');
+  //   String selectedCodeDigits = _selectedCountryCode.replaceAll(
+  //     RegExp(r'\D'),
+  //     '',
+  //   );
+  //
+  //   String localNumber = inputDigits;
+  //
+  //   if (inputDigits.startsWith(selectedCodeDigits) &&
+  //       inputDigits.length > selectedCodeDigits.length) {
+  //     localNumber = inputDigits.substring(selectedCodeDigits.length);
+  //   }
+  //
+  //   if (localNumber.startsWith('0')) {
+  //     localNumber = localNumber.substring(1);
+  //   }
+  //
+  //   if (localNumber.length < 9 || localNumber.length > 11) {
+  //     setState(() {
+  //       _errorMessage = "Please enter a valid phone number";
+  //     });
+  //     return;
+  //   }
+  //
+  //   final phoneNoWithCode = "$_selectedCountryCode$localNumber";
+  //
+  //   setState(() {
+  //     _isLoading = true;
+  //     _errorMessage = null;
+  //   });
+  //
+  //   try {
+  //     final result = await _authService.checkPhoneExists(
+  //       phoneNo: phoneNoWithCode,
+  //     );
+  //
+  //     if (!mounted) return;
+  //
+  //     if (result['success'] == true) {
+  //       _startFirebaseOTP(phoneNoWithCode);
+  //     } else {
+  //       setState(() {
+  //         _isLoading = false;
+  //       });
+  //
+  //       String errorMsg = result['error']?.toString() ?? "";
+  //
+  //       if (errorMsg.toLowerCase().contains("already exists") ||
+  //           errorMsg.contains("linked")) {
+  //         _showResultPopup(phoneNoWithCode);
+  //       } else if (errorMsg == "no_internet") {
+  //         _showError(
+  //           "No internet connection. Please check your network and try again.",
+  //         );
+  //       } else if (errorMsg == "timeout") {
+  //         _showError("Server is taking too long. Please try again.");
+  //       } else if (errorMsg == "something_went_wrong") {
+  //         _showError("Something went wrong. Please try again.");
+  //       } else {
+  //         _showError(errorMsg.isEmpty ? "Verification check failed" : errorMsg);
+  //       }
+  //     }
+  //   } on SocketException {
+  //     if (!mounted) return;
+  //
+  //     setState(() {
+  //       _isLoading = false;
+  //     });
+  //
+  //     _showError(
+  //       "No internet connection. Please check your network and try again.",
+  //     );
+  //   } on TimeoutException {
+  //     if (!mounted) return;
+  //
+  //     setState(() {
+  //       _isLoading = false;
+  //     });
+  //
+  //     _showError("Server is taking too long. Please try again.");
+  //   } catch (e) {
+  //     if (!mounted) return;
+  //
+  //     setState(() {
+  //       _isLoading = false;
+  //     });
+  //
+  //     _showError("Something went wrong. Please try again.");
+  //   }
+  // }
+  //
+  // void _startFirebaseOTP(String phoneNumber) {
+  //   _authService.verifyPhoneNumber(
+  //     phoneNumber: phoneNumber,
+  //     onCodeSent: (verificationId) {
+  //       if (!mounted) return;
+  //
+  //       setState(() {
+  //         _isLoading = false;
+  //       });
+  //
+  //       Navigator.pushReplacement(
+  //         context,
+  //         MaterialPageRoute(
+  //           builder: (_) => NoOtpVerification(
+  //             phoneNumber: phoneNumber,
+  //             verificationId: verificationId,
+  //           ),
+  //         ),
+  //       );
+  //     },
+  //     onVerificationFailed: (e) {
+  //       if (!mounted) return;
+  //       setState(() {
+  //         _isLoading = false;
+  //         _errorMessage = e.message?? "Please enter a valid phone number";
+  //       });
+  //     },
+  //   );
+  // }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -165,8 +274,8 @@ class _NoVerificationState extends State<NoVerification> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              AppHeaderWidget(isLeading: true, isTrailing: false),
-
+              AppHeaderWidget(
+                  isLeading: true, isTrailing: false),
               SizedBox(height: 40.h),
               Text(
                 "Can we get your number?",
@@ -298,9 +407,9 @@ class _NoVerificationState extends State<NoVerification> {
     );
   }
 
-  void _showError(String msg) {
-    setState(() {
-      _errorMessage = msg;
-    });
-  }
+  // void _showError(String msg) {
+  //   setState(() {
+  //     _errorMessage = msg;
+  //   });
+  // }
 }
