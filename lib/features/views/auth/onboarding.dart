@@ -5,9 +5,7 @@ import 'package:two_are_one/core/constants/app_images.dart';
 import 'package:two_are_one/core/constants/app_colors.dart';
 
 import 'package:two_are_one/core/widgets/main_button_widget.dart';
-import 'package:two_are_one/data/models/user_profile_model.dart';
-import 'package:two_are_one/features/views/main/main_screen.dart';
-import 'package:two_are_one/features/views/main/profile_setup_screen.dart';
+
 import 'package:two_are_one/features/views/others/privacy.dart';
 import 'package:two_are_one/features/views/others/terms_and_conditions_screen.dart';
 

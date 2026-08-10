@@ -24,6 +24,7 @@ const Color kMehroonLight = Color(0xFFDD276F);
 
 class ProfileDetailsScreen extends StatefulWidget {
   final int? userId;
+
   const ProfileDetailsScreen({super.key, this.userId});
 
   @override
