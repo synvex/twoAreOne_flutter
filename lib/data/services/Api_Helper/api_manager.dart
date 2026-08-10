@@ -16,7 +16,7 @@ class Api {
 }
 
 class ApiManager {
-  static const String baseUrl = "https://www.twoareone.love/api/";
+  static const String baseUrl = "https://www.----.--/api/";
   static bool _sessionDialogShowing = false;
   static final Dio _dio = Dio(BaseOptions(
     baseUrl: baseUrl,
@@ -65,7 +65,9 @@ class ApiManager {
     }
   }
   Future<Map<String, dynamic>> fetchMultipart(
-      Api api, FormData formData) async
+      Api api, FormData formData, {
+        void Function(int sent, int total)? onSendProgress, // NEW — optional
+      }) async
   {
     try {
       final options = Options(
@@ -81,6 +83,7 @@ class ApiManager {
         ApiManager._normalize(api.url),
         data: formData,
         options: options,
+        onSendProgress: onSendProgress,
       );
 
       return _parseSuccessResponse(response.data);
