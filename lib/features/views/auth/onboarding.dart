@@ -3,11 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:two_are_one/core/constants/app_images.dart';
 import 'package:two_are_one/core/constants/app_colors.dart';
-
 import 'package:two_are_one/core/widgets/main_button_widget.dart';
-import 'package:two_are_one/data/models/user_profile_model.dart';
-import 'package:two_are_one/features/views/main/main_screen.dart';
-import 'package:two_are_one/features/views/main/profile_setup_screen.dart';
 import 'package:two_are_one/features/views/others/privacy.dart';
 import 'package:two_are_one/features/views/others/terms_and_conditions_screen.dart';
 
@@ -26,7 +22,6 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   Widget build(BuildContext context) {
     final bool isLandscape =
         MediaQuery.of(context).orientation == Orientation.landscape;
-
     return Scaffold(
       body: SafeArea(
         child: SingleChildScrollView(
@@ -204,9 +199,10 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                   onTap: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => NoVerification()),
+                      MaterialPageRoute(builder: (context) =>
+                          NoVerification()
+                      ),
                     );
-                    // Navigator.pushNamed(context, '/signup');
                   },
                 ),
                 SizedBox(height: 4.h),
