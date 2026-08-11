@@ -149,6 +149,7 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
   //     _showError(result['error'] ?? "Failed to upload profile info.");
   //   }
   // }
+
   Future<void> _onNextTapped() async {
     setState(() {
       _heightError = _selectedHeight == null;
@@ -161,8 +162,8 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
 
     setState(() => _isLoading = true);
 
-    final progressNotifier = ValueNotifier<double>(0.0);
-    UploadProgressModal.show(context, progressNotifier);
+    final progress = SmoothUploadProgress()..start();
+    UploadProgressModal.show(context, progress.notifier);
 
     final result = await _authService.uploadFullProfile(
       height: _selectedHeight!,
@@ -174,13 +175,18 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
       profileImage: _profileImage,
       extraImages: _additionalImages,
       extraVideos: _additionalVideos,
-      onProgress: (sent, total) {
-        if (total > 0) progressNotifier.value = sent / total;
-      },
+      onProgress: progress.onRealProgress,
     );
 
-    if (!mounted) return;
+    progress.finish(); // snap to 100% now that server actually responded
+    await Future.delayed(const Duration(milliseconds: 200)); // let it visually land
+
+    if (!mounted) {
+      progress.dispose();
+      return;
+    }
     Navigator.of(context, rootNavigator: true).pop(); // close progress modal
+    progress.dispose();
     setState(() => _isLoading = false);
 
     if (result['success'] == true) {
@@ -209,11 +215,77 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
     } else {
       _showError(
         result['error'] ?? "Failed to upload profile info.",
-        title: result['title'], // e.g. "No internet" from ApiManager's error handler
+        title: result['title'],
         allowRetry: true,
       );
     }
   }
+
+  // Future<void> _onNextTapped() async {
+  //   setState(() {
+  //     _heightError = _selectedHeight == null;
+  //     _weightError = _selectedWeight == null;
+  //     _workError = _workController.text.trim().isEmpty;
+  //     _bioError = _bioController.text.trim().isEmpty;
+  //   });
+  //
+  //   if (_heightError || _weightError || _workError || _bioError) return;
+  //
+  //   setState(() => _isLoading = true);
+  //
+  //   final progressNotifier = ValueNotifier<double>(0.0);
+  //   UploadProgressModal.show(context, progressNotifier);
+  //
+  //   final result = await _authService.uploadFullProfile(
+  //     height: _selectedHeight!,
+  //     weight: _selectedWeight!,
+  //     work: _workController.text.trim(),
+  //     bio: _bioController.text.trim(),
+  //     gender: widget.profileModel.gender ?? '',
+  //     sexuality: widget.profileModel.sexuality ?? '',
+  //     profileImage: _profileImage,
+  //     extraImages: _additionalImages,
+  //     extraVideos: _additionalVideos,
+  //     onProgress: (sent, total) {
+  //       if (total > 0) progressNotifier.value = sent / total;
+  //     },
+  //   );
+  //
+  //   if (!mounted) return;
+  //   Navigator.of(context, rootNavigator: true).pop(); // close progress modal
+  //   setState(() => _isLoading = false);
+  //
+  //   if (result['success'] == true) {
+  //     final prefs = await SharedPreferences.getInstance();
+  //     await prefs.setString('cached_screen_type', '2');
+  //     await prefs.setString('profile_height', _selectedHeight!);
+  //     await prefs.setString('profile_work', _workController.text.trim());
+  //     await prefs.setString('profile_bio', _bioController.text.trim());
+  //
+  //     final updatedModel = widget.profileModel.copyWith(
+  //       profileImage: _profileImage,
+  //       additionalImages: List<File>.from(_additionalImages),
+  //       additionalVideos: List<File>.from(_additionalVideos),
+  //       height: _selectedHeight,
+  //       weight: _selectedWeight,
+  //       work: _workController.text.trim(),
+  //       bio: _bioController.text.trim(),
+  //     );
+  //
+  //     Navigator.pushReplacement(
+  //       context,
+  //       MaterialPageRoute(
+  //         builder: (_) => QuestionnaireScreen(profileModel: updatedModel),
+  //       ),
+  //     );
+  //   } else {
+  //     _showError(
+  //       result['error'] ?? "Failed to upload profile info.",
+  //       title: result['title'], // e.g. "No internet" from ApiManager's error handler
+  //       allowRetry: true,
+  //     );
+  //   }
+  // }
   // void _showError(String message) {
   //   ScaffoldMessenger.of(context).showSnackBar(
   //     SnackBar(
@@ -454,8 +526,8 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
           break;
 
         case 2: // Video
-          // Both camera recording and gallery video —
-          // camera already checked above, gallery handled by image_picker
+        // Both camera recording and gallery video —
+        // camera already checked above, gallery handled by image_picker
           final XFile? picked = await _picker.pickVideo(
             source: source,
             maxDuration: const Duration(minutes: 5),
@@ -531,7 +603,7 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
                 ),
                 const Texts(
                   text:
-                      "Increase Your Matches By Uploading\nYour Photos And Videos",
+                  "Increase Your Matches By Uploading\nYour Photos And Videos",
                   textAlign: TextAlign.center,
                   size: 12,
                   fontWeight: FontWeight.w400,
@@ -555,15 +627,15 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
                         child: ClipOval(
                           child: _profileImage != null
                               ? Image.file(
-                                  _profileImage!,
-                                  fit: BoxFit.cover,
-                                  width: 120,
-                                  height: 120,
-                                )
+                            _profileImage!,
+                            fit: BoxFit.cover,
+                            width: 120,
+                            height: 120,
+                          )
                               : const Icon(
-                                  Icons.person_outline_sharp,
-                                  size: 80,
-                                ),
+                            Icons.person_outline_sharp,
+                            size: 80,
+                          ),
                         ),
                       ),
                       Positioned(
@@ -697,7 +769,7 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
                         horizontal: 15,
                       ),
                       hintText:
-                          "Tell us something about yourself in 250 characters or less",
+                      "Tell us something about yourself in 250 characters or less",
                       hintStyle: TextStyle(fontSize: 12),
                     ),
                   ),
@@ -709,13 +781,13 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
                     _mediaActionButton(
                       "Add Photos",
                       "assets/svg_images/add_photo.svg",
-                      () => _pickMedia(1),
+                          () => _pickMedia(1),
                     ),
                     Spacer(),
                     _mediaActionButton(
                       "Add Videos",
                       "assets/svg_images/add_video.svg",
-                      () => _pickMedia(2),
+                          () => _pickMedia(2),
                     ),
                   ],
                 ),
@@ -736,8 +808,8 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
                     children: _additionalImages.asMap().entries.map((entry) {
                       return _buildMediaPreview(
                         entry.value,
-                        () => setState(
-                          () => _additionalImages.removeAt(entry.key),
+                            () => setState(
+                              () => _additionalImages.removeAt(entry.key),
                         ),
                         isVideo: false,
                       );
@@ -762,8 +834,8 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
                         padding: const EdgeInsets.only(bottom: 10),
                         child: _buildMediaPreview(
                           entry.value,
-                          () => setState(
-                            () => _additionalVideos.removeAt(entry.key),
+                              () => setState(
+                                () => _additionalVideos.removeAt(entry.key),
                           ),
                           isVideo: true,
                         ),
@@ -791,25 +863,25 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
   }
 
   Widget _buildMediaPreview(
-    File file,
-    VoidCallback onRemove, {
-    required bool isVideo,
-  }) {
+      File file,
+      VoidCallback onRemove, {
+        required bool isVideo,
+      }) {
     return Stack(
       clipBehavior: Clip.none,
       children: [
         isVideo
             ? VideoPreviewCard(file: file)
             : Containers(
-                wWidth: 100,
-                wHeight: 100,
-                radius: BorderRadius.circular(15),
-                hexValue: 0xFFECECEC,
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(15),
-                  child: Image.file(file, fit: BoxFit.cover),
-                ),
-              ),
+          wWidth: 100,
+          wHeight: 100,
+          radius: BorderRadius.circular(15),
+          hexValue: 0xFFECECEC,
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(15),
+            child: Image.file(file, fit: BoxFit.cover),
+          ),
+        ),
         Positioned(
           top: -5,
           right: -5,
