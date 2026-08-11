@@ -6,7 +6,9 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../../../core/Error/api_error.dart';
 import '../../end_points.dart';
 import '../../repo/socket_service.dart';
+
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
+
 class Api {
   final String url;
   final String method;
@@ -16,25 +18,28 @@ class Api {
 }
 
 class ApiManager {
-  static const String baseUrl = "https://www.----.--/api/";
+  static const String baseUrl = "https://www.twoareone.love/api/";
   static bool _sessionDialogShowing = false;
-  static final Dio _dio = Dio(BaseOptions(
-    baseUrl: baseUrl,
-    connectTimeout: const Duration(seconds: 30),
-    receiveTimeout: const Duration(seconds: 30),
-    responseType: ResponseType.json,
-    headers: {
-      'User-Agent':
-      'Mozilla/5.0 (Linux; Android 10) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.181 Mobile Safari/537.36',
-      'Accept': 'application/json',
-      'X-Requested-With': 'XMLHttpRequest',
-    },
-  ));
+  static final Dio _dio = Dio(
+    BaseOptions(
+      baseUrl: baseUrl,
+      connectTimeout: const Duration(seconds: 30),
+      receiveTimeout: const Duration(seconds: 30),
+      responseType: ResponseType.json,
+      headers: {
+        'User-Agent':
+            'Mozilla/5.0 (Linux; Android 10) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.181 Mobile Safari/537.36',
+        'Accept': 'application/json',
+        'X-Requested-With': 'XMLHttpRequest',
+      },
+    ),
+  );
   static void setUpRequestToken(String token) {
     _dio.options.headers["Authorization"] = "Bearer $token";
     _dio.options.headers["x-api-key"] = token;
     SocketService.instance.updateToken(token);
   }
+
   static Future<void> logout() async {
     _dio.options.headers.remove("Authorization");
     _dio.options.headers.remove("x-api-key");
@@ -42,10 +47,12 @@ class ApiManager {
     final prefs = await SharedPreferences.getInstance();
     await prefs.clear();
   }
+
   static void removeRequestToken() {
     _dio.options.headers.remove("Authorization");
     _dio.options.headers.remove("x-api-key");
   }
+
   static String _normalize(String url) =>
       url.startsWith('/') ? url.substring(1) : url;
 
@@ -55,7 +62,9 @@ class ApiManager {
         ApiManager._normalize(api.url),
         data: api.method.toUpperCase() == "GET" ? null : parameters,
         queryParameters: api.method.toUpperCase() == "GET" ? parameters : null,
-        options: Options(method: api.method, headers: api.headers,
+        options: Options(
+          method: api.method,
+          headers: api.headers,
           contentType: api.headers?['Content-Type'] ?? 'application/json',
         ),
       );
@@ -64,11 +73,12 @@ class ApiManager {
       return _handleDioError(e, api, parameters);
     }
   }
+
   Future<Map<String, dynamic>> fetchMultipart(
-      Api api, FormData formData, {
-        void Function(int sent, int total)? onSendProgress, // NEW — optional
-      }) async
-  {
+    Api api,
+    FormData formData, {
+    void Function(int sent, int total)? onSendProgress, // NEW — optional
+  }) async {
     try {
       final options = Options(
         method: api.method,
@@ -126,14 +136,18 @@ class ApiManager {
       "error": res['message'],
     };
   }
+
   Map<String, dynamic> _handleDioError(
-      DioException error, Api api, dynamic parameters)
-  {
+    DioException error,
+    Api api,
+    dynamic parameters,
+  ) {
     final status = error.response?.statusCode;
     final message = error.response?.data is Map
         ? error.response?.data['message']
         : null;
-    final isAuthRequest = api.url.contains("auth/") ||
+    final isAuthRequest =
+        api.url.contains("auth/") ||
         api.url.contains("login") ||
         api.url.contains("register") ||
         api.url.contains("verify-otp") ||
@@ -142,19 +156,18 @@ class ApiManager {
         api.url.contains("otp-verify");
 
     if (!isAuthRequest) {
-      if (status == 401 || status == 403 ||
+      if (status == 401 ||
+          status == 403 ||
           message == "Invalid or expired token" ||
           message == "Invalid or expired token." ||
           message == "Unauthorized") {
         ApiManager.handleUnauthorized();
-        return {
-          "success": false,
-          "error": null,
-        };
+        return {"success": false, "error": null};
       }
     }
 
-    final isNetworkError = error.type == DioExceptionType.connectionError ||
+    final isNetworkError =
+        error.type == DioExceptionType.connectionError ||
         error.type == DioExceptionType.connectionTimeout ||
         error.type == DioExceptionType.receiveTimeout ||
         error.type == DioExceptionType.sendTimeout ||
@@ -175,11 +188,13 @@ class ApiManager {
       "isNetworkError": false,
     };
   }
+
   static void handleUnauthorized() {
     _showSessionExpiredDialogStatic();
 
     logout();
   }
+
   static void _showSessionExpiredDialogStatic() {
     if (_sessionDialogShowing) return;
     final context = navigatorKey.currentContext;
@@ -194,29 +209,32 @@ class ApiManager {
         // });
         _sessionDialogShowing = false;
         // Navigator.of(dialogContext).pop();
-        Navigator.of(dialogContext).pushNamedAndRemoveUntil(
-          '/login',
-              (route) => false,
-        );
+        Navigator.of(
+          dialogContext,
+        ).pushNamedAndRemoveUntil('/login', (route) => false);
         return AlertDialog(
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+          ),
           title: const Text("Session Expired"),
           content: const Text(
-              "Your session has timed out. Please login again to continue."),
+            "Your session has timed out. Please login again to continue.",
+          ),
           actions: [
             TextButton(
               onPressed: () {
                 Navigator.of(dialogContext).pop();
                 _sessionDialogShowing = false;
-                Navigator.of(dialogContext).pushNamedAndRemoveUntil(
-                  '/login',
-                      (route) => false,
-                );
+                Navigator.of(
+                  dialogContext,
+                ).pushNamedAndRemoveUntil('/login', (route) => false);
               },
               child: const Text(
                 "OK",
                 style: TextStyle(
-                    color: Color(0xFF77153C), fontWeight: FontWeight.bold),
+                  color: Color(0xFF77153C),
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             ),
           ],
@@ -225,7 +243,6 @@ class ApiManager {
     ).then((_) {
       _sessionDialogShowing = false;
     });
-
   }
 }
 
@@ -248,15 +265,16 @@ class Api_Manager {
     _dio.options.headers['Authorization'] = 'Bearer $token';
     _dio.options.headers['x-api-key'] = token;
   }
+
   void clearAuthToken() {
     _dio.options.headers.remove('Authorization');
     _dio.options.headers.remove('x-api-key');
   }
+
   Future<Response<dynamic>> fetch(
-      ApiRequest request, {
-        Map<String, dynamic>? parameters,
-      }) async
-  {
+    ApiRequest request, {
+    Map<String, dynamic>? parameters,
+  }) async {
     try {
       final response = await _dio.request(
         request.url,
@@ -272,12 +290,12 @@ class Api_Manager {
       throw await _mapError(error, request, parameters);
     }
   }
+
   Future<ApiError> _mapError(
-      DioException error,
-      ApiRequest request,
-      Map<String, dynamic>? parameters,
-      ) async
-  {
+    DioException error,
+    ApiRequest request,
+    Map<String, dynamic>? parameters,
+  ) async {
     final status = error.response?.statusCode;
     final message = error.response?.data is Map
         ? error.response?.data['message']?.toString()
