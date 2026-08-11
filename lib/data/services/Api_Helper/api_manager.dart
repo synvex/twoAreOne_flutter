@@ -16,7 +16,7 @@ class Api {
 }
 
 class ApiManager {
-  static const String baseUrl = "https://www.----.--/api/";
+  static const String baseUrl = "https://www.twoareone.love/api/";
   static bool _sessionDialogShowing = false;
   static final Dio _dio = Dio(BaseOptions(
     baseUrl: baseUrl,
