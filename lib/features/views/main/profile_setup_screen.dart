@@ -17,6 +17,12 @@ import 'package:two_are_one/data/services/Api_Helper/api_manager.dart';
 import 'package:two_are_one/data/services/auth_service.dart';
 import 'package:wechat_assets_picker/wechat_assets_picker.dart';
 
+class _PickedImage {
+  final File file;
+  final AssetEntity? asset; // null when it came from the camera
+  const _PickedImage({required this.file, this.asset});
+}
+
 class ProfileSetupScreen extends StatefulWidget {
   final String? gender;
   final String? lookingFor;
@@ -40,7 +46,6 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
   // ── Media ─────────────────────────────────────────────────────────────────
   final ImagePicker _picker = ImagePicker();
   File? _profileImage;
-  final List<File> _additionalImages = [];
   final List<File> _additionalVideos = [];
   String? _selectedHeight;
   String? _selectedWeight;
@@ -58,8 +63,22 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
     return "$feet'$inches";
   });
   List<String> get _weightOptions => List.generate(374, (i) => "${66 + i} lbs");
-  List<AssetEntity> _selectedAssets = [];
+  // REMOVE these two:
+  // final List<File> _additionalImages = [];
+  // List<AssetEntity> _selectedAssets = [];
 
+  // ADD this one:
+  final List<_PickedImage> _additionalPicked = [];
+  static const int _minBioLength = 5;
+
+  // Convenience getters so the rest of your code barely changes:
+  List<File> get _additionalImages =>
+      _additionalPicked.map((e) => e.file).toList();
+
+  List<AssetEntity> get _selectedAssets => _additionalPicked
+      .where((e) => e.asset != null)
+      .map((e) => e.asset!)
+      .toList();
   @override
   void initState() {
     // TODO: implement initState
@@ -92,7 +111,7 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
       _heightError = _selectedHeight == null;
       _weightError = _selectedWeight == null;
       _workError = _workController.text.trim().isEmpty;
-      _bioError = _bioController.text.trim().isEmpty;
+      _bioError = _bioController.text.trim().length < _minBioLength;
     });
 
     if (_heightError || _weightError || _workError || _bioError) return;
@@ -345,7 +364,7 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
 
         case 1: // Additional images
           if (isCamera) {
-            if (_additionalImages.length >= 5) {
+            if (_additionalPicked.length >= 5) {
               _showImageLimitDialog();
               return;
             }
@@ -357,39 +376,47 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
             );
 
             if (picked != null && mounted) {
-              setState(() => _additionalImages.add(File(picked.path)));
+              setState(() {
+                _additionalPicked.add(_PickedImage(file: File(picked.path)));
+              });
             }
           } else {
-            if (_additionalImages.length >= 5) {
+            if (_additionalPicked.length >= 5) {
               _showImageLimitDialog();
               return;
             }
 
+            // How many slots gallery selection can use, given camera shots
+            // already take some of the 5.
+            final cameraCount = _additionalPicked
+                .where((e) => e.asset == null)
+                .length;
+            final maxForGallery = 5 - cameraCount;
+
             final List<AssetEntity>? assets = await AssetPicker.pickAssets(
               context,
               pickerConfig: AssetPickerConfig(
-                maxAssets: 5, // hard cap enforced by the picker UI
+                maxAssets: maxForGallery,
                 selectedAssets:
-                    _selectedAssets, // pass previously selected AssetEntity list, not File
+                    _selectedAssets, // pre-checked, in sync with removals now
                 requestType: RequestType.image,
               ),
             );
 
             if (assets != null && mounted) {
-              _selectedAssets =
-                  assets; // keep AssetEntity list in sync for next time picker opens
-
-              final List<File> files = [];
+              final List<_PickedImage> galleryPicked = [];
               for (final asset in assets) {
-                final file =
-                    await asset.file; // or asset.originFile for full quality
-                if (file != null) files.add(file);
+                final file = await asset.file;
+                if (file != null) {
+                  galleryPicked.add(_PickedImage(file: file, asset: asset));
+                }
               }
 
               setState(() {
-                _additionalImages
-                  ..clear()
-                  ..addAll(files);
+                // Keep camera shots, replace gallery-sourced items with fresh selection
+                _additionalPicked
+                  ..removeWhere((e) => e.asset != null)
+                  ..addAll(galleryPicked);
               });
             }
           }
@@ -624,8 +651,9 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
                     controller: _bioController, // FIX: wired controller
                     maxLength: 250,
                     maxLines: 4,
-                    onChanged: (_) =>
-                        setState(() => _bioError = false), // clear on type
+                    onChanged: (value) => setState(
+                      () => _bioError = value.trim().length < _minBioLength,
+                    ), // clear on type
                     style: const TextStyle(
                       fontSize: 15,
                       fontWeight: FontWeight.w400,
@@ -644,6 +672,19 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
                     ),
                   ),
                 ),
+                if (_bioError)
+                  Padding(
+                    padding: const EdgeInsets.only(left: 16, top: 4),
+                    child: Align(
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        _bioController.text.trim().isEmpty
+                            ? "Bio is required"
+                            : "Bio must be at least $_minBioLength characters",
+                        style: const TextStyle(color: Colors.red, fontSize: 12),
+                      ),
+                    ),
+                  ),
                 const SizedBox(height: 20),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -675,11 +716,11 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
                   Wrap(
                     spacing: 10,
                     runSpacing: 10,
-                    children: _additionalImages.asMap().entries.map((entry) {
+                    children: _additionalPicked.asMap().entries.map((entry) {
                       return _buildMediaPreview(
-                        entry.value,
+                        entry.value.file,
                         () => setState(
-                          () => _additionalImages.removeAt(entry.key),
+                          () => _additionalPicked.removeAt(entry.key),
                         ),
                         isVideo: false,
                       );
