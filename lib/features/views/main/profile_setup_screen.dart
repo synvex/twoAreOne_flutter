@@ -15,6 +15,7 @@ import 'package:two_are_one/core/widgets/texts.dart';
 import 'package:two_are_one/data/models/user_profile_model.dart';
 import 'package:two_are_one/data/services/Api_Helper/api_manager.dart';
 import 'package:two_are_one/data/services/auth_service.dart';
+import 'package:wechat_assets_picker/wechat_assets_picker.dart';
 
 class ProfileSetupScreen extends StatefulWidget {
   final String? gender;
@@ -57,6 +58,7 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
     return "$feet'$inches";
   });
   List<String> get _weightOptions => List.generate(374, (i) => "${66 + i} lbs");
+  List<AssetEntity> _selectedAssets = [];
 
   @override
   void initState() {
@@ -343,7 +345,6 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
 
         case 1: // Additional images
           if (isCamera) {
-            // Check if limit reached
             if (_additionalImages.length >= 5) {
               _showImageLimitDialog();
               return;
@@ -359,26 +360,37 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
               setState(() => _additionalImages.add(File(picked.path)));
             }
           } else {
-            final List<XFile> picked = await _picker.pickMultiImage();
+            if (_additionalImages.length >= 5) {
+              _showImageLimitDialog();
+              return;
+            }
 
-            if (picked.isNotEmpty && mounted) {
-              final remainingSlots = 5 - _additionalImages.length;
+            final List<AssetEntity>? assets = await AssetPicker.pickAssets(
+              context,
+              pickerConfig: AssetPickerConfig(
+                maxAssets: 5, // hard cap enforced by the picker UI
+                selectedAssets:
+                    _selectedAssets, // pass previously selected AssetEntity list, not File
+                requestType: RequestType.image,
+              ),
+            );
 
-              if (remainingSlots <= 0) {
-                _showImageLimitDialog();
-                return;
+            if (assets != null && mounted) {
+              _selectedAssets =
+                  assets; // keep AssetEntity list in sync for next time picker opens
+
+              final List<File> files = [];
+              for (final asset in assets) {
+                final file =
+                    await asset.file; // or asset.originFile for full quality
+                if (file != null) files.add(file);
               }
 
               setState(() {
-                _additionalImages.addAll(
-                  picked.take(remainingSlots).map((e) => File(e.path)),
-                );
+                _additionalImages
+                  ..clear()
+                  ..addAll(files);
               });
-
-              // Inform user if they selected more than allowed
-              if (picked.length > remainingSlots) {
-                _showError("Only 5 images are allowed.");
-              }
             }
           }
           break;

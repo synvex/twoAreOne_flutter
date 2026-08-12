@@ -46,6 +46,7 @@ void main() async {
         ChangeNotifierProvider(create: (_) => NotificationViewModel()),
         ChangeNotifierProvider(create: (_) => ReportViewModel()),
         ChangeNotifierProvider(create: (_) => VisitedUserViewModel()),
+
         ChangeNotifierProvider(create: (_) => UserStatsViewModel()),
         ChangeNotifierProvider(create: (_) => PresenceService()..connect()),
         ChangeNotifierProvider(create: (_) => PasswordVisibilityProvider()),
