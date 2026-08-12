@@ -168,14 +168,88 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
       _showError(result['error'] ?? "Failed to upload profile info.");
     }
   }
+  // Future<void> _onNextTapped() async {
+  //   setState(() {
+  //     _heightError = _selectedHeight == null;
+  //     _weightError = _selectedWeight == null;
+  //     _workError = _workController.text.trim().isEmpty;
+  //     _bioError = _bioController.text.trim().isEmpty;
+  //   });
+  //
+  //   if (_heightError || _weightError || _workError || _bioError) return;
+  //
+  //   setState(() => _isLoading = true);
+  //
+  //   final progressNotifier = ValueNotifier<double>(0.0);
+  //   UploadProgressModal.show(context, progressNotifier);
+  //
+  //   final result = await _authService.uploadFullProfile(
+  //     height: _selectedHeight!,
+  //     weight: _selectedWeight!,
+  //     work: _workController.text.trim(),
+  //     bio: _bioController.text.trim(),
+  //     gender: widget.profileModel.gender ?? '',
+  //     sexuality: widget.profileModel.sexuality ?? '',
+  //     profileImage: _profileImage,
+  //     extraImages: _additionalImages,
+  //     extraVideos: _additionalVideos,
+  //     onProgress: (sent, total) {
+  //       if (total > 0) progressNotifier.value = sent / total;
+  //     },
+  //   );
+  //
+  //   if (!mounted) return;
+  //   Navigator.of(context, rootNavigator: true).pop(); // close progress modal
+  //   setState(() => _isLoading = false);
+  //
+  //   if (result['success'] == true) {
+  //     final prefs = await SharedPreferences.getInstance();
+  //     await prefs.setString('cached_screen_type', '2');
+  //     await prefs.setString('profile_height', _selectedHeight!);
+  //     await prefs.setString('profile_work', _workController.text.trim());
+  //     await prefs.setString('profile_bio', _bioController.text.trim());
+  //
+  //     final updatedModel = widget.profileModel.copyWith(
+  //       profileImage: _profileImage,
+  //       additionalImages: List<File>.from(_additionalImages),
+  //       additionalVideos: List<File>.from(_additionalVideos),
+  //       height: _selectedHeight,
+  //       weight: _selectedWeight,
+  //       work: _workController.text.trim(),
+  //       bio: _bioController.text.trim(),
+  //     );
+  //
+  //     Navigator.pushReplacement(
+  //       context,
+  //       MaterialPageRoute(
+  //         builder: (_) => QuestionnaireScreen(profileModel: updatedModel),
+  //       ),
+  //     );
+  //   } else {
+  //     _showError(
+  //       result['error'] ?? "Failed to upload profile info.",
+  //       title: result['title'], // e.g. "No internet" from ApiManager's error handler
+  //       allowRetry: true,
+  //     );
+  //   }
+  // }
+  // void _showError(String message) {
+  //   ScaffoldMessenger.of(context).showSnackBar(
+  //     SnackBar(
+  //       content: Text(message),
+  //       backgroundColor: const Color(0xFF77153C),
+  //       behavior: SnackBarBehavior.floating,
+  //     ),
+  //   );
+  // }
 
-  void _showError(String message) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(message),
-        backgroundColor: const Color(0xFF77153C),
-        behavior: SnackBarBehavior.floating,
-      ),
+  void _showError(String message, {String? title, bool allowRetry = false}) {
+    CustomErrorAlert.show(
+      context,
+      title: title,
+      message: message,
+      action: allowRetry,
+      onRetry: allowRetry ? _onNextTapped : null,
     );
   }
 
