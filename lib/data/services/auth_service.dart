@@ -318,6 +318,7 @@ class AuthService {
     File? profileImage,
     List<File> extraImages = const [],
     List<File> extraVideos = const [],
+    void Function(int sent, int total)? onProgress, // NEW — optional
   }) async
   {
     final prefs = await SharedPreferences.getInstance();
@@ -343,7 +344,6 @@ class AuthService {
         await MultipartFile.fromFile(profileImage.path, filename: 'avatar.jpg'),
       ));
     }
-
     for (int i = 0; i < extraImages.length; i++) {
       formData.files.add(MapEntry(
         'image${i + 1}', // FIX: image1..image6, matches RN
@@ -351,7 +351,6 @@ class AuthService {
             filename: 'extra_$i.jpg'),
       ));
     }
-
     if (extraVideos.isNotEmpty) {
       formData.files.add(MapEntry(
         'video', // FIX: matches RN's single "video" field
@@ -359,7 +358,6 @@ class AuthService {
             filename: 'intro_video.mp4'),
       ));
     }
-
     return await _api.fetchMultipart(
       Api(
         url: "user/upload-user-info.php", // FIX: was update-user-profile.php in a duplicate/dead method; this is the correct, single upload path now.
@@ -370,6 +368,7 @@ class AuthService {
         },
       ),
       formData,
+      onSendProgress: onProgress,
     );
   }
   Map<String, dynamic> _catchError(Object e) {
@@ -401,7 +400,6 @@ class AuthService {
       'device_token': deviceToken,
     };
   }
-
   Map<String, dynamic> _handleResponse(http.Response response) {
     if (kDebugMode) {
       debugPrint("=== SERVER RESPONSE (${response.request?.url}) ===");
