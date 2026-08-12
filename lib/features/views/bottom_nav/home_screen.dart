@@ -152,7 +152,6 @@ class _HomeScreenState extends State<HomeScreen> {
     }
     setState(() => _loadingHearts.remove(user.id));
   }
-
   void _handleBlock(FilterMatchModel user) async {
     setState(() => _loadingBlocks.add(user.id));
     final success = await _homeService.blockUser(user.id);
@@ -165,6 +164,12 @@ class _HomeScreenState extends State<HomeScreen> {
         wasInterested: user.isInterested,
       );
       TopToast.show(context, title: "User blocked", type: ToastType.success);
+
+      // ✅ Top up the list if we've run low, since scroll-based
+      // pagination can't trigger on a short/empty list.
+      if (_users.length < 4 && _hasMore && !_isFetchingMore) {
+        _fetchProfiles();
+      }
     } else if (mounted) {
       TopToast.show(
         context,
@@ -175,6 +180,29 @@ class _HomeScreenState extends State<HomeScreen> {
     }
     setState(() => _loadingBlocks.remove(user.id));
   }
+
+  // void _handleBlock(FilterMatchModel user) async {
+  //   setState(() => _loadingBlocks.add(user.id));
+  //   final success = await _homeService.blockUser(user.id);
+  //   if (success && mounted) {
+  //     setState(() {
+  //       _users.removeWhere((u) => u.id == user.id);
+  //     });
+  //     context.read<UserStatsViewModel>().userBlocked(
+  //       wasFavorite: user.isFavorite,
+  //       wasInterested: user.isInterested,
+  //     );
+  //     TopToast.show(context, title: "User blocked", type: ToastType.success);
+  //   } else if (mounted) {
+  //     TopToast.show(
+  //       context,
+  //       title: "Couldn't block user",
+  //       message: "Please check your connection and try again.",
+  //       type: ToastType.error,
+  //     );
+  //   }
+  //   setState(() => _loadingBlocks.remove(user.id));
+  // }
 
   final Map<String, DateTime> _chatCooldowns = {};
   void _handleSilentChat(FilterMatchModel user) {

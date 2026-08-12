@@ -220,7 +220,6 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
       );
     }
   }
-
   // Future<void> _onNextTapped() async {
   //   setState(() {
   //     _heightError = _selectedHeight == null;
@@ -295,6 +294,7 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
   //     ),
   //   );
   // }
+
   void _showError(String message, {String? title, bool allowRetry = false}) {
     CustomErrorAlert.show(
       context,

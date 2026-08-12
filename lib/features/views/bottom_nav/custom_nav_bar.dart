@@ -99,13 +99,13 @@ class CustomBottomNavBar extends StatelessWidget {
     final chatViewModel = context.watch<ChatViewModel>();
     return SizedBox(
       width: screenWidth,
-      height: _kBarHeight + 18,
+      height: _kBarHeight + 20.h,
       child: Padding(
         padding: const EdgeInsets.only(top: 20.0),
         child: Stack(
           clipBehavior: Clip.none,
           children: [
-            SizedBox(height: 30),
+            SizedBox(height: 30.h),
             Positioned.fill(
               child: CustomPaint(
                 painter: _ShadowPainter(
@@ -115,7 +115,7 @@ class CustomBottomNavBar extends StatelessWidget {
               ),
             ),
             Positioned(
-              top: 10,
+              top: 25.h,
               left: 0,
               right: 0,
               bottom: -20,
@@ -134,7 +134,6 @@ class CustomBottomNavBar extends StatelessWidget {
                 ),
               ),
             ),
-
             // main white bar
             ClipPath(
               clipper: _CurveClipper(
@@ -149,9 +148,9 @@ class CustomBottomNavBar extends StatelessWidget {
             ),
             // tab items
             Positioned(
-              top: 54,
-              left: 0,
-              right: 0,
+              top: 58.h,
+              left: 5.h,
+              right: 5.h,
               height: 100,
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -160,7 +159,7 @@ class CustomBottomNavBar extends StatelessWidget {
                   final bool isSelected = selectedIndex == index;
                   return Expanded(
                     child: Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 18.w),
+                      padding: EdgeInsets.symmetric(horizontal: 18.w,),
                       child: Stack(
                         children: [
                           _NavItem(
@@ -221,14 +220,12 @@ class _NavItem extends StatelessWidget {
   final String label;
   final bool isSelected;
   final VoidCallback onTap;
-
   const _NavItem({
     required this.imgStr,
     required this.label,
     required this.isSelected,
     required this.onTap,
   });
-
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -268,7 +265,7 @@ class _NavItem extends StatelessWidget {
                 ],
               ),
             ),
-            const SizedBox(height: 2),
+            const SizedBox(height: 1),
             Text(
               label,
               style: TextStyle(
