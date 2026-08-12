@@ -173,33 +173,33 @@ class CustomBottomNavBar extends StatelessWidget {
 
                           index == 2
                               ? Positioned(
-                                  right: 14.w,
-                                  top: 18.h,
-                                  child: Visibility(
-                                    visible:
-                                        chatViewModel.unreadConversationCount !=
-                                        0,
-                                    child: CircleAvatar(
-                                      radius: 10.r,
-                                      backgroundColor: isSelected
-                                          ? Colors.transparent
-                                          : AppColors.red,
-                                      child: Center(
-                                        child: Text(
-                                          isSelected
-                                              ? ''
-                                              : chatViewModel
-                                                    .unreadConversationCount
-                                                    .toString(),
-                                          style: GoogleFonts.poppins(
-                                            color: AppColors.white,
-                                            fontSize: 11.sp,
-                                          ),
-                                        ),
-                                      ),
+                            right: 14.w,
+                            top: 18.h,
+                            child: Visibility(
+                              visible:
+                              chatViewModel.unreadConversationCount !=
+                                  0,
+                              child: CircleAvatar(
+                                radius: 10.r,
+                                backgroundColor: isSelected
+                                    ? Colors.transparent
+                                    : AppColors.red,
+                                child: Center(
+                                  child: Text(
+                                    isSelected
+                                        ? ''
+                                        : chatViewModel
+                                        .unreadConversationCount
+                                        .toString(),
+                                    style: GoogleFonts.poppins(
+                                      color: AppColors.white,
+                                      fontSize: 11.sp,
                                     ),
                                   ),
-                                )
+                                ),
+                              ),
+                            ),
+                          )
                               : const SizedBox.shrink(),
                         ],
                       ),
