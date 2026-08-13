@@ -57,8 +57,110 @@ class _SignUpScreenState extends State<SignUpScreen> {
     super.dispose();
   }
 
+  // void _handleSignUp() async {
+  //   // 1. Reset all errors to null before validating again
+  //   setState(() {
+  //     _nameError = null;
+  //     _ageError = null;
+  //     _emailError = null;
+  //     _passwordError = null;
+  //     _locationError = null;
+  //   });
+  //
+  //   final name = _nameController.text.trim();
+  //   final email = _emailController.text.trim();
+  //   final password = _passwordController.text.trim();
+  //   final ageStr = _ageController.text.trim();
+  //
+  //   // Email Validation
+  //   final emailRegex = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
+  //   if (email.isEmpty) {
+  //     _emailError = "Email is required";
+  //   } else if (!emailRegex.hasMatch(email)) {
+  //     _emailError = "Email is invalid";
+  //   }
+  //   // Password Validation
+  //   final passwordRegex = RegExp(
+  //     r'^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z\d])[A-Za-z\d\S]{8,}$',
+  //   );
+  //   if (password.isEmpty) {
+  //     _passwordError = "Password is required";
+  //   } else if (!passwordRegex.hasMatch(password)) {
+  //     _passwordError =
+  //         "Must be 8+ characters with Upper, Lower, Number & Special char";
+  //   }
+  //
+  //   // Age Validation
+  //   final ageNum = int.tryParse(ageStr);
+  //   if (ageStr.isEmpty) {
+  //     _ageError = "Age is required";
+  //   } else if (ageNum == null || ageNum < 1 || ageNum > 99) {
+  //     _ageError = "Age must be between 1 and 99";
+  //   }
+  //
+  //   // Name Validation
+  //   if (name.isEmpty) {
+  //     _nameError = "Name is required";
+  //   } else if (!RegExp(r'^[A-Za-z\s]+$').hasMatch(name)) {
+  //     _nameError = "Name can only contain letters and spaces";
+  //   }
+  //   // Location Validation
+  //   if (_selectedLocation.isEmpty) {
+  //     _locationError = "Location is required";
+  //   }
+  //
+  //   // 3. CHECK: If any error variable is NOT null, stop here and show them on UI
+  //   if (_emailError != null ||
+  //       _passwordError != null ||
+  //       _ageError != null ||
+  //       _nameError != null ||
+  //       _locationError != null) {
+  //     setState(() {}); // Refresh UI to show the red text under fields
+  //     return; // Exit function
+  //   }
+  //
+  //   setState(() => _isLoading = true);
+  //
+  //   try {
+  //     final deviceInfo = await _authService.getDeviceInfo();
+  //     final deviceId = deviceInfo['device_id'] ?? "";
+  //     final deviceToken = deviceInfo['device_token'] ?? "";
+  //
+  //     final result = await _authService.signUp(
+  //       fullName: name,
+  //       email: email,
+  //       password: password,
+  //       age: ageNum!, // Use ! because we validated it's not null above
+  //       gender: _selectedGender,
+  //       location: _city,
+  //       phoneNo: widget.verifiedPhoneNo,
+  //       country: _country,
+  //       state: _state,
+  //       city: _city,
+  //       latitude: _latitude,
+  //       longitude: _longitude,
+  //       deviceId: deviceId,
+  //       deviceToken: deviceToken,
+  //     );
+  //
+  //     if (result['success']) {
+  //       if (!mounted) return;
+  //       Navigator.pushReplacement(
+  //         context,
+  //         MaterialPageRoute(
+  //           builder: (context) => EmailOtpVerification(email: email,isFromForget: false,),
+  //         ),
+  //       );
+  //     } else {
+  //       _showErrorDialog(result['error'] ?? "Signup failed");
+  //     }
+  //   } catch (e) {
+  //     _showErrorDialog("Error: $e");
+  //   } finally {
+  //     if (mounted) setState(() => _isLoading = false);
+  //   }
+  // }
   void _handleSignUp() async {
-    // 1. Reset all errors to null before validating again
     setState(() {
       _nameError = null;
       _ageError = null;
@@ -79,6 +181,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
     } else if (!emailRegex.hasMatch(email)) {
       _emailError = "Email is invalid";
     }
+
     // Password Validation
     final passwordRegex = RegExp(
       r'^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z\d])[A-Za-z\d\S]{8,}$',
@@ -87,7 +190,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
       _passwordError = "Password is required";
     } else if (!passwordRegex.hasMatch(password)) {
       _passwordError =
-          "Must be 8+ characters with Upper, Lower, Number & Special char";
+      "Must be 8+ characters with Upper, Lower, Number & Special char";
     }
 
     // Age Validation
@@ -104,19 +207,19 @@ class _SignUpScreenState extends State<SignUpScreen> {
     } else if (!RegExp(r'^[A-Za-z\s]+$').hasMatch(name)) {
       _nameError = "Name can only contain letters and spaces";
     }
-    // Location Validation
-    if (_selectedLocation.isEmpty) {
-      _locationError = "Location is required";
+    if (_state.isEmpty) {
+      _locationError = _selectedLocation.isEmpty
+          ? "Location is required"
+          : "Please select a location with a valid state";
     }
 
-    // 3. CHECK: If any error variable is NOT null, stop here and show them on UI
     if (_emailError != null ||
         _passwordError != null ||
         _ageError != null ||
         _nameError != null ||
         _locationError != null) {
-      setState(() {}); // Refresh UI to show the red text under fields
-      return; // Exit function
+      setState(() {});
+      return;
     }
 
     setState(() => _isLoading = true);
@@ -130,7 +233,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
         fullName: name,
         email: email,
         password: password,
-        age: ageNum!, // Use ! because we validated it's not null above
+        age: ageNum!,
         gender: _selectedGender,
         location: _city,
         phoneNo: widget.verifiedPhoneNo,
@@ -148,7 +251,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
-            builder: (context) => EmailOtpVerification(email: email,isFromForget: false,),
+            builder: (context) =>
+                EmailOtpVerification(email: email, isFromForget: false),
           ),
         );
       } else {
@@ -160,7 +264,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
       if (mounted) setState(() => _isLoading = false);
     }
   }
-
   void _showErrorDialog(String message, {String title = "Oops, Failed!"}) {
     showDialog(
       context: context,
@@ -349,6 +452,20 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 edgeInsets: EdgeInsets.only(bottom: 10, top: 4),
               ),
             ),
+            // LocationSelectorField(
+            //   onLocationSelected: (LocationData locationData) {
+            //     setState(() {
+            //       _selectedLocation = locationData.address ?? '';
+            //       _country = locationData.country ?? '';
+            //       _state = locationData.state ?? '';
+            //       _city = locationData.city ?? '';
+            //       _latitude = locationData.latitude.toString();
+            //       _longitude = locationData.longitude.toString();
+            //       _locationError = null;
+            //     });
+            //     print("Selected Coordinates: $_latitude, $_longitude");
+            //   },
+            // ),
             LocationSelectorField(
               onLocationSelected: (LocationData locationData) {
                 setState(() {
@@ -360,9 +477,19 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   _longitude = locationData.longitude.toString();
                   _locationError = null;
                 });
-                print("Selected Coordinates: $_latitude, $_longitude");
+              },
+              onLocationCleared: () {
+                setState(() {
+                  _selectedLocation = "";
+                  _country = "";
+                  _state = "";
+                  _city = "";
+                  _latitude = "";
+                  _longitude = "";
+                });
               },
             ),
+
             _errorWidget(_locationError),
             const SizedBox(height: 40),
             SizedBox(

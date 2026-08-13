@@ -5,6 +5,7 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:two_are_one/core/constants/app_colors.dart';
 import 'package:two_are_one/core/widgets/containers.dart';
+import 'package:two_are_one/core/widgets/error_dialogue.dart';
 import 'package:two_are_one/core/widgets/my_icons.dart';
 import 'package:two_are_one/features//views/main/question_screen.dart';
 import 'package:two_are_one/features//views/main/video.dart';
@@ -16,14 +17,11 @@ import 'package:two_are_one/data/models/user_profile_model.dart';
 import 'package:two_are_one/data/services/Api_Helper/api_manager.dart';
 import 'package:two_are_one/data/services/auth_service.dart';
 import 'package:wechat_assets_picker/wechat_assets_picker.dart';
-import '../../../core/widgets/error_dialogue.dart';
-
 class _PickedImage {
   final File file;
   final AssetEntity? asset; // null when it came from the camera
   const _PickedImage({required this.file, this.asset});
 }
-
 class ProfileSetupScreen extends StatefulWidget {
   final String? gender;
   final String? lookingFor;
@@ -39,7 +37,6 @@ class ProfileSetupScreen extends StatefulWidget {
   @override
   State<ProfileSetupScreen> createState() => _ProfileSetupScreenState();
 }
-
 class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
   final TextEditingController _bioController = TextEditingController();
   final TextEditingController _workController = TextEditingController();
