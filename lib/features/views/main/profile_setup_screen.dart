@@ -17,6 +17,7 @@ import 'package:two_are_one/data/models/user_profile_model.dart';
 import 'package:two_are_one/data/services/Api_Helper/api_manager.dart';
 import 'package:two_are_one/data/services/auth_service.dart';
 import 'package:wechat_assets_picker/wechat_assets_picker.dart';
+
 class _PickedImage {
   final File file;
   final AssetEntity? asset; // null when it came from the camera
