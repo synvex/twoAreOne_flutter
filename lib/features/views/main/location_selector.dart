@@ -18,7 +18,8 @@ class LocationSelectorField extends StatefulWidget {
     super.key,
     this.labels,
     required this.onLocationSelected,
-    this.fillColor, this.hintText,
+    this.fillColor,
+    this.hintText,
   });
 
   @override
@@ -75,6 +76,7 @@ class _LocationSelectorFieldState extends State<LocationSelectorField> {
       if (mounted) setState(() => _isLoading = false);
     }
   }
+
   Future<void> _getPlaceDetails(String placeId, String displayName) async {
     try {
       final url = Uri.parse(
@@ -145,7 +147,7 @@ class _LocationSelectorFieldState extends State<LocationSelectorField> {
               width: 20,
             ),
           ),
-          hintText:  widget.hintText ?? 'Search',
+          hintText: widget.hintText ?? 'Search',
         ),
         // 3. Suggestions List
         if (_showSuggestions)
