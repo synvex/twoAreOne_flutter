@@ -105,48 +105,61 @@ class _EditProfileScreenState extends State<EditProfileScreen>
     final age = '${i + 13}';
     return _DropdownOption(age, age);
   });
-
-  static const List<_DropdownOption> _heightOptions = [
-    _DropdownOption("4'10", '4.10'),
-    _DropdownOption("4'11", '4.11'),
-    _DropdownOption("5'0", '5.0'),
-    _DropdownOption("5'1", '5.1'),
-    _DropdownOption("5'2", '5.2'),
-    _DropdownOption("5'3", '5.3'),
-    _DropdownOption("5'4", '5.4'),
-    _DropdownOption("5'5", '5.5'),
-    _DropdownOption("5'6", '5.6'),
-    _DropdownOption("5'7", '5.7'),
-    _DropdownOption("5'8", '5.8'),
-    _DropdownOption("5'9", '5.9'),
-    _DropdownOption("5'10", '5.10'),
-    _DropdownOption("5'11", '5.11'),
-    _DropdownOption("6'0", '6.0'),
-    _DropdownOption("6'1", '6.1'),
-    _DropdownOption("6'2", '6.2'),
-    _DropdownOption("6'3", '6.3'),
-    _DropdownOption("6'4", '6.4'),
-    _DropdownOption("6'5", '6.5'),
-    _DropdownOption("6'6", '6.6'),
-    _DropdownOption("6'7", '6.7'),
-    _DropdownOption("6'8", '6.8'),
-    _DropdownOption("6'9", '6.9'),
-    _DropdownOption("6'10", '6.10'),
-    _DropdownOption("6'11", '6.11'),
-    _DropdownOption("7'0", '7.0'),
-    _DropdownOption("7'1", '7.1'),
-    _DropdownOption("7'2", '7.2'),
-    _DropdownOption("7'3", '7.3'),
-    _DropdownOption("7'4", '7.4'),
-    _DropdownOption("7'5", '7.5'),
-    _DropdownOption("7'6", '7.6'),
-  ];
+  static List<_DropdownOption> get _heightOptions => List.generate(33, (i) {
+    final totalInches = 58 + i;
+    final feet = totalInches ~/ 12;
+    final inches = totalInches % 12;
+    final label = "$feet'$inches";
+    return _DropdownOption(label, label);
+  });
 
   static List<_DropdownOption> get _weightOptions =>
-      List.generate(440 - 66 + 1, (i) {
-        final weight = 66 + i;
-        return _DropdownOption('$weight lbs', '$weight');
+      List.generate(374, (i) {
+        final label = "${66 + i} lbs";
+        return _DropdownOption(label, label);
       });
+
+  // static const List<_DropdownOption> _heightOptions = [
+  //   _DropdownOption("4'10", '4.10'),
+  //   _DropdownOption("4'11", '4.11'),
+  //   _DropdownOption("5'0", '5.0'),
+  //   _DropdownOption("5'1", '5.1'),
+  //   _DropdownOption("5'2", '5.2'),
+  //   _DropdownOption("5'3", '5.3'),
+  //   _DropdownOption("5'4", '5.4'),
+  //   _DropdownOption("5'5", '5.5'),
+  //   _DropdownOption("5'6", '5.6'),
+  //   _DropdownOption("5'7", '5.7'),
+  //   _DropdownOption("5'8", '5.8'),
+  //   _DropdownOption("5'9", '5.9'),
+  //   _DropdownOption("5'10", '5.10'),
+  //   _DropdownOption("5'11", '5.11'),
+  //   _DropdownOption("6'0", '6.0'),
+  //   _DropdownOption("6'1", '6.1'),
+  //   _DropdownOption("6'2", '6.2'),
+  //   _DropdownOption("6'3", '6.3'),
+  //   _DropdownOption("6'4", '6.4'),
+  //   _DropdownOption("6'5", '6.5'),
+  //   _DropdownOption("6'6", '6.6'),
+  //   _DropdownOption("6'7", '6.7'),
+  //   _DropdownOption("6'8", '6.8'),
+  //   _DropdownOption("6'9", '6.9'),
+  //   _DropdownOption("6'10", '6.10'),
+  //   _DropdownOption("6'11", '6.11'),
+  //   _DropdownOption("7'0", '7.0'),
+  //   _DropdownOption("7'1", '7.1'),
+  //   _DropdownOption("7'2", '7.2'),
+  //   _DropdownOption("7'3", '7.3'),
+  //   _DropdownOption("7'4", '7.4'),
+  //   _DropdownOption("7'5", '7.5'),
+  //   _DropdownOption("7'6", '7.6'),
+  // ];
+  //
+  // static List<_DropdownOption> get _weightOptions =>
+  //     List.generate(440 - 66 + 1, (i) {
+  //       final weight = 66 + i;
+  //       return _DropdownOption('$weight lbs', '$weight');
+  //     });
 
   @override
   void initState() {

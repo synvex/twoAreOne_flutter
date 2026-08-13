@@ -7,6 +7,7 @@ import 'package:two_are_one/core/constants/app_colors.dart';
 import 'package:two_are_one/core/widgets/containers.dart';
 import 'package:two_are_one/core/widgets/error_dialogue.dart';
 import 'package:two_are_one/core/widgets/my_icons.dart';
+import 'package:two_are_one/core/widgets/upload_progress_model.dart' show SmoothUploadProgress, UploadProgressModal;
 import 'package:two_are_one/features//views/main/question_screen.dart';
 import 'package:two_are_one/features//views/main/video.dart';
 import 'package:two_are_one/core/widgets/main_button_widget.dart';
@@ -103,21 +104,25 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
       debugPrint("WARNING: No token found in ProfileSetup initState");
     }
   }
-
   Future<void> _onNextTapped() async {
     // 1. Validation
     setState(() {
       _heightError = _selectedHeight == null;
       _weightError = _selectedWeight == null;
       _workError = _workController.text.trim().isEmpty;
-      _bioError = _bioController.text.trim().length < _minBioLength;
+      _bioError = _bioController.text.trim().isEmpty;
     });
 
     if (_heightError || _weightError || _workError || _bioError) return;
 
     setState(() => _isLoading = true);
 
-    // 2. Call the Unified Upload Method
+    // 2. Show the upload progress modal and start the smooth ticker
+    final progress = SmoothUploadProgress();
+    progress.start();
+    UploadProgressModal.show(context, progress.notifier);
+
+    // 3. Call the Unified Upload Method
     final result = await _authService.uploadFullProfile(
       height: _selectedHeight!,
       weight: _selectedWeight!,
@@ -128,13 +133,21 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
       profileImage: _profileImage,
       extraImages: _additionalImages,
       extraVideos: _additionalVideos,
+      onSendProgress: progress.onRealProgress,
     );
+
+    // 4. Finish/close the progress modal
+    progress.finish();
+    await Future.delayed(const Duration(milliseconds: 200));
+    if (!mounted) return;
+    Navigator.of(context, rootNavigator: true).pop(); // close progress dialog
+    progress.dispose();
 
     if (!mounted) return;
     setState(() => _isLoading = false);
 
     if (result['success'] == true) {
-      // 3. Save locally for the HomeScreen Banner
+      // 5. Save locally for the HomeScreen Banner
       final prefs = await SharedPreferences.getInstance();
       await prefs.setString(
         'cached_screen_type',
@@ -156,7 +169,7 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
         bio: _bioController.text.trim(),
       );
 
-      // 4. Move to Questions
+      // 6. Move to Questions
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
@@ -167,6 +180,69 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
       _showError(result['error'] ?? "Failed to upload profile info.");
     }
   }
+  // Future<void> _onNextTapped() async {
+  //   // 1. Validation
+  //   setState(() {
+  //     _heightError = _selectedHeight == null;
+  //     _weightError = _selectedWeight == null;
+  //     _workError = _workController.text.trim().isEmpty;
+  //     _bioError = _bioController.text.trim().length < _minBioLength;
+  //   });
+  //
+  //   if (_heightError || _weightError || _workError || _bioError) return;
+  //
+  //   setState(() => _isLoading = true);
+  //
+  //   // 2. Call the Unified Upload Method
+  //   final result = await _authService.uploadFullProfile(
+  //     height: _selectedHeight!,
+  //     weight: _selectedWeight!,
+  //     work: _workController.text.trim(),
+  //     bio: _bioController.text.trim(),
+  //     gender: widget.profileModel.gender ?? '',
+  //     sexuality: widget.profileModel.sexuality ?? '',
+  //     profileImage: _profileImage,
+  //     extraImages: _additionalImages,
+  //     extraVideos: _additionalVideos,
+  //   );
+  //
+  //   if (!mounted) return;
+  //   setState(() => _isLoading = false);
+  //
+  //   if (result['success'] == true) {
+  //     // 3. Save locally for the HomeScreen Banner
+  //     final prefs = await SharedPreferences.getInstance();
+  //     await prefs.setString(
+  //       'cached_screen_type',
+  //       '2',
+  //     ); // Move to Questionnaire stage
+  //     await prefs.setString('profile_height', _selectedHeight!);
+  //     await prefs.setString('profile_work', _workController.text.trim());
+  //     await prefs.setString('profile_bio', _bioController.text.trim());
+  //
+  //     // Note: The server will return the new image path in result['data']
+  //     // We update our model with the file paths we have
+  //     final updatedModel = widget.profileModel.copyWith(
+  //       profileImage: _profileImage,
+  //       additionalImages: List<File>.from(_additionalImages),
+  //       additionalVideos: List<File>.from(_additionalVideos),
+  //       height: _selectedHeight,
+  //       weight: _selectedWeight,
+  //       work: _workController.text.trim(),
+  //       bio: _bioController.text.trim(),
+  //     );
+  //
+  //     // 4. Move to Questions
+  //     Navigator.pushReplacement(
+  //       context,
+  //       MaterialPageRoute(
+  //         builder: (_) => QuestionnaireScreen(profileModel: updatedModel),
+  //       ),
+  //     );
+  //   } else {
+  //     _showError(result['error'] ?? "Failed to upload profile info.");
+  //   }
+  // }
 
   void _showError(String message, {String? title, bool allowRetry = false}) {
     CustomErrorAlert.show(
