@@ -23,7 +23,6 @@ class _PickedImage {
   final AssetEntity? asset; // null when it came from the camera
   const _PickedImage({required this.file, this.asset});
 }
-
 class ProfileSetupScreen extends StatefulWidget {
   final String? gender;
   final String? lookingFor;
@@ -39,7 +38,6 @@ class ProfileSetupScreen extends StatefulWidget {
   @override
   State<ProfileSetupScreen> createState() => _ProfileSetupScreenState();
 }
-
 class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
   final TextEditingController _bioController = TextEditingController();
   final TextEditingController _workController = TextEditingController();

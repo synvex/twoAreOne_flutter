@@ -754,6 +754,23 @@ class _EditProfileScreenState extends State<EditProfileScreen>
                     if (_nameError.isNotEmpty) _errorText(_nameError),
                     const SizedBox(height: 20),
                     _fieldLabel("Location"),
+                    // Container(
+                    //   decoration: BoxDecoration(
+                    //     color: Colors.white,
+                    //     borderRadius: BorderRadius.circular(30),
+                    //     border: Border.all(color: _kFieldBorder),
+                    //   ),
+                    //   child: LocationSelectorField(
+                    //     hintText:
+                    //         (_user?.city.isNotEmpty == true &&
+                    //             _user?.country.isNotEmpty == true)
+                    //         ? "${_user?.city},${_user?.country}"
+                    //         : "Search",
+                    //     fillColor: 0xFFFFFFFF,
+                    //     onLocationSelected: (loc) =>
+                    //         setState(() => _pickedLocation = loc),
+                    //   ),
+                    // ),
                     Container(
                       decoration: BoxDecoration(
                         color: Colors.white,
@@ -762,13 +779,13 @@ class _EditProfileScreenState extends State<EditProfileScreen>
                       ),
                       child: LocationSelectorField(
                         hintText:
-                            (_user?.city.isNotEmpty == true &&
-                                _user?.country.isNotEmpty == true)
+                        (_user?.city.isNotEmpty == true &&
+                            _user?.country.isNotEmpty == true)
                             ? "${_user?.city},${_user?.country}"
                             : "Search",
                         fillColor: 0xFFFFFFFF,
-                        onLocationSelected: (loc) =>
-                            setState(() => _pickedLocation = loc),
+                        onLocationSelected: (loc) => setState(() => _pickedLocation = loc),
+                        onLocationCleared: () => setState(() => _pickedLocation = null),
                       ),
                     ),
                     const SizedBox(height: 20),
