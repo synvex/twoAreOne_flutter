@@ -505,7 +505,7 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
   @override
   Widget build(BuildContext context) {
     return PopScope(
-      canPop: false, // Prevents back navigation
+      canPop: false,
       onPopInvoked: (didPop) {
         if (didPop) return;
       },
