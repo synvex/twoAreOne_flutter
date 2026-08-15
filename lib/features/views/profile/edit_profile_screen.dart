@@ -538,7 +538,8 @@ class _EditProfileScreenState extends State<EditProfileScreen>
     required bool isVideo,
     required Future<void> Function() onCamera,
     required Future<void> Function() onGallery,
-  }) {
+  })
+  {
     showModalBottomSheet(
       context: context,
       backgroundColor: Colors.white,
@@ -1093,6 +1094,7 @@ class _EditProfileScreenState extends State<EditProfileScreen>
       ),
       child: DropdownButtonHideUnderline(
         child: DropdownButtonFormField<String>(
+          key: ValueKey<String?>(safeValue),
           initialValue: safeValue,
           isExpanded: true,
           hint: Text(
@@ -1110,19 +1112,68 @@ class _EditProfileScreenState extends State<EditProfileScreen>
           items: items
               .map(
                 (opt) => DropdownMenuItem(
-                  value: opt.value,
-                  child: Text(
-                    opt.label,
-                    style: const TextStyle(fontSize: 14, color: _kFieldText),
-                  ),
-                ),
-              )
+              value: opt.value,
+              child: Text(
+                opt.label,
+                style: const TextStyle(fontSize: 14, color: _kFieldText),
+              ),
+            ),
+          )
               .toList(),
           onChanged: onChanged,
         ),
       ),
     );
   }
+  // Widget _buildDropdown({
+  //   required String hint,
+  //   required String? value,
+  //   required List<_DropdownOption> items,
+  //   required ValueChanged<String?> onChanged,
+  // })
+  // {
+  //   final safeValue = (value != null && items.any((o) => o.value == value))
+  //       ? value
+  //       : null;
+  //   return Container(
+  //     padding: const EdgeInsets.symmetric(horizontal: 16),
+  //     decoration: BoxDecoration(
+  //       color: Colors.white,
+  //       borderRadius: BorderRadius.circular(30),
+  //       border: Border.all(color: _kFieldBorder),
+  //     ),
+  //     child: DropdownButtonHideUnderline(
+  //       child: DropdownButtonFormField<String>(
+  //         initialValue: safeValue,
+  //         isExpanded: true,
+  //         hint: Text(
+  //           hint,
+  //           style: const TextStyle(fontSize: 14, color: _kFieldText),
+  //         ),
+  //         icon: const Icon(Icons.arrow_drop_down, color: _kFieldText),
+  //         menuMaxHeight: 300,
+  //         style: const TextStyle(fontSize: 14, color: _kFieldText),
+  //         decoration: const InputDecoration(
+  //           border: InputBorder.none,
+  //           isDense: true,
+  //           contentPadding: EdgeInsets.symmetric(vertical: 14),
+  //         ),
+  //         items: items
+  //             .map(
+  //               (opt) => DropdownMenuItem(
+  //                 value: opt.value,
+  //                 child: Text(
+  //                   opt.label,
+  //                   style: const TextStyle(fontSize: 14, color: _kFieldText),
+  //                 ),
+  //               ),
+  //             )
+  //             .toList(),
+  //         onChanged: onChanged,
+  //       ),
+  //     ),
+  //   );
+  // }
 
   Widget _buildUpdateButton() {
     return MainButtonWidget(
