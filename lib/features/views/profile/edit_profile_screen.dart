@@ -198,7 +198,9 @@ class _EditProfileScreenState extends State<EditProfileScreen>
             : null;
         _selectedAge = user.age.isNotEmpty ? user.age : null;
         _selectedHeight = user.height.isNotEmpty ? user.height : null;
-        _selectedWeight = user.weight.isNotEmpty ? user.weight : null;
+        // _selectedWeight = user.weight.isNotEmpty ? user.weight : null;
+        _selectedWeight = _normalizeWeight(user.weight);
+        debugPrint('weight from server = "${user.weight}"');
         _existingVideo = user.userVideo;
         _imageEntries
           ..clear()
@@ -224,7 +226,13 @@ class _EditProfileScreenState extends State<EditProfileScreen>
     if (path == null || path.isEmpty) return '';
     return path.startsWith('http') ? path : '$kEditProfileUploadBase$path';
   }
-
+  String? _normalizeWeight(String? raw) {
+    if (raw == null || raw.trim().isEmpty) return null;
+    final match = RegExp(r'\d+').firstMatch(raw);
+    if (match == null) return null;
+    final candidate = '${match.group(0)} lbs';
+    return _weightOptions.any((o) => o.value == candidate) ? candidate : null;
+  }
   Future<bool> _requestCameraPermission() async {
     final status = await Permission.camera.status;
     if (status.isGranted) return true;
@@ -533,7 +541,6 @@ class _EditProfileScreenState extends State<EditProfileScreen>
       },
     );
   }
-
   void _openMediaSheet({
     required bool isVideo,
     required Future<void> Function() onCamera,
@@ -600,7 +607,6 @@ class _EditProfileScreenState extends State<EditProfileScreen>
       ),
     );
   }
-
   bool _validate() {
     final nameOk = RegExp(
       r'^[A-Za-z\s]+$',
@@ -626,7 +632,6 @@ class _EditProfileScreenState extends State<EditProfileScreen>
     debugPrint("nameOk: $nameOk, workOk: $workOk, bioOk: $bioOk");
     return nameOk && workOk && bioOk;
   }
-
   Future<void> _onUpdate() async {
     if (!_validate()) return;
 

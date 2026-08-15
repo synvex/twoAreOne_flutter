@@ -63,18 +63,10 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
     return "$feet'$inches";
   });
   List<String> get _weightOptions => List.generate(374, (i) => "${66 + i} lbs");
-  // REMOVE these two:
-  // final List<File> _additionalImages = [];
-  // List<AssetEntity> _selectedAssets = [];
-
-  // ADD this one:
   final List<_PickedImage> _additionalPicked = [];
   static const int _minBioLength = 5;
-
-  // Convenience getters so the rest of your code barely changes:
   List<File> get _additionalImages =>
       _additionalPicked.map((e) => e.file).toList();
-
   List<AssetEntity> get _selectedAssets => _additionalPicked
       .where((e) => e.asset != null)
       .map((e) => e.asset!)
@@ -104,82 +96,7 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
       debugPrint("WARNING: No token found in ProfileSetup initState");
     }
   }
-  // Future<void> _onNextTapped() async {
-  //   // 1. Validation
-  //   setState(() {
-  //     _heightError = _selectedHeight == null;
-  //     _weightError = _selectedWeight == null;
-  //     _workError = _workController.text.trim().isEmpty;
-  //     _bioError = _bioController.text.trim().isEmpty;
-  //   });
-  //
-  //   if (_heightError || _weightError || _workError || _bioError) return;
-  //
-  //   setState(() => _isLoading = true);
-  //
-  //   // 2. Show the upload progress modal and start the smooth ticker
-  //   final progress = SmoothUploadProgress();
-  //   progress.start();
-  //   UploadProgressModal.show(context, progress.notifier);
-  //
-  //   // 3. Call the Unified Upload Method
-  //   final result = await _authService.uploadFullProfile(
-  //     height: _selectedHeight!,
-  //     weight: _selectedWeight!,
-  //     work: _workController.text.trim(),
-  //     bio: _bioController.text.trim(),
-  //     gender: widget.profileModel.gender ?? '',
-  //     sexuality: widget.profileModel.sexuality ?? '',
-  //     profileImage: _profileImage,
-  //     extraImages: _additionalImages,
-  //     extraVideos: _additionalVideos,
-  //     onSendProgress: progress.onRealProgress,
-  //   );
-  //
-  //   // 4. Finish/close the progress modal
-  //   progress.finish();
-  //   await Future.delayed(const Duration(milliseconds: 200));
-  //   if (!mounted) return;
-  //   Navigator.of(context, rootNavigator: true).pop(); // close progress dialog
-  //   progress.dispose();
-  //
-  //   if (!mounted) return;
-  //   setState(() => _isLoading = false);
-  //
-  //   if (result['success'] == true) {
-  //     // 5. Save locally for the HomeScreen Banner
-  //     final prefs = await SharedPreferences.getInstance();
-  //     await prefs.setString(
-  //       'cached_screen_type',
-  //       '2',
-  //     ); // Move to Questionnaire stage
-  //     await prefs.setString('profile_height', _selectedHeight!);
-  //     await prefs.setString('profile_work', _workController.text.trim());
-  //     await prefs.setString('profile_bio', _bioController.text.trim());
-  //
-  //     // Note: The server will return the new image path in result['data']
-  //     // We update our model with the file paths we have
-  //     final updatedModel = widget.profileModel.copyWith(
-  //       profileImage: _profileImage,
-  //       additionalImages: List<File>.from(_additionalImages),
-  //       additionalVideos: List<File>.from(_additionalVideos),
-  //       height: _selectedHeight,
-  //       weight: _selectedWeight,
-  //       work: _workController.text.trim(),
-  //       bio: _bioController.text.trim(),
-  //     );
-  //
-  //     // 6. Move to Questions
-  //     Navigator.pushReplacement(
-  //       context,
-  //       MaterialPageRoute(
-  //         builder: (_) => QuestionnaireScreen(profileModel: updatedModel),
-  //       ),
-  //     );
-  //   } else {
-  //     _showError(result['error'] ?? "Failed to upload profile info.");
-  //   }
-  // }
+
   Future<void> _onNextTapped() async {
     // 1. Validation
     setState(() {
@@ -260,71 +177,6 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
       _showError(result['error'] ?? "Failed to upload profile info.");
     }
   }
-
-  // Future<void> _onNextTapped() async {
-  //   // 1. Validation
-  //   setState(() {
-  //     _heightError = _selectedHeight == null;
-  //     _weightError = _selectedWeight == null;
-  //     _workError = _workController.text.trim().isEmpty;
-  //     _bioError = _bioController.text.trim().length < _minBioLength;
-  //   });
-  //
-  //   if (_heightError || _weightError || _workError || _bioError) return;
-  //
-  //   setState(() => _isLoading = true);
-  //
-  //   // 2. Call the Unified Upload Method
-  //   final result = await _authService.uploadFullProfile(
-  //     height: _selectedHeight!,
-  //     weight: _selectedWeight!,
-  //     work: _workController.text.trim(),
-  //     bio: _bioController.text.trim(),
-  //     gender: widget.profileModel.gender ?? '',
-  //     sexuality: widget.profileModel.sexuality ?? '',
-  //     profileImage: _profileImage,
-  //     extraImages: _additionalImages,
-  //     extraVideos: _additionalVideos,
-  //   );
-  //
-  //   if (!mounted) return;
-  //   setState(() => _isLoading = false);
-  //
-  //   if (result['success'] == true) {
-  //     // 3. Save locally for the HomeScreen Banner
-  //     final prefs = await SharedPreferences.getInstance();
-  //     await prefs.setString(
-  //       'cached_screen_type',
-  //       '2',
-  //     ); // Move to Questionnaire stage
-  //     await prefs.setString('profile_height', _selectedHeight!);
-  //     await prefs.setString('profile_work', _workController.text.trim());
-  //     await prefs.setString('profile_bio', _bioController.text.trim());
-  //
-  //     // Note: The server will return the new image path in result['data']
-  //     // We update our model with the file paths we have
-  //     final updatedModel = widget.profileModel.copyWith(
-  //       profileImage: _profileImage,
-  //       additionalImages: List<File>.from(_additionalImages),
-  //       additionalVideos: List<File>.from(_additionalVideos),
-  //       height: _selectedHeight,
-  //       weight: _selectedWeight,
-  //       work: _workController.text.trim(),
-  //       bio: _bioController.text.trim(),
-  //     );
-  //
-  //     // 4. Move to Questions
-  //     Navigator.pushReplacement(
-  //       context,
-  //       MaterialPageRoute(
-  //         builder: (_) => QuestionnaireScreen(profileModel: updatedModel),
-  //       ),
-  //     );
-  //   } else {
-  //     _showError(result['error'] ?? "Failed to upload profile info.");
-  //   }
-  // }
-
   void _showError(String message, {String? title, bool allowRetry = false}) {
     CustomErrorAlert.show(
       context,
@@ -356,12 +208,10 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
               ),
             ),
             const SizedBox(height: 20),
-
             MainButtonWidget(
               text: type == 2 ? "Record Video" : "Take Photo",
               onTap: () async {
                 Navigator.pop(context);
-                // Wait for bottom sheet to fully close before opening camera
                 await Future.delayed(const Duration(milliseconds: 300));
                 if (mounted) _handleMediaSelection(type, ImageSource.camera);
               },
@@ -450,8 +300,6 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
       return true; // let picker try anyway
     }
   }
-
-  // ── Permission dialog ─────────────────────────────────────────────────────
   void _showPermissionDialog(String message) {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
@@ -498,14 +346,16 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
     try {
       final isCamera = source == ImageSource.camera;
       final isVideo = type == 2;
-
       // Camera needs explicit permission check
       // Gallery + video gallery — image_picker handles it internally, skip check
+      if (isVideo && _additionalVideos.length >= 1) {
+        _showVideoLimitDialog();
+        return;
+      }
       if (isCamera) {
         final granted = await _checkCameraPermission(isVideo: isVideo);
         if (!granted) return;
       }
-
       switch (type) {
         case 0: // Profile picture
           final XFile? picked = await _picker.pickImage(
@@ -581,6 +431,10 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
         case 2: // Video
           // Both camera recording and gallery video —
           // camera already checked above, gallery handled by image_picker
+        if (_additionalVideos.length >=1){
+          _showVideoLimitDialog();
+          return;
+        }
           final XFile? picked = await _picker.pickVideo(
             source: source,
             maxDuration: const Duration(minutes: 5),
@@ -612,7 +466,21 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
       ),
     );
   }
-
+  void _showVideoLimitDialog() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text("Limit Reached"),
+        content: const Text("You can upload a maximum of 1 video."),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text("OK"),
+          ),
+        ],
+      ),
+    );
+  }
   Widget _mediaActionButton(String title, String icon, VoidCallback onTap) {
     return GestureDetector(
       onTap: onTap,
@@ -854,7 +722,9 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
                     _mediaActionButton(
                       "Add Videos",
                       "assets/svg_images/add_video.svg",
-                      () => _pickMedia(2),
+                      () => _additionalVideos.length >= 1
+                          ? _showVideoLimitDialog()
+                          : _pickMedia(2),
                     ),
                   ],
                 ),
@@ -928,7 +798,6 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
       ),
     );
   }
-
   Widget _buildMediaPreview(
     File file,
     VoidCallback onRemove, {

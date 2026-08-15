@@ -61,7 +61,7 @@ class _CustomInputFieldState extends State<CustomInputField> {
           textAlign: TextAlign.left,
           cursorColor: Colors.black,
           onChanged: widget.onChanged,
-          style: TextStyle(color: Color(0xFF787878)),
+          style: TextStyle(color: Color(0xFF000000)),
           inputFormatters: widget.formatter ?? [],
           decoration: InputDecoration(
             prefixIconConstraints: const BoxConstraints(
@@ -76,8 +76,8 @@ class _CustomInputFieldState extends State<CustomInputField> {
                 : null,
             hintText: widget.hintText,
             hintStyle: TextStyle(
-              color: Color(widget.textColor ?? 0xFF787878),
-              fontSize: 16,
+              color: Color(widget.textColor ?? 0xFF000000),
+              fontSize: 15,
             ),
             prefixIcon: Padding(
               padding: EdgeInsets.only(left: 10),
@@ -165,7 +165,7 @@ class CircleField extends StatelessWidget {
         textStyle: TextStyle(
           fontSize: 16,
           fontWeight: FontWeight.w600,
-          color: Color(0xFF727272),
+          color: Color(0xFF000000),
         ),
       ),
       separatorBuilder: (index) => SizedBox(width: 15),
