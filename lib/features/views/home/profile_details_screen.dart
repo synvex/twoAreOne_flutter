@@ -18,11 +18,9 @@ import '../../../data/repo/socket_service.dart';
 import 'category_questions_screen.dart';
 import 'inline_video_player.dart';
 import 'profile_detail_card.dart';
-
 const String kProfileUploadImagesBase = "https://www.twoareone.love/uploads/";
 const Color kMehroon = Color(0xFF77153C);
 const Color kMehroonLight = Color(0xFFDD276F);
-
 class ProfileDetailsScreen extends StatefulWidget {
   final int? userId;
 
@@ -31,7 +29,6 @@ class ProfileDetailsScreen extends StatefulWidget {
   @override
   State<ProfileDetailsScreen> createState() => _ProfileDetailsScreenState();
 }
-
 class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
   final HomeService _homeService = HomeService();
   bool _didInit = false;
@@ -40,7 +37,7 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
   bool _loading = true;
   ProfileDetailModel? _details;
   bool _showFullBio = false;
-  String? _selectedImage; // fully-resolved URL for the fullscreen viewer
+  String? _selectedImage;
   bool _blockLoading = false;
   bool _heartLoading = false;
   bool _starLoading = false;
@@ -326,7 +323,6 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
   Widget _buildScreen(BuildContext context) {
     final details = _details;
     final screenWidth = MediaQuery.of(context).size.width;
-
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
@@ -458,9 +454,9 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
                       runSpacing: 6,
                       children: [
                         _infoBadge("Gender", details?.gender),
-                        _infoBadge("Height", details?.height),
+                        _infoBadge("Height", _formatHeight(details?.height)),
                         _infoBadge("Age", details?.age),
-                        _infoBadge("Weight", "${details?.weight}"),
+                        _infoBadge("Weight",  _formatWeight(details?.weight)),
                       ],
                     ),
                     // ── Images ────────────────────────────────────────
@@ -543,7 +539,6 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
                       ),
                     ),
                     const SizedBox(height: 6),
-
                     ...?details?.categories.map(
                           (category) => Padding(
                         padding: const EdgeInsets.only(top: 4),
@@ -606,7 +601,6 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
       ),
     );
   }
-
   Widget _buildFullScreenImageViewer() {
     return Scaffold(
       body: GestureDetector(
@@ -725,6 +719,44 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
       ),
     );
   }
+
+  String _formatHeight(String? height) {
+    if (height == null || height.isEmpty) return "N/A";
+
+    // if API already returns "6'4 (193cm)"
+    if (height.contains("'") || height.contains("cm") || height.contains("ft")) {
+      return height;
+    }
+
+    // if API returns numeric cm
+    final cm = double.tryParse(height);
+    if (cm != null) {
+      final totalInches = cm / 2.54;
+      final feet = (totalInches / 12).floor();
+      final inches = (totalInches % 12).round();
+      return "${feet}'${inches}\" (${cm.round()}cm)";
+    }
+
+    return height;
+  }
+  String _formatWeight(String? weight) {
+    if (weight == null || weight.isEmpty) return "N/A";
+
+    // if API already returns "91 lbs (41kg)"
+    if (weight.contains("lbs") || weight.contains("kg")) {
+      return weight;
+    }
+
+    // if API returns numeric kg
+    final kg = double.tryParse(weight);
+    if (kg != null) {
+      final lbs = kg * 2.20462;
+      return "${lbs.round()} lbs (${kg.round()}kg)";
+    }
+
+    return weight;
+  }
+
   Widget _infoBadge(String label, String? value) {
     return SizedBox(
       width: (MediaQuery.of(context).size.width * 0.92) / 2,

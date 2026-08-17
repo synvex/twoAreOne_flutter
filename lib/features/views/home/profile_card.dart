@@ -143,8 +143,8 @@ class ProfileCard extends StatelessWidget {
                                 user.isFavorite
                                     ? "assets/svg_images/filled_star.svg"
                                     : "assets/svg_images/unfill_star.svg",
-                                iconSize: user.isFavorite? 18:13.2,
-                                padding: user.isFavorite?2:3.5
+                                iconSize: user.isFavorite? 21:17.5,
+                                padding: user.isFavorite?3:3.5
                               ),
                             ),
                             Expanded(
@@ -157,8 +157,8 @@ class ProfileCard extends StatelessWidget {
                               child: _smallIcon(
                                 onRequestSend,
                                 "assets/svg_images/interested.svg",
-                                padding: 2,
-                                iconSize: 18
+                                padding: 3,
+                                iconSize: 21.5
                               ),
                             ),
                           ],
@@ -178,7 +178,7 @@ class ProfileCard extends StatelessWidget {
     return PlaceholderImage(height: 135, width: 140, size: 22);
   }
   Widget _smallIcon(VoidCallback? onTap, String imageStr,
-      {double iconSize = 16, double padding = 3})
+      {double iconSize = 20, double padding = 3})
   {
     return Material(
       color: Colors.transparent,
