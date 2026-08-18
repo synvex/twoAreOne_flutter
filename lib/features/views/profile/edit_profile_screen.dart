@@ -22,11 +22,14 @@ const String kEditProfileUploadBase = "https://www.twoareone.love/uploads/";
 const Color _kGradientStart = Color(0xFFB06A82);
 const Color _kGradientEnd = Color(0xFF84A2D4);
 const Color _kMehroon = Color(0xFF77153C);
+const Color _kBorderGrey = Color(0xFF969696);      // Main border color
+const Color _kFieldTextGrey = Color(0xFF4D4D4D);   // Field text color
+const Color _kLabelGrey = Color(0xFF424242);       // Label text color
+const Color _kFieldTextLight = Color(0xFFA5A6A6);
+const Color _kBorder = Color(0xFF969696);           // Changed from _kA5A6A6
+const Color _kFieldText = Color(0xFF4D4D4D);        // Changed from _kA5A6A6
+const Color _kLabelText = Color(0xFF424242);
 
-const Color _kBorder = Color(0xFFA5A6A6);
-// const Color _kFieldBorder = Color(0xFFDCDCDC);
-const Color _kFieldText = Color(0xFFA5A6A6);
-// maximum allowed video size (50 MB)
 const int kMaxVideoBytes = 50 * 1024 * 1024;
 // maximum allowed video duration in seconds (120s)
 const int kMaxVideoSeconds = 120;
@@ -126,7 +129,6 @@ class _EditProfileScreenState extends State<EditProfileScreen>
     )..repeat(reverse: true);
     _loadUser();
   }
-
   @override
   void dispose() {
     _nameController.dispose();
@@ -135,7 +137,6 @@ class _EditProfileScreenState extends State<EditProfileScreen>
     _fadeController.dispose();
     super.dispose();
   }
-
   Future<void> _loadUser() async {
     final res = await _profileService.getUserInfo();
     if (!mounted) return;
@@ -203,7 +204,6 @@ class _EditProfileScreenState extends State<EditProfileScreen>
     final result = await Permission.camera.request();
     return result.isGranted;
   }
-
   Future<bool> _requestGalleryPermission() async {
     if (Platform.isIOS) {
       final status = await Permission.photos.status;
@@ -629,7 +629,6 @@ class _EditProfileScreenState extends State<EditProfileScreen>
       ),
     );
   }
-
   @override
   Widget build(BuildContext context) {
     if (_loadingUser) {
@@ -724,6 +723,7 @@ class _EditProfileScreenState extends State<EditProfileScreen>
                             ? "${_user?.city},${_user?.country}"
                             : "Search",
                         fillColor: 0xFFFFFFFF,
+                        selectedClr: 0xFF4D4D4D,
                         onLocationSelected: (loc) => setState(() => _pickedLocation = loc),
                         onLocationCleared: () => setState(() => _pickedLocation = null),
                       ),
@@ -856,7 +856,6 @@ class _EditProfileScreenState extends State<EditProfileScreen>
       ),
     );
   }
-
   Widget _sectionCard({required String title, required Widget child}) {
     return Container(
       width: double.infinity,
@@ -883,7 +882,6 @@ class _EditProfileScreenState extends State<EditProfileScreen>
       ),
     );
   }
-
   Widget _fieldLabel(String text, {double padBottom = 8}) => Padding(
     padding: EdgeInsets.only(bottom: padBottom, top: 4),
     child: Text(
@@ -1018,6 +1016,38 @@ class _EditProfileScreenState extends State<EditProfileScreen>
         borderRadius: BorderRadius.circular(30),
         border: Border.all(color: _kBorder),
       ),
+
+      // child: DropdownButtonHideUnderline(
+      //   child: DropdownButtonFormField<String>(
+      //     key: ValueKey<String?>(safeValue),
+      //     initialValue: safeValue,
+      //     isExpanded: true,
+      //     hint: Text(
+      //       hint,
+      //       style: const TextStyle(fontSize: 14, color: _kFieldText),
+      //     ),
+      //     icon: const Icon(Icons.arrow_drop_down, color: _kFieldText),
+      //     menuMaxHeight: 300,
+      //     style: const TextStyle(fontSize: 14, color: _kFieldText),
+      //     decoration: const InputDecoration(
+      //       border: InputBorder.none,
+      //       isDense: true,
+      //       contentPadding: EdgeInsets.symmetric(vertical: 14),
+      //     ),
+      //     items: items
+      //         .map(
+      //           (opt) => DropdownMenuItem(
+      //         value: opt.value,
+      //         child: Text(
+      //           opt.label,
+      //           style: const TextStyle(fontSize: 14, color: Color(0xFF000000)),
+      //         ),
+      //       ),
+      //     ).toList(),
+      //     onChanged: onChanged,
+      //   ),
+      // ),
+
       child: DropdownButtonHideUnderline(
         child: DropdownButtonFormField<String>(
           key: ValueKey<String?>(safeValue),
@@ -1027,28 +1057,38 @@ class _EditProfileScreenState extends State<EditProfileScreen>
             hint,
             style: const TextStyle(fontSize: 14, color: _kFieldText),
           ),
-          icon: const Icon(Icons.arrow_drop_down, color: _kFieldText),
+          icon: const Icon(Icons.arrow_drop_down_rounded,
+            color: Colors.black,size: 30,),
           menuMaxHeight: 300,
+          // 1. This style will apply to the closed dropdown text if selectedItemBuilder is used
           style: const TextStyle(fontSize: 14, color: _kFieldText),
           decoration: const InputDecoration(
             border: InputBorder.none,
             isDense: true,
             contentPadding: EdgeInsets.symmetric(vertical: 14),
           ),
-          items: items
-              .map(
-                (opt) => DropdownMenuItem(
-              value: opt.value,
-              child: Text(
+          // 2. ADD THIS: It styles the text ONLY when the dropdown is closed
+          selectedItemBuilder: (BuildContext context) {
+            return items.map((opt) {
+              return Text(
                 opt.label,
-                style: const TextStyle(fontSize: 14, color: _kFieldText),
-              ),
+                style: const TextStyle(fontSize: 14, color: _kFieldText), // Your custom color
+              );
+            }).toList();
+          },
+          // 3. This stays the same (styles the items inside the open menu)
+          items: items.map((opt) => DropdownMenuItem(
+            value: opt.value,
+            child: Text(
+              opt.label,
+              style: const TextStyle(fontSize: 14, color: Color(0xFF000000)), // Black color for list
             ),
-          )
-              .toList(),
+          ),
+          ).toList(),
           onChanged: onChanged,
         ),
       ),
+
     );
   }
   Widget _buildUpdateButton() {
