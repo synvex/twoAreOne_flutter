@@ -31,9 +31,7 @@ const Color _kFieldText = Color(0xFF4D4D4D);        // Changed from _kA5A6A6
 const Color _kLabelText = Color(0xFF424242);
 
 const int kMaxVideoBytes = 50 * 1024 * 1024;
-// maximum allowed video duration in seconds (120s)
 const int kMaxVideoSeconds = 120;
-
 class _DropdownOption {
   final String label;
   final String value;
@@ -77,23 +75,17 @@ class _EditProfileScreenState extends State<EditProfileScreen>
   String? _selectedAge;
   String? _selectedHeight;
   String? _selectedWeight;
-
   LocationData? _pickedLocation;
-
   File? _pickedAvatarFile;
   bool _avatarUploading = false;
-
   final List<_ImageEntry> _imageEntries = [];
   int? _removingIndex;
   late final AnimationController _fadeController;
-
   ProfileMediaVideo? _existingVideo;
   File? _pickedVideoFile;
   bool _videoUploading = false;
   bool _removingVideo = false;
-
   bool _saving = false;
-
   String _nameError = '';
   String _workError = '';
   String _bioError = '';
