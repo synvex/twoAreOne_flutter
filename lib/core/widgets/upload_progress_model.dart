@@ -9,9 +9,14 @@ class UploadProgressModal extends StatelessWidget {
     showDialog(
       context: context,
       barrierDismissible: false,
-      builder: (_) => ValueListenableBuilder<double>(
+      builder: (_) => PopScope(
+        canPop: false,
+        onPopInvoked: (didPop) {
+          if (didPop) return;
+        },
+        child:ValueListenableBuilder<double>(
         valueListenable: progressNotifier,
-        builder: (context, value, _) => UploadProgressModal(progress: value),
+        builder: (context, value, _) =>  UploadProgressModal(progress: value),),
       ),
     );
   }

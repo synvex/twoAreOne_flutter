@@ -4,6 +4,7 @@ class AppColors {
   AppColors._();
 
   static const Color background = Colors.white;
+  static const Color profileBlack = Color(0x80000000); // #00000080
   static const Color headerBackground = Colors.white;
   static const Color primaryText = Color(0xFF333333);
   static const Color primary = Color(0xFF7041EA);

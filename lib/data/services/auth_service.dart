@@ -318,7 +318,7 @@ class AuthService {
     File? profileImage,
     List<File> extraImages = const [],
     List<File> extraVideos = const [],
-    void Function(int sent, int total)? onProgress, // NEW — optional
+    void Function(int sent, int total)? onSendProgress,
   }) async
   {
     final prefs = await SharedPreferences.getInstance();
@@ -344,6 +344,7 @@ class AuthService {
         await MultipartFile.fromFile(profileImage.path, filename: 'avatar.jpg'),
       ));
     }
+
     for (int i = 0; i < extraImages.length; i++) {
       formData.files.add(MapEntry(
         'image${i + 1}', // FIX: image1..image6, matches RN
@@ -351,6 +352,7 @@ class AuthService {
             filename: 'extra_$i.jpg'),
       ));
     }
+
     if (extraVideos.isNotEmpty) {
       formData.files.add(MapEntry(
         'video', // FIX: matches RN's single "video" field
@@ -358,9 +360,10 @@ class AuthService {
             filename: 'intro_video.mp4'),
       ));
     }
+
     return await _api.fetchMultipart(
       Api(
-        url: "user/upload-user-info.php", // FIX: was update-user-profile.php in a duplicate/dead method; this is the correct, single upload path now.
+        url: "user/upload-user-info.php",
         method: "POST",
         headers: {
           'Authorization': 'Bearer $token',
@@ -368,9 +371,72 @@ class AuthService {
         },
       ),
       formData,
-      onSendProgress: onProgress,
+      onSendProgress: onSendProgress,
     );
   }
+  // Future<Map<String, dynamic>> uploadFullProfile({
+  //   required String height,
+  //   required String weight,
+  //   required String work,
+  //   required String bio,
+  //   String? gender,
+  //   String? sexuality,
+  //   File? profileImage,
+  //   List<File> extraImages = const [],
+  //   List<File> extraVideos = const [],
+  //   void Function(int sent, int total)? onProgress, // NEW — optional
+  // }) async
+  // {
+  //   final prefs = await SharedPreferences.getInstance();
+  //   final userId = prefs.getString('user_id') ?? "0";
+  //   final token = prefs.getString('auth_token') ?? "";
+  //   if (token.isEmpty) {
+  //     return {
+  //       'success': false,
+  //       'error': 'API Token not found. Please log in again.'
+  //     };
+  //   }
+  //   final formData = FormData.fromMap({
+  //     'user_id': userId,
+  //     'screen_type': '2', // Crucial for backend routing
+  //     'height': height,
+  //     'weight': weight,
+  //     'work': work,
+  //     'bio': bio,
+  //   });
+  //   if (profileImage != null) {
+  //     formData.files.add(MapEntry(
+  //       'profile_picture',
+  //       await MultipartFile.fromFile(profileImage.path, filename: 'avatar.jpg'),
+  //     ));
+  //   }
+  //   for (int i = 0; i < extraImages.length; i++) {
+  //     formData.files.add(MapEntry(
+  //       'image${i + 1}', // FIX: image1..image6, matches RN
+  //       await MultipartFile.fromFile(extraImages[i].path,
+  //           filename: 'extra_$i.jpg'),
+  //     ));
+  //   }
+  //   if (extraVideos.isNotEmpty) {
+  //     formData.files.add(MapEntry(
+  //       'video', // FIX: matches RN's single "video" field
+  //       await MultipartFile.fromFile(extraVideos[0].path,
+  //           filename: 'intro_video.mp4'),
+  //     ));
+  //   }
+  //   return await _api.fetchMultipart(
+  //     Api(
+  //       url: "user/upload-user-info.php", // FIX: was update-user-profile.php in a duplicate/dead method; this is the correct, single upload path now.
+  //       method: "POST",
+  //       headers: {
+  //         'Authorization': 'Bearer $token',
+  //         'x-api-key': token,
+  //       },
+  //     ),
+  //     formData,
+  //     onSendProgress: onProgress,
+  //   );
+  // }
   Map<String, dynamic> _catchError(Object e) {
     if (e is SocketException) return {'success': false, 'error': "no_internet"};
     if (e is TimeoutException) return {'success': false, 'error': "timeout"};
