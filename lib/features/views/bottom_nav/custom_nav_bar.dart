@@ -93,6 +93,135 @@ class CustomBottomNavBar extends StatelessWidget {
   static const List<String> _tabNames = ["Home", "Favorite", "Chat", "Profile"];
 
   @override
+  @override
+  // Widget build(BuildContext context) {
+  //   final double screenWidth = MediaQuery.of(context).size.width;
+  //   final double bottomInset = MediaQuery.viewPaddingOf(context).bottom;
+  //   final double barAreaHeight = _kBarHeight + 20.h;
+  //
+  //   final chatViewModel = context.watch<ChatViewModel>();
+  //
+  //   return SizedBox(
+  //     width: screenWidth,
+  //     height: barAreaHeight + bottomInset,
+  //     child: Column(
+  //       children: [
+  //         SizedBox(
+  //           width: screenWidth,
+  //           height: barAreaHeight,
+  //           child: Stack(
+  //             clipBehavior: Clip.none,
+  //             children: [
+  //               Positioned.fill(
+  //                 child: CustomPaint(
+  //                   painter: _ShadowPainter(
+  //                     curveDepth: _kCurveDepth,
+  //                     barHeight: _kBarHeight,
+  //                   ),
+  //                 ),
+  //               ),
+  //
+  //               Positioned(
+  //                 top: 25.h,
+  //                 left: 0,
+  //                 right: 0,
+  //                 bottom: -20.h,
+  //                 child: Transform.translate(
+  //                   offset: const Offset(0, 6),
+  //                   child: ClipPath(
+  //                     clipper: _CurveClipper(
+  //                       curveDepth: _kCurveDepth,
+  //                       barHeight: _kBarHeight,
+  //                     ),
+  //                     child: Container(
+  //                       color: const Color(0xFF77153C)
+  //                           .withValues(alpha: 0.12),
+  //                     ),
+  //                   ),
+  //                 ),
+  //               ),
+  //
+  //               ClipPath(
+  //                 clipper: _CurveClipper(
+  //                   curveDepth: _kCurveDepth,
+  //                   barHeight: _kBarHeight,
+  //                 ),
+  //                 child: Container(
+  //                   width: screenWidth,
+  //                   height: _kBarHeight,
+  //                   color: Colors.white,
+  //                 ),
+  //               ),
+  //
+  //               Positioned(
+  //                 top: 55.h,
+  //                 left: 5.w,
+  //                 right: 5.w,
+  //                 bottom: 8.h,
+  //                 child: Row(
+  //                   mainAxisAlignment: MainAxisAlignment.spaceAround,
+  //                   crossAxisAlignment: CrossAxisAlignment.center,
+  //                   children: List.generate(_imgStr.length, (index) {
+  //                     final bool isSelected = selectedIndex == index;
+  //
+  //                     return Expanded(
+  //                       child: Padding(
+  //                         padding: EdgeInsets.symmetric(horizontal: 8.w),
+  //                         child: Stack(
+  //                           clipBehavior: Clip.none,
+  //                           children: [
+  //                             _NavItem(
+  //                               imgStr: isSelected
+  //                                   ? _selectedImgStr[index]
+  //                                   : _imgStr[index],
+  //                               label: _tabNames[index],
+  //                               isSelected: isSelected,
+  //                               onTap: () => onTabChanged(index),
+  //                             ),
+  //
+  //                             if (index == 2)
+  //                               Positioned(
+  //                                 right: 4.w,
+  //                                 top: 0,
+  //                                 child: Visibility(
+  //                                   visible: chatViewModel
+  //                                       .unreadConversationCount !=
+  //                                       0,
+  //                                   child: CircleAvatar(
+  //                                     radius: 10.r,
+  //                                     backgroundColor: isSelected
+  //                                         ? Colors.transparent
+  //                                         : AppColors.red,
+  //                                     child: Text(
+  //                                       isSelected
+  //                                           ? ''
+  //                                           : chatViewModel
+  //                                           .unreadConversationCount
+  //                                           .toString(),
+  //                                       style: GoogleFonts.poppins(
+  //                                         color: AppColors.white,
+  //                                         fontSize: 11.sp,
+  //                                       ),
+  //                                     ),
+  //                                   ),
+  //                                 ),
+  //                               ),
+  //                           ],
+  //                         ),
+  //                       ),
+  //                     );
+  //                   }),
+  //                 ),
+  //               ),
+  //             ],
+  //           ),
+  //         ),
+  //         // Reserves space for Android's system navigation bar.
+  //         // SizedBox(height: bottomInset),
+  //       ],
+  //     ),
+  //   );
+  // }
   Widget build(BuildContext context) {
     final double screenWidth = MediaQuery.of(context).size.width;
 
@@ -148,7 +277,7 @@ class CustomBottomNavBar extends StatelessWidget {
             ),
             // tab items
             Positioned(
-              top: 55.h,
+              top: 75.h,
               left: 5.h,
               right: 5.h,
               // height: 100,
