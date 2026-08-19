@@ -75,10 +75,10 @@ class ApiManager {
   }
 
   Future<Map<String, dynamic>> fetchMultipart(
-    Api api,
-    FormData formData, {
-    void Function(int sent, int total)? onSendProgress, // NEW — optional
-  }) async {
+      Api api, FormData formData, {
+        void Function(int sent, int total)? onSendProgress,
+      }) async
+  {
     try {
       final options = Options(
         method: api.method,

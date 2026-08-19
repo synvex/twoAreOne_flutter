@@ -22,16 +22,16 @@ const String kEditProfileUploadBase = "https://www.twoareone.love/uploads/";
 const Color _kGradientStart = Color(0xFFB06A82);
 const Color _kGradientEnd = Color(0xFF84A2D4);
 const Color _kMehroon = Color(0xFF77153C);
+const Color _kBorderGrey = Color(0xFF969696);      // Main border color
+const Color _kFieldTextGrey = Color(0xFF4D4D4D);   // Field text color
+const Color _kLabelGrey = Color(0xFF424242);       // Label text color
+const Color _kFieldTextLight = Color(0xFFA5A6A6);
+const Color _kBorder = Color(0xFF969696);           // Changed from _kA5A6A6
+const Color _kFieldText = Color(0xFF4D4D4D);        // Changed from _kA5A6A6
+const Color _kLabelText = Color(0xFF424242);
 
-const Color _kCardBorder = Color(0xFFE3E3E3);
-const Color _kFieldBorder = Color(0xFFDCDCDC);
-const Color _kFieldText = Color(0xFF9B9B9B);
-
-// maximum allowed video size (50 MB)
 const int kMaxVideoBytes = 50 * 1024 * 1024;
-// maximum allowed video duration in seconds (120s)
 const int kMaxVideoSeconds = 120;
-
 class _DropdownOption {
   final String label;
   final String value;
@@ -75,23 +75,17 @@ class _EditProfileScreenState extends State<EditProfileScreen>
   String? _selectedAge;
   String? _selectedHeight;
   String? _selectedWeight;
-
   LocationData? _pickedLocation;
-
   File? _pickedAvatarFile;
   bool _avatarUploading = false;
-
   final List<_ImageEntry> _imageEntries = [];
   int? _removingIndex;
   late final AnimationController _fadeController;
-
   ProfileMediaVideo? _existingVideo;
   File? _pickedVideoFile;
   bool _videoUploading = false;
   bool _removingVideo = false;
-
   bool _saving = false;
-
   String _nameError = '';
   String _workError = '';
   String _bioError = '';
@@ -105,47 +99,17 @@ class _EditProfileScreenState extends State<EditProfileScreen>
     final age = '${i + 13}';
     return _DropdownOption(age, age);
   });
-
-  static const List<_DropdownOption> _heightOptions = [
-    _DropdownOption("4'10", '4.10'),
-    _DropdownOption("4'11", '4.11'),
-    _DropdownOption("5'0", '5.0'),
-    _DropdownOption("5'1", '5.1'),
-    _DropdownOption("5'2", '5.2'),
-    _DropdownOption("5'3", '5.3'),
-    _DropdownOption("5'4", '5.4'),
-    _DropdownOption("5'5", '5.5'),
-    _DropdownOption("5'6", '5.6'),
-    _DropdownOption("5'7", '5.7'),
-    _DropdownOption("5'8", '5.8'),
-    _DropdownOption("5'9", '5.9'),
-    _DropdownOption("5'10", '5.10'),
-    _DropdownOption("5'11", '5.11'),
-    _DropdownOption("6'0", '6.0'),
-    _DropdownOption("6'1", '6.1'),
-    _DropdownOption("6'2", '6.2'),
-    _DropdownOption("6'3", '6.3'),
-    _DropdownOption("6'4", '6.4'),
-    _DropdownOption("6'5", '6.5'),
-    _DropdownOption("6'6", '6.6'),
-    _DropdownOption("6'7", '6.7'),
-    _DropdownOption("6'8", '6.8'),
-    _DropdownOption("6'9", '6.9'),
-    _DropdownOption("6'10", '6.10'),
-    _DropdownOption("6'11", '6.11'),
-    _DropdownOption("7'0", '7.0'),
-    _DropdownOption("7'1", '7.1'),
-    _DropdownOption("7'2", '7.2'),
-    _DropdownOption("7'3", '7.3'),
-    _DropdownOption("7'4", '7.4'),
-    _DropdownOption("7'5", '7.5'),
-    _DropdownOption("7'6", '7.6'),
-  ];
-
+  static List<_DropdownOption> get _heightOptions => List.generate(33, (i) {
+    final totalInches = 58 + i;
+    final feet = totalInches ~/ 12;
+    final inches = totalInches % 12;
+    final label = "$feet'$inches";
+    return _DropdownOption(label, label);
+  });
   static List<_DropdownOption> get _weightOptions =>
-      List.generate(440 - 66 + 1, (i) {
-        final weight = 66 + i;
-        return _DropdownOption('$weight lbs', '$weight');
+      List.generate(374, (i) {
+        final label = "${66 + i} lbs";
+        return _DropdownOption(label, label);
       });
 
   @override
@@ -157,7 +121,6 @@ class _EditProfileScreenState extends State<EditProfileScreen>
     )..repeat(reverse: true);
     _loadUser();
   }
-
   @override
   void dispose() {
     _nameController.dispose();
@@ -166,7 +129,6 @@ class _EditProfileScreenState extends State<EditProfileScreen>
     _fadeController.dispose();
     super.dispose();
   }
-
   Future<void> _loadUser() async {
     final res = await _profileService.getUserInfo();
     if (!mounted) return;
@@ -185,7 +147,9 @@ class _EditProfileScreenState extends State<EditProfileScreen>
             : null;
         _selectedAge = user.age.isNotEmpty ? user.age : null;
         _selectedHeight = user.height.isNotEmpty ? user.height : null;
-        _selectedWeight = user.weight.isNotEmpty ? user.weight : null;
+        // _selectedWeight = user.weight.isNotEmpty ? user.weight : null;
+        _selectedWeight = _normalizeWeight(user.weight);
+        debugPrint('weight from server = "${user.weight}"');
         _existingVideo = user.userVideo;
         _imageEntries
           ..clear()
@@ -211,7 +175,13 @@ class _EditProfileScreenState extends State<EditProfileScreen>
     if (path == null || path.isEmpty) return '';
     return path.startsWith('http') ? path : '$kEditProfileUploadBase$path';
   }
-
+  String? _normalizeWeight(String? raw) {
+    if (raw == null || raw.trim().isEmpty) return null;
+    final match = RegExp(r'\d+').firstMatch(raw);
+    if (match == null) return null;
+    final candidate = '${match.group(0)} lbs';
+    return _weightOptions.any((o) => o.value == candidate) ? candidate : null;
+  }
   Future<bool> _requestCameraPermission() async {
     final status = await Permission.camera.status;
     if (status.isGranted) return true;
@@ -226,7 +196,6 @@ class _EditProfileScreenState extends State<EditProfileScreen>
     final result = await Permission.camera.request();
     return result.isGranted;
   }
-
   Future<bool> _requestGalleryPermission() async {
     if (Platform.isIOS) {
       final status = await Permission.photos.status;
@@ -247,7 +216,6 @@ class _EditProfileScreenState extends State<EditProfileScreen>
     final storageResult = await Permission.storage.request();
     return storageResult.isGranted;
   }
-
   Future<bool> _showPermissionAlert() async {
     if (!mounted) return false;
     final result = await showDialog<bool>(
@@ -270,7 +238,6 @@ class _EditProfileScreenState extends State<EditProfileScreen>
     );
     return result ?? false;
   }
-
   Future<void> _uploadAvatar(File file) async {
     setState(() {
       _pickedAvatarFile = file;
@@ -289,7 +256,6 @@ class _EditProfileScreenState extends State<EditProfileScreen>
       );
     }
   }
-
   void _pickAvatar() {
     _openMediaSheet(
       isVideo: false,
@@ -315,7 +281,6 @@ class _EditProfileScreenState extends State<EditProfileScreen>
       },
     );
   }
-
   Future<void> _addImage(File file) async {
     setState(
       () => _imageEntries.add(_ImageEntry(localFile: file, uploading: true)),
@@ -338,7 +303,6 @@ class _EditProfileScreenState extends State<EditProfileScreen>
       );
     }
   }
-
   Future<void> _removeImage(_ImageEntry entry, int index) async {
     if (entry.id == null) return;
     setState(() => _removingIndex = index);
@@ -353,7 +317,6 @@ class _EditProfileScreenState extends State<EditProfileScreen>
       TopToast.show(context, title: "Error", type: ToastType.error);
     }
   }
-
   void _pickAdditionalImage() {
     if (_imageEntries.length == 6) {
       TopToast.show(
@@ -387,7 +350,6 @@ class _EditProfileScreenState extends State<EditProfileScreen>
       },
     );
   }
-
   Future<void> _addVideo(File file) async {
     try {
       final fileLen = await file.length();
@@ -430,14 +392,6 @@ class _EditProfileScreenState extends State<EditProfileScreen>
         await _loadUser();
         if (!mounted) return;
         final serverVideo = _existingVideo;
-        // if (serverVideo == null || (serverVideo.uploading == false)) {
-        //   setState(() {
-        //     _pickedVideoFile = null;
-        //     _videoUploading = false;
-        //   });
-        // } else {
-        // keep the overlay if server says upload is still processing
-        // }
         setState(() {
           _pickedVideoFile = null;
           _videoUploading = false;
@@ -480,7 +434,6 @@ class _EditProfileScreenState extends State<EditProfileScreen>
       );
     }
   }
-
   Future<void> _removeVideo() async {
     final video = _existingVideo;
     if (video == null) return;
@@ -496,7 +449,6 @@ class _EditProfileScreenState extends State<EditProfileScreen>
       TopToast.show(context, title: "Error", type: ToastType.error);
     }
   }
-
   void _pickVideo() {
     if (_existingVideo != null || _pickedVideoFile != null) {
       TopToast.show(
@@ -520,12 +472,12 @@ class _EditProfileScreenState extends State<EditProfileScreen>
       },
     );
   }
-
   void _openMediaSheet({
     required bool isVideo,
     required Future<void> Function() onCamera,
     required Future<void> Function() onGallery,
-  }) {
+  })
+  {
     showModalBottomSheet(
       context: context,
       backgroundColor: Colors.white,
@@ -586,7 +538,6 @@ class _EditProfileScreenState extends State<EditProfileScreen>
       ),
     );
   }
-
   bool _validate() {
     final nameOk = RegExp(
       r'^[A-Za-z\s]+$',
@@ -612,7 +563,6 @@ class _EditProfileScreenState extends State<EditProfileScreen>
     debugPrint("nameOk: $nameOk, workOk: $workOk, bioOk: $bioOk");
     return nameOk && workOk && bioOk;
   }
-
   Future<void> _onUpdate() async {
     if (!_validate()) return;
 
@@ -658,7 +608,6 @@ class _EditProfileScreenState extends State<EditProfileScreen>
       );
     }
   }
-
   void _onPressCategory(dynamic category) {
     final userId = _user?.id ?? 0;
     Navigator.of(context).push(
@@ -672,7 +621,6 @@ class _EditProfileScreenState extends State<EditProfileScreen>
       ),
     );
   }
-
   @override
   Widget build(BuildContext context) {
     if (_loadingUser) {
@@ -754,28 +702,11 @@ class _EditProfileScreenState extends State<EditProfileScreen>
                     if (_nameError.isNotEmpty) _errorText(_nameError),
                     const SizedBox(height: 20),
                     _fieldLabel("Location"),
-                    // Container(
-                    //   decoration: BoxDecoration(
-                    //     color: Colors.white,
-                    //     borderRadius: BorderRadius.circular(30),
-                    //     border: Border.all(color: _kFieldBorder),
-                    //   ),
-                    //   child: LocationSelectorField(
-                    //     hintText:
-                    //         (_user?.city.isNotEmpty == true &&
-                    //             _user?.country.isNotEmpty == true)
-                    //         ? "${_user?.city},${_user?.country}"
-                    //         : "Search",
-                    //     fillColor: 0xFFFFFFFF,
-                    //     onLocationSelected: (loc) =>
-                    //         setState(() => _pickedLocation = loc),
-                    //   ),
-                    // ),
                     Container(
                       decoration: BoxDecoration(
                         color: Colors.white,
                         borderRadius: BorderRadius.circular(30),
-                        border: Border.all(color: _kFieldBorder),
+                        border: Border.all(color: _kBorder),
                       ),
                       child: LocationSelectorField(
                         hintText:
@@ -784,6 +715,7 @@ class _EditProfileScreenState extends State<EditProfileScreen>
                             ? "${_user?.city},${_user?.country}"
                             : "Search",
                         fillColor: 0xFFFFFFFF,
+                        selectedClr: 0xFF4D4D4D,
                         onLocationSelected: (loc) => setState(() => _pickedLocation = loc),
                         onLocationCleared: () => setState(() => _pickedLocation = null),
                       ),
@@ -872,7 +804,7 @@ class _EditProfileScreenState extends State<EditProfileScreen>
                             decoration: BoxDecoration(
                               color: Colors.white,
                               borderRadius: BorderRadius.circular(20),
-                              border: Border.all(color: _kFieldBorder),
+                              border: Border.all(color: _kBorder),
                             ),
                             child: TextField(
                               controller: _workController,
@@ -916,7 +848,6 @@ class _EditProfileScreenState extends State<EditProfileScreen>
       ),
     );
   }
-
   Widget _sectionCard({required String title, required Widget child}) {
     return Container(
       width: double.infinity,
@@ -924,7 +855,7 @@ class _EditProfileScreenState extends State<EditProfileScreen>
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: _kCardBorder),
+        border: Border.all(color: _kBorder),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -937,18 +868,17 @@ class _EditProfileScreenState extends State<EditProfileScreen>
               style: const TextStyle(fontSize: 22, fontWeight: FontWeight.w500),
             ),
           ),
-          Divider(height: 1, thickness: 1, color: _kCardBorder),
+          Divider(height: 1, thickness: 1, color: _kBorder),
           Padding(padding: const EdgeInsets.all(8), child: child),
         ],
       ),
     );
   }
-
   Widget _fieldLabel(String text, {double padBottom = 8}) => Padding(
     padding: EdgeInsets.only(bottom: padBottom, top: 4),
     child: Text(
       text,
-      style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w400),
+      style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w400,color: Colors.black),
     ),
   );
   Widget _errorText(String message) => Padding(
@@ -964,7 +894,8 @@ class _EditProfileScreenState extends State<EditProfileScreen>
     int? maxLength,
     TextInputType? keyboardType,
     ValueChanged<String>? onChanged,
-  }) {
+  })
+  {
     return TextField(
       controller: controller,
       maxLength: maxLength,
@@ -990,21 +921,20 @@ class _EditProfileScreenState extends State<EditProfileScreen>
           ),
         ),
         border: OutlineInputBorder(
-          borderSide: const BorderSide(color: _kFieldBorder),
+          borderSide: const BorderSide(color: _kBorder),
           borderRadius: BorderRadius.circular(30),
         ),
         enabledBorder: OutlineInputBorder(
-          borderSide: const BorderSide(color: _kFieldBorder),
+          borderSide: const BorderSide(color: _kBorder),
           borderRadius: BorderRadius.circular(30),
         ),
         focusedBorder: OutlineInputBorder(
-          borderSide: const BorderSide(color: _kFieldBorder),
+          borderSide: const BorderSide(color: _kBorder),
           borderRadius: BorderRadius.circular(30),
         ),
       ),
     );
   }
-
   Widget _buildAvatarSection() {
     final avatarUrl = _fullUrl(_user?.profilePicture);
     return Center(
@@ -1018,7 +948,7 @@ class _EditProfileScreenState extends State<EditProfileScreen>
             decoration: BoxDecoration(
               shape: BoxShape.circle,
               border: Border.all(
-                color: Colors.grey.withValues(alpha: 0.3),
+                color: Colors.grey.withValues(alpha: 0.7),
                 width: 4,
               ),
             ),
@@ -1061,13 +991,13 @@ class _EditProfileScreenState extends State<EditProfileScreen>
       ),
     );
   }
-
   Widget _buildDropdown({
     required String hint,
     required String? value,
     required List<_DropdownOption> items,
     required ValueChanged<String?> onChanged,
-  }) {
+  })
+  {
     final safeValue = (value != null && items.any((o) => o.value == value))
         ? value
         : null;
@@ -1076,41 +1006,83 @@ class _EditProfileScreenState extends State<EditProfileScreen>
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(30),
-        border: Border.all(color: _kFieldBorder),
+        border: Border.all(color: _kBorder),
       ),
+
+      // child: DropdownButtonHideUnderline(
+      //   child: DropdownButtonFormField<String>(
+      //     key: ValueKey<String?>(safeValue),
+      //     initialValue: safeValue,
+      //     isExpanded: true,
+      //     hint: Text(
+      //       hint,
+      //       style: const TextStyle(fontSize: 14, color: _kFieldText),
+      //     ),
+      //     icon: const Icon(Icons.arrow_drop_down, color: _kFieldText),
+      //     menuMaxHeight: 300,
+      //     style: const TextStyle(fontSize: 14, color: _kFieldText),
+      //     decoration: const InputDecoration(
+      //       border: InputBorder.none,
+      //       isDense: true,
+      //       contentPadding: EdgeInsets.symmetric(vertical: 14),
+      //     ),
+      //     items: items
+      //         .map(
+      //           (opt) => DropdownMenuItem(
+      //         value: opt.value,
+      //         child: Text(
+      //           opt.label,
+      //           style: const TextStyle(fontSize: 14, color: Color(0xFF000000)),
+      //         ),
+      //       ),
+      //     ).toList(),
+      //     onChanged: onChanged,
+      //   ),
+      // ),
+
       child: DropdownButtonHideUnderline(
         child: DropdownButtonFormField<String>(
+          key: ValueKey<String?>(safeValue),
           initialValue: safeValue,
           isExpanded: true,
           hint: Text(
             hint,
             style: const TextStyle(fontSize: 14, color: _kFieldText),
           ),
-          icon: const Icon(Icons.arrow_drop_down, color: _kFieldText),
+          icon: const Icon(Icons.arrow_drop_down_rounded,
+            color: Colors.black,size: 30,),
           menuMaxHeight: 300,
+          // 1. This style will apply to the closed dropdown text if selectedItemBuilder is used
           style: const TextStyle(fontSize: 14, color: _kFieldText),
           decoration: const InputDecoration(
             border: InputBorder.none,
             isDense: true,
             contentPadding: EdgeInsets.symmetric(vertical: 14),
           ),
-          items: items
-              .map(
-                (opt) => DropdownMenuItem(
-                  value: opt.value,
-                  child: Text(
-                    opt.label,
-                    style: const TextStyle(fontSize: 14, color: _kFieldText),
-                  ),
-                ),
-              )
-              .toList(),
+          // 2. ADD THIS: It styles the text ONLY when the dropdown is closed
+          selectedItemBuilder: (BuildContext context) {
+            return items.map((opt) {
+              return Text(
+                opt.label,
+                style: const TextStyle(fontSize: 14, color: _kFieldText), // Your custom color
+              );
+            }).toList();
+          },
+          // 3. This stays the same (styles the items inside the open menu)
+          items: items.map((opt) => DropdownMenuItem(
+            value: opt.value,
+            child: Text(
+              opt.label,
+              style: const TextStyle(fontSize: 14, color: Color(0xFF000000)), // Black color for list
+            ),
+          ),
+          ).toList(),
           onChanged: onChanged,
         ),
       ),
+
     );
   }
-
   Widget _buildUpdateButton() {
     return MainButtonWidget(
       text: "Update",

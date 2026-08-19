@@ -148,64 +148,68 @@ class CustomBottomNavBar extends StatelessWidget {
             ),
             // tab items
             Positioned(
-              top: 58.h,
+              top: 55.h,
               left: 5.h,
               right: 5.h,
-              height: 100,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: List.generate(_imgStr.length, (index) {
-                  final bool isSelected = selectedIndex == index;
-                  return Expanded(
-                    child: Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 18.w,),
-                      child: Stack(
-                        children: [
-                          _NavItem(
-                            imgStr: isSelected
-                                ? _selectedImgStr[index]
-                                : _imgStr[index],
-                            label: _tabNames[index],
-                            isSelected: isSelected,
-                            onTap: () => onTabChanged(index),
-                          ),
+              // height: 100,
+              bottom: 0,
+              child: SafeArea(
+                top: false,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: List.generate(_imgStr.length, (index) {
+                    final bool isSelected = selectedIndex == index;
+                    return Expanded(
+                      child: Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 18.w,),
+                        child: Stack(
+                          children: [
+                            _NavItem(
+                              imgStr: isSelected
+                                  ? _selectedImgStr[index]
+                                  : _imgStr[index],
+                              label: _tabNames[index],
+                              isSelected: isSelected,
+                              onTap: () => onTabChanged(index),
+                            ),
 
-                          index == 2
-                              ? Positioned(
-                            right: 14.w,
-                            top: 18.h,
-                            child: Visibility(
-                              visible:
-                              chatViewModel.unreadConversationCount !=
-                                  0,
-                              child: CircleAvatar(
-                                radius: 10.r,
-                                backgroundColor: isSelected
-                                    ? Colors.transparent
-                                    : AppColors.red,
-                                child: Center(
-                                  child: Text(
-                                    isSelected
-                                        ? ''
-                                        : chatViewModel
-                                        .unreadConversationCount
-                                        .toString(),
-                                    style: GoogleFonts.poppins(
-                                      color: AppColors.white,
-                                      fontSize: 11.sp,
+                            index == 2
+                                ? Positioned(
+                              right: 14.w,
+                              top: 18.h,
+                              child: Visibility(
+                                visible:
+                                chatViewModel.unreadConversationCount !=
+                                    0,
+                                child: CircleAvatar(
+                                  radius: 10.r,
+                                  backgroundColor: isSelected
+                                      ? Colors.transparent
+                                      : AppColors.red,
+                                  child: Center(
+                                    child: Text(
+                                      isSelected
+                                          ? ''
+                                          : chatViewModel
+                                          .unreadConversationCount
+                                          .toString(),
+                                      style: GoogleFonts.poppins(
+                                        color: AppColors.white,
+                                        fontSize: 11.sp,
+                                      ),
                                     ),
                                   ),
                                 ),
                               ),
-                            ),
-                          )
-                              : const SizedBox.shrink(),
-                        ],
+                            )
+                                : const SizedBox.shrink(),
+                          ],
+                        ),
                       ),
-                    ),
-                  );
-                }),
+                    );
+                  }),
+                ),
               ),
             ),
           ],
