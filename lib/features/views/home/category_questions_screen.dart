@@ -1,11 +1,3 @@
-// lib/features/home/category_questions_screen.dart
-//
-// Flutter port of React Native's `QuestionListScreen`
-// (src/Screens/AppScreens/UserQuestionList/index.js).
-//
-// Reached from ProfileDetailsScreen's "View Answers" button — shows every
-// question a given user has answered inside one category.
-
 import 'package:flutter/material.dart';
 import 'package:two_are_one/core/widgets/app_header_widget.dart';
 import 'package:two_are_one/data/services/question_service.dart';
@@ -93,7 +85,6 @@ class _CategoryQuestionsScreenState extends State<CategoryQuestionsScreen> {
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
-
             children: [
               AppHeaderWidget(title: widget.categoryName, isTrailing: false),
               Expanded(
@@ -108,7 +99,7 @@ class _CategoryQuestionsScreenState extends State<CategoryQuestionsScreen> {
                         itemBuilder: (context, index) {
                           final item = _questions[index];
                           final answerText =
-                              item['user_answer_text']?.toString() ?? '';
+                              item['user_answer_text']?.toString().trim() ?? '';
                           debugPrint(
                             'Rendering item $index answer=$answerText',
                           );

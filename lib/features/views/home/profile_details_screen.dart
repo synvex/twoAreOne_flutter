@@ -38,6 +38,7 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
   ProfileDetailModel? _details;
   bool _showFullBio = false;
   String? _selectedImage;
+  int? _profileUserId;
   bool _blockLoading = false;
   bool _heartLoading = false;
   bool _starLoading = false;
@@ -126,15 +127,21 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
         );
       }
     }
+    _profileUserId = _cardUser?.id ?? widget.userId;
 
+    if (_profileUserId == null || _profileUserId == 0) {
+      debugPrint('Invalid profile user ID');
+    }
     _visitedUser();
     _getUserDetails();
   }
 
-  int? get _userId => _details?.userId ?? _cardUser?.id;
+  // int? get _userId => _details?.userId ?? _cardUser?.id;
+  int? get _userId => _profileUserId ?? _details?.userId;
   // ── API ──────────────────────────────────────────────────────────────
   Future<void> _visitedUser() async {
-    final id = _cardUser?.id ?? widget.userId;
+    // final id = _cardUser?.id ?? widget.userId;
+    final id = _profileUserId;
     debugPrint("VISITED: cardUser id = $id, blocked = $_blocked");
     if (id == null) {
       debugPrint("VISITED: skipped, no id");
@@ -145,7 +152,8 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
   }
 
   Future<void> _getUserDetails() async {
-    final id = _cardUser?.id ?? widget.userId;
+    // final id = _cardUser?.id ?? widget.userId;
+    final id = _profileUserId;
     if (id == null) {
       setState(() => _loading = false);
       return;
@@ -558,14 +566,17 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
                               width: double.infinity,
                               height: 48,
                               child: ElevatedButton(
-                                onPressed: () {
+                                onPressed: _profileUserId == null
+                                    ? null
+                                    : () {
                                   Navigator.of(context).push(
                                     MaterialPageRoute(
                                       builder: (_) => CategoryQuestionsScreen(
-                                        categoryId: category
-                                            .categoryId, // 👈 confirm field name — neeche note dekhein
+                                        categoryId: category.categoryId, // 👈 confirm field name — neeche note dekhein
                                         categoryName: category.categoryName,
-                                        userId: _userId ?? 0,
+                                        // userId: _userId ?? 0,
+                                        // userId: _profileUserId ?? 0,
+                                        userId: _profileUserId!,
                                         editable:
                                         false, // doosre user ka profile view ho raha hai — read-only
                                       ),
