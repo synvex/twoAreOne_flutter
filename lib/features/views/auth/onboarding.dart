@@ -3,11 +3,11 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:two_are_one/core/constants/app_images.dart';
 import 'package:two_are_one/core/constants/app_colors.dart';
+import 'package:two_are_one/core/widgets/image.dart';
 import 'package:two_are_one/core/widgets/main_button_widget.dart';
-
+import 'package:two_are_one/features/views/main/main_screen.dart';
 import 'package:two_are_one/features/views/others/privacy.dart';
 import 'package:two_are_one/features/views/others/terms_and_conditions_screen.dart';
-
 import 'login_screen.dart';
 import 'no_verification.dart';
 
@@ -33,100 +33,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 SizedBox(
                   height: 0.42.sh,
                   width: 1.sw,
-                  child: Stack(
-                    alignment: Alignment.center,
-                    children: [
-                      // BLUE CIRCLE
-                      Container(
-                        width: 0.82.sw,
-                        height: 0.80.sw,
-                        decoration: const BoxDecoration(
-                          color: AppColors.onboardingCircleBlue,
-                          shape: BoxShape.circle,
-                        ),
-                      ),
-
-                      // BOTTOM RIGHT AVATAR
-                      Positioned(
-                        bottom: 0.06.sh,
-                        right: 0.072.sw,
-                        child: Container(
-                          width: 98.w,
-                          height: 98.w,
-                          decoration: const BoxDecoration(
-                            shape: BoxShape.circle,
-                            image: DecorationImage(
-                              image: AssetImage(
-                                AppImages.onboardingBottomRight,
-                              ),
-                              fit: BoxFit.cover,
-                            ),
-                          ),
-                        ),
-                      ),
-
-                      // MAIN IMAGE
-                      Positioned(
-                        child: Image.asset(
-                          AppImages.onboardingMainImage,
-                          width: 0.59.sw,
-                          height: 0.53.sw,
-                          fit: BoxFit.contain,
-                        ),
-                      ),
-
-                      // TOP LEFT AVATAR
-                      Positioned(
-                        top: 0.074.sh,
-                        left: 0.095.sw,
-                        child: Container(
-                          width: 67.5.w,
-                          height: 67.5.w,
-                          decoration: const BoxDecoration(
-                            shape: BoxShape.circle,
-                            image: DecorationImage(
-                              image: AssetImage(AppImages.onboardingTopLeft),
-                              fit: BoxFit.cover,
-                            ),
-                          ),
-                        ),
-                      ),
-
-                      // TOP RIGHT AVATAR
-                      Positioned(
-                        top: 0.025.sh,
-                        right: 0.09.sw,
-                        child: Container(
-                          width: 0.20.sw,
-                          height: 0.20.sw,
-                          decoration: const BoxDecoration(
-                            shape: BoxShape.circle,
-                            image: DecorationImage(
-                              image: AssetImage(AppImages.onboardingTopRight),
-                              fit: BoxFit.cover,
-                            ),
-                          ),
-                        ),
-                      ),
-
-                      // BOTTOM LEFT AVATAR
-                      Positioned(
-                        bottom: 0.072.sh,
-                        left: 0.13.sw,
-                        child: Container(
-                          width: 62.w,
-                          height: 62.w,
-                          decoration: const BoxDecoration(
-                            shape: BoxShape.circle,
-                            image: DecorationImage(
-                              image: AssetImage(AppImages.onboardingBottomLeft),
-                              fit: BoxFit.cover,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
+                  child: Images(imageStr: 'assets/images/onboarding.png'),
                 ),
                 // 2. Page Indicators
                 SizedBox(height: 20.h),

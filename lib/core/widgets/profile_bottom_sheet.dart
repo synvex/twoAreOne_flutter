@@ -57,7 +57,7 @@ class MenuBottomSheet extends StatelessWidget {
                   // icon: Icons.logout_rounded,
                   label: "Delete Account",
                   labelColor: const Color(
-                    0xFF77153C,
+                    0xFFD00000,
                   ), // Maroon color for Logout
                   onTap: onDelete,
                 ),
