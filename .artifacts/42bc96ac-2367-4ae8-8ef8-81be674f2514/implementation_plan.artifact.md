@@ -1,31 +1,39 @@
-# Fix Application Warnings and Font Assertions
+# iOS Readiness Assessment and Configuration Plan
 
-The user is experiencing two types of issues after hot restarting:
-1.  **Android Warning:** `OnBackInvokedCallback is not enabled`.
-2.  **Flutter Assertion Error:** `RenderParagraph._scheduleSystemFontsUpdate() called during SchedulerPhase.midFrameMicrotasks`.
+Based on a scan of the project, the app is well-structured for Android, but several critical iOS-specific configurations are missing or incomplete. While it "runs" on Android, it will likely crash or fail to build on iOS in its current state.
 
 ## User Review Required
 
-> [!NOTE]
-> The `RenderParagraph` assertion error is a known issue in the Flutter framework related to system font updates during the frame cycle. While it typically doesn't crash the app in release mode, it is intrusive during development.
+> [!CAUTION]
+> **Critical Missing File:** `GoogleService-Info.plist` is missing from the `ios/Runner` directory. Firebase will crash on iOS without this file. You must download it from the Firebase Console and add it to the Xcode project.
+
+> [!WARNING]
+> **Podfile Missing:** The `ios/Podfile` is not present in the project. This file is required to manage native iOS dependencies (Firebase, Camera, etc.). It must be generated on a macOS machine using `pod init` or `flutter pub get`.
+
+## Open Questions
+
+- Are you planning to use **Phone Authentication** on iOS? If so, we need to configure URL Schemes in `Info.plist`.
+- Does the app need to access the user's **Real-time GPS location**? If so, we must add `NSLocationWhenInUseUsageDescription`.
 
 ## Proposed Changes
 
-### Android Configuration
+### iOS Configuration
 
-#### [MODIFY] [AndroidManifest.xml](file:///C:/Users/NG/app/twoAreOne_flutter/android/app/src/main/AndroidManifest.xml)
-- Add `android:enableOnBackInvokedCallback="true"` to the `<application>` tag to resolve the warning and enable support for the predictive back gesture on Android 13+.
+#### [MODIFY] [Info.plist](file:///C:/Users/NG/app/twoAreOne_flutter/ios/Runner/Info.plist)
+- Add `NSLocationWhenInUseUsageDescription` (even if just using search, it's safer for App Store review).
+- Add `NSAppTransportSecurity` to allow secure connections if needed.
+- Add `ITSAppUsesNonExemptEncryption` to `false` (standard for most apps).
 
-### Flutter Optimization (Optional but Recommended)
+#### [NEW] [Podfile](file:///C:/Users/NG/app/twoAreOne_flutter/ios/Podfile)
+- I will provide a template `Podfile` with necessary `permission_handler` macros for Camera and Photo Library.
 
-#### [MODIFY] [main.dart](file:///C:/Users/NG/app/twoAreOne_flutter/lib/main.dart)
-- I will investigate if adding a small delay or configuration to `GoogleFonts` helps, but the primary fix is the manifest update for the first error.
+### UI Improvements
+
+#### [MODIFY] [custom_nav_bar.dart](file:///C:/Users/NG/app/twoAreOne_flutter/lib/features/views/bottom_nav/custom_nav_bar.dart)
+- Wrap the bottom navigation `Stack` or `Positioned` in a `SafeArea` to avoid overlap with the iOS Home Indicator.
 
 ## Verification Plan
 
-### Automated Tests
-- None applicable for these environment/manifest changes.
-
 ### Manual Verification
-- Hot restart the app and verify that the `OnBackInvokedCallback` warning no longer appears in the logs.
-- Check if the `RenderParagraph` assertion error persists (some framework errors are tied to the Flutter engine version itself).
+- The user will need to run `flutter build ios` on a macOS machine to verify the `Podfile` and build process.
+- Verify Firebase initialization on an iOS Simulator or Device once `GoogleService-Info.plist` is added.

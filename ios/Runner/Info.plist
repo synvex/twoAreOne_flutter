@@ -12,8 +12,12 @@
     <string>We need microphone access to record videos for your profile.</string>
     <key>NSPhotoLibraryUsageDescription</key>
     <string>We need gallery access to upload photos and videos for your profile.</string>
+    <key>NSLocationWhenInUseUsageDescription</key>
+    <string>We need your location to help you find matches in your area.</string>
+    <key>ITSAppUsesNonExemptEncryption</key>
+    <false/>
 	<key>CFBundleDisplayName</key>
-	<string>Two Are One</string>
+	<string>TwoAreOne</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
@@ -21,7 +25,7 @@
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>
-	<string>two_are_one</string>
+	<string>TwoAreOne</string>
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
