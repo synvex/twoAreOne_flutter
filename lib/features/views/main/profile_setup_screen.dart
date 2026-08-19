@@ -103,7 +103,7 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
       _heightError = _selectedHeight == null;
       _weightError = _selectedWeight == null;
       _workError = _workController.text.trim().isEmpty;
-      _bioError = _bioController.text.trim().isEmpty;
+      _bioError = _bioController.text.trim().length < _minBioLength;
     });
 
     if (_heightError || _weightError || _workError || _bioError) return;
