@@ -115,6 +115,7 @@ class HomeService {
     return await _api.fetchMultipart(
       Api(url: "user/upload-user-info.php", method: "POST"),
       formData,
+
     );
   }
 }

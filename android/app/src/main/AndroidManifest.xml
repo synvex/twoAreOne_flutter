@@ -13,7 +13,6 @@
 
     <!-- For Camera -->
     <uses-permission android:name="android.permission.CAMERA" />
-    <uses-permission android:name="android.permission.Microphone" />
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <application
         android:label="two_are_one"

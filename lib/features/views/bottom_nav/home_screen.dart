@@ -293,8 +293,122 @@ class _HomeScreenState extends State<HomeScreen> {
       itemBuilder: (_, _) => _buildShimmerCard(),
     );
   }
+  Widget _buildShimmerBanner() {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.grey[200], // Background card color (outside shimmer)
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(20),
+        child: Stack(
+          children: [
+            // ── Inner Shimmer Content ──
+            Shimmer.fromColors(
+              baseColor: Colors.grey[300]!,
+              highlightColor: Colors.grey[100]!,
+              child: Padding(
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        // Profile Picture Placeholder
+                        Container(
+                          width: 58.w,
+                          height: 58.h,
+                          decoration: const BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: Colors.white,
+                          ),
+                        ),
+                        SizedBox(width: 14.w),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              // Name Placeholder
+                              Container(
+                                width: 120.w,
+                                height: 16.h,
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(4),
+                                ),
+                              ),
+                              const SizedBox(height: 6),
+                              // Email Placeholder
+                              Container(
+                                width: 160.w,
+                                height: 10.h,
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(4),
+                                ),
+                              ),
+                              const SizedBox(height: 10),
+                              // Online Pill Placeholder
+                              Container(
+                                width: 90.w,
+                                height: 18.h,
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(20),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 18),
 
-  Widget _buildHeader() {
+                    // Divider Placeholder
+                    Container(
+                      height: 1,
+                      width: double.infinity,
+                      color: Colors.white,
+                    ),
+                    const SizedBox(height: 10),
+
+                    // ── Stats Row Placeholder ──
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: List.generate(
+                        3,
+                            (index) => Column(
+                          children: [
+                            Container(
+                              width: 40.w,
+                              height: 20.h,
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(4),
+                              ),
+                            ),
+                            const SizedBox(height: 6),
+                            Container(
+                              width: 60.w,
+                              height: 10.h,
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(4),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }  Widget _buildHeader() {
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 20.h),
       child: Row(
@@ -806,8 +920,10 @@ class _HomeScreenState extends State<HomeScreen> {
       const NeverScrollableScrollPhysics(), // Loading ke waqt scroll na ho
       children: [
         const SizedBox(height: 10),
-        const SizedBox(height: 30),
+        _buildShimmerBanner(),
         const SizedBox(height: 20),
+        _buildSectionDivider("YOUR MATCHES"),
+        const SizedBox(height: 15,),
         GridView.builder(
           shrinkWrap: true,
           itemCount: 6,

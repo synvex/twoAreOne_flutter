@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:two_are_one/data/services/Api_Helper/api_manager.dart';
 import 'package:two_are_one/data/repo/socket_service.dart';
 import 'package:two_are_one/data/services/presense_service.dart';
@@ -15,9 +14,9 @@ import 'package:two_are_one/features/provider/password_visibility_provider.dart'
 import 'package:two_are_one/features/views/Interested/interrested_user_screen.dart';
 import 'package:two_are_one/features/views/Settings/settings_screen.dart';
 import 'package:two_are_one/features/views/auth/login_screen.dart';
+import 'package:two_are_one/features/views/auth/splash_screen.dart';
 import 'package:two_are_one/features/views/home/profile_details_screen.dart';
 import 'package:two_are_one/features/views/profile/edit_profile_screen.dart';
-import 'core/routes/flow_router.dart';
 import 'core/routes/routes.dart';
 import 'data/viewmodels/user_stats_view_model.dart';
 import 'features/views/Blocked/blocked_screen.dart';
@@ -26,7 +25,6 @@ import 'features/views/Settings/change_email_otp_screen.dart';
 import 'features/views/Settings/change_otp_screen.dart';
 import 'features/views/Settings/change_phone_screen.dart';
 import 'features/views/Settings/reset_password_screen.dart';
-import 'features/views/auth/onboarding.dart';
 import 'features/views/others/privacy.dart';
 import 'features/views/others/terms_and_conditions_screen.dart';
 import 'features/views/visted_screen.dart';
@@ -74,6 +72,8 @@ class MyApp extends StatelessWidget {
           colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
           useMaterial3: true,
         ),
+
+        home: const SplashScreen(),
         routes: {
           '/settings_screen': (context) => const SettingsScreen(),
           '/profile_detail': (context) => const ProfileDetailsScreen(),
@@ -136,29 +136,7 @@ class MyApp extends StatelessWidget {
               return null; // unknown routes still fall through to "Coming soon" — unchanged behavior
           }
         },
-        home: FutureBuilder<Widget>(
-          future: getInitialScreen(),
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return const Scaffold(
-                backgroundColor: Colors.white,
-                body: Center(child: CircularProgressIndicator()),
-              );
-            }
-            return snapshot.data ?? const OnboardingScreen();
-          },
-        ),
       ),
     );
   }
-}
-
-Future<Widget> getInitialScreen() async {
-  final prefs = await SharedPreferences.getInstance();
-  final token = prefs.getString('auth_token');
-
-  if (token == null || token.isEmpty) return const OnboardingScreen();
-
-  ApiManager.setUpRequestToken(token);
-  return await OnboardingFlowRouter.resolveResumeScreen();
 }
