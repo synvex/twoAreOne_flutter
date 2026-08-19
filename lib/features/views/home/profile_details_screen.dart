@@ -10,6 +10,7 @@ import 'package:two_are_one/data/models/details_screen_model.dart';
 import 'package:two_are_one/data/models/user_match_model.dart';
 import 'package:two_are_one/data/models/visited_blocked_model.dart';
 import 'package:two_are_one/data/services/home_service.dart';
+import 'package:two_are_one/data/viewmodels/user_stats_view_model.dart';
 import 'package:two_are_one/features/views/report/report_screen.dart';
 import '../../../data/models/favourite_model.dart';
 import 'package:two_are_one/data/models/interested_model.dart';
@@ -17,19 +18,17 @@ import '../../../data/repo/socket_service.dart';
 import 'category_questions_screen.dart';
 import 'inline_video_player.dart';
 import 'profile_detail_card.dart';
-
 const String kProfileUploadImagesBase = "https://www.twoareone.love/uploads/";
 const Color kMehroon = Color(0xFF77153C);
 const Color kMehroonLight = Color(0xFFDD276F);
-
 class ProfileDetailsScreen extends StatefulWidget {
   final int? userId;
+
   const ProfileDetailsScreen({super.key, this.userId});
 
   @override
   State<ProfileDetailsScreen> createState() => _ProfileDetailsScreenState();
 }
-
 class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
   final HomeService _homeService = HomeService();
   bool _didInit = false;
@@ -38,7 +37,7 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
   bool _loading = true;
   ProfileDetailModel? _details;
   bool _showFullBio = false;
-  String? _selectedImage; // fully-resolved URL for the fullscreen viewer
+  String? _selectedImage;
   bool _blockLoading = false;
   bool _heartLoading = false;
   bool _starLoading = false;
@@ -87,7 +86,8 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
         matchPercent: '0%',
       );
       _blocked = true;
-    } else if (args is Map) {
+    }
+    else if (args is Map) {
       final u = args['user'];
       _blocked = args['blocked'] == true;
 
@@ -167,7 +167,6 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
       setState(() => _loading = false);
     }
   }
-
   // ── utils ────────────────────────────────────────────────────────────
   String _capitalize(String? text) {
     if (text == null || text.isEmpty) return '';
@@ -183,7 +182,6 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
     final bio = _details?.bio ?? '';
     return bio.length > 200 ? bio.substring(0, 200) : bio;
   }
-
   // ── actions ──────────────────────────────────────────────────────────
   void _handleSilentChat() {
     if (_chatLoading) return;
@@ -240,7 +238,6 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
 
     setState(() => _chatLoading = false);
   }
-
   Future<void> _onBlockPress() async {
     final id = _userId;
     if (id == null) return;
@@ -251,6 +248,13 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
 
     setState(() => _blockLoading = false);
     if (success) {
+      // ✅ Keep the Home banner's counts in sync instantly - this screen
+      // was previously only updating its own local `_details`, so a block
+      // done here never reached the banner until the app restarted.
+      context.read<UserStatsViewModel>().userBlocked(
+        wasFavorite: _details?.isFavorite ?? false,
+        wasInterested: _details?.isInterested ?? false,
+      );
       TopToast.show(
         context,
         title: "User blocked",
@@ -267,7 +271,6 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
       );
     }
   }
-
   Future<void> _onLikePress() async {
     final id = _userId;
     if (id == null || _details == null) return;
@@ -279,12 +282,12 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
 
     if (success) {
       setState(
-        () => _details = _details!.copyWith(isInterested: !wasInterested),
+            () => _details = _details!.copyWith(isInterested: !wasInterested),
       );
+      context.read<UserStatsViewModel>().setInterested(!wasInterested);
     }
     setState(() => _heartLoading = false);
   }
-
   Future<void> _onStarPress() async {
     final id = _userId;
     if (id == null || _details == null) return;
@@ -296,10 +299,10 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
 
     if (success) {
       setState(() => _details = _details!.copyWith(isFavorite: !wasFav));
+      context.read<UserStatsViewModel>().setFavorite(!wasFav);
     }
     setState(() => _starLoading = false);
   }
-
   @override
   Widget build(BuildContext context) {
     if (_loading && _details == null) {
@@ -320,7 +323,6 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
   Widget _buildScreen(BuildContext context) {
     final details = _details;
     final screenWidth = MediaQuery.of(context).size.width;
-
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
@@ -332,7 +334,6 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
               child: AppHeaderWidget(
                 trailing: GestureDetector(
                   onTap: () {
-                    // RN navigates to NotificationScreen here.
                     Navigator.push(
                       context,
                       MaterialPageRoute(
@@ -365,7 +366,6 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     const SizedBox(height: 12),
-                    // ── Detail card (image + actions) ────────────────
                     ProfileDetailCard(
                       imageUrl: _fullUrl(details?.profilePicture),
                       blocked: _blocked,
@@ -399,7 +399,7 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
                     Row(
                       children: [
                         const Images(
-                          imageStr: "assets/location_detail_screen.svg",
+                          imageStr: "assets/svg_images/location_detail_screen.svg",
                           height: 15,
                           width: 15,
                         ),
@@ -454,9 +454,9 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
                       runSpacing: 6,
                       children: [
                         _infoBadge("Gender", details?.gender),
-                        _infoBadge("Height", details?.height),
+                        _infoBadge("Height", _formatHeight(details?.height)),
                         _infoBadge("Age", details?.age),
-                        _infoBadge("Weight", details?.weight),
+                        _infoBadge("Weight",  _formatWeight(details?.weight)),
                       ],
                     ),
                     // ── Images ────────────────────────────────────────
@@ -539,9 +539,8 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
                       ),
                     ),
                     const SizedBox(height: 6),
-
                     ...?details?.categories.map(
-                      (category) => Padding(
+                          (category) => Padding(
                         padding: const EdgeInsets.only(top: 4),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.center,
@@ -568,7 +567,7 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
                                         categoryName: category.categoryName,
                                         userId: _userId ?? 0,
                                         editable:
-                                            false, // doosre user ka profile view ho raha hai — read-only
+                                        false, // doosre user ka profile view ho raha hai — read-only
                                       ),
                                     ),
                                   );
@@ -602,7 +601,6 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
       ),
     );
   }
-
   Widget _buildFullScreenImageViewer() {
     return Scaffold(
       body: GestureDetector(
@@ -657,7 +655,6 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
       ),
     );
   }
-
   Widget _buildGetToKnowButton(ProfileDetailModel? details) {
     return GestureDetector(
       onTap: _chatLoading ? null : _handleSilentChat,
@@ -677,39 +674,38 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
           alignment: Alignment.center,
           child: _chatLoading
               ? const SizedBox(
-                  width: 20,
-                  height: 20,
-                  child: CircularProgressIndicator(
-                    strokeWidth: 2,
-                    valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                  ),
-                )
+            width: 20,
+            height: 20,
+            child: CircularProgressIndicator(
+              strokeWidth: 2,
+              valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+            ),
+          )
               : Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text(
-                      "Get to know ${_capitalize(details?.fullName)}",
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 18,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                    Text(
-                      "${details?.percentMatch ?? '0'} % MATCH OVERALL",
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 13,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ],
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                "Get to know ${_capitalize(details?.fullName)}",
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 18,
+                  fontWeight: FontWeight.w600,
                 ),
+              ),
+              Text(
+                "${details?.percentMatch ?? '0'} % MATCH OVERALL",
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 13,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
   }
-
   Widget _sectionTitle(String text) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 6),
@@ -722,6 +718,43 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
         ),
       ),
     );
+  }
+
+  String _formatHeight(String? height) {
+    if (height == null || height.isEmpty) return "N/A";
+
+    // if API already returns "6'4 (193cm)"
+    if (height.contains("'") || height.contains("cm") || height.contains("ft")) {
+      return height;
+    }
+
+    // if API returns numeric cm
+    final cm = double.tryParse(height);
+    if (cm != null) {
+      final totalInches = cm / 2.54;
+      final feet = (totalInches / 12).floor();
+      final inches = (totalInches % 12).round();
+      return "${feet}'${inches}\" (${cm.round()}cm)";
+    }
+
+    return height;
+  }
+  String _formatWeight(String? weight) {
+    if (weight == null || weight.isEmpty) return "N/A";
+
+    // if API already returns "91 lbs (41kg)"
+    if (weight.contains("lbs") || weight.contains("kg")) {
+      return weight;
+    }
+
+    // if API returns numeric kg
+    final kg = double.tryParse(weight);
+    if (kg != null) {
+      final lbs = kg * 2.20462;
+      return "${lbs.round()} lbs (${kg.round()}kg)";
+    }
+
+    return weight;
   }
 
   Widget _infoBadge(String label, String? value) {

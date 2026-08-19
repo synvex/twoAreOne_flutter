@@ -4,6 +4,7 @@ import 'package:pinput/pinput.dart';
 import 'package:two_are_one/core/widgets/texts.dart';
 
 class CustomInputField extends StatefulWidget {
+  final int? selectedColor;
   final String? label;
   final TextInputType? textInputType;
   final String hintText;
@@ -34,7 +35,7 @@ class CustomInputField extends StatefulWidget {
     this.onChanged,
     this.onTap,
     this.textColor,
-    this.prefixImg, this.formatter,
+    this.prefixImg, this.formatter, this.selectedColor,
   });
 
   @override
@@ -61,7 +62,7 @@ class _CustomInputFieldState extends State<CustomInputField> {
           textAlign: TextAlign.left,
           cursorColor: Colors.black,
           onChanged: widget.onChanged,
-          style: TextStyle(color: Color(0xFF787878)),
+          style: TextStyle(color: Color(widget.selectedColor ?? 0xFF000000)),
           inputFormatters: widget.formatter ?? [],
           decoration: InputDecoration(
             prefixIconConstraints: const BoxConstraints(
@@ -71,13 +72,14 @@ class _CustomInputFieldState extends State<CustomInputField> {
             iconColor: Color(0xFF787878),
             prefixIconColor: Color(0xFF787878),
             isDense: true,
+
             label: widget.label != null
                 ? Texts(text: widget.label!, colorHexValue: 0xFF787878)
                 : null,
             hintText: widget.hintText,
             hintStyle: TextStyle(
-              color: Color(widget.textColor ?? 0xFF787878),
-              fontSize: 16,
+              color: Color(widget.textColor ?? 0xFF000000),
+              fontSize: 15,
             ),
             prefixIcon: Padding(
               padding: EdgeInsets.only(left: 10),
@@ -144,7 +146,6 @@ class TxtField extends StatelessWidget {
     );
   }
 }
-
 class CircleField extends StatelessWidget {
   final TextEditingController? controller;
   const CircleField({super.key, this.controller});
@@ -165,7 +166,7 @@ class CircleField extends StatelessWidget {
         textStyle: TextStyle(
           fontSize: 16,
           fontWeight: FontWeight.w600,
-          color: Color(0xFF727272),
+          color: Color(0xFF000000),
         ),
       ),
       separatorBuilder: (index) => SizedBox(width: 15),
