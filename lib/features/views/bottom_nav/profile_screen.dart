@@ -55,7 +55,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
       final info = await PackageInfo.fromPlatform();
       if (mounted) setState(() => _appVersion = "v${info.version}");
     } catch (_) {
-      // Non-critical — leave blank if the platform channel isn't available.
     }
   }
 
@@ -130,7 +129,33 @@ class _ProfileScreenState extends State<ProfileScreen> {
     }
     return false;
   }
+  Future<bool> _ensureGalleryPermission() async {
+    PermissionStatus status;
+    if (Platform.isAndroid) {
+      // Note: permission_handler maps these correctly based on OS version
+      status = await Permission.photos.status;
+      if (status.isDenied) {
+        status = await Permission.photos.request();
+      }
+    } else {
+      status = await Permission.photos.status;
+      if (status.isDenied) {
+        status = await Permission.photos.request();
+      }
+    }
 
+    if (status.isGranted || status.isLimited) return true;
+
+    if (status.isPermanentlyDenied && mounted) {
+      TopToast.show(
+        context,
+        title: "Permission required",
+        message: "Enable gallery access from Settings.",
+        type: ToastType.error,
+      );
+    }
+    return false;
+  }
   void _openAvatarSheet() {
     showModalBottomSheet(
       context: context,
@@ -167,6 +192,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 onTap: () async {
                   Navigator.pop(sheetContext);
                   await Future.delayed(const Duration(milliseconds: 250));
+                  if (!await _ensureGalleryPermission()) return;
                   final XFile? picked = await _picker.pickImage(
                     source: ImageSource.gallery,
                     imageQuality: 85,
@@ -197,18 +223,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      backgroundColor: Colors.transparent, // Background transparent lazmi hai
+      backgroundColor: Colors.transparent,
       builder: (context) => MenuBottomSheet(
         onSettings: () {
           Navigator.pushNamed(context, '/edit_profile'); // Navigate to settings
         },
         onLogout: () {
           Navigator.pop(context);
-          _showLogoutDialog(); // Aapka purana logout dialog function
+          _showLogoutDialog();
         },
         onDelete: () {
           Navigator.pop(context);
-          _showDeleteDialog(); // Aapka purana delete dialog function
+          _showDeleteDialog();
         },
       ),
     );
@@ -594,9 +620,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         return Padding(
           padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
           child: GestureDetector(
-            // Tap Start: Opacity kam hogi aur shadow thori badlegi
             onTapDown: (_) => setState(() => isPressed = true),
-            // Tap End: Wapis normal ho jayega
             onTapUp: (_) => setState(() => isPressed = false),
             onTapCancel: () => setState(() => isPressed = false),
             onTap: onTap,

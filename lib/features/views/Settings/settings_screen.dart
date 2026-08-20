@@ -195,19 +195,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        // GestureDetector(
-        //   onTap: _goBack,
-        //   child: Container(
-        //     width: 50,
-        //     height: 50,
-        //     decoration: BoxDecoration(
-        //       shape: BoxShape.circle,
-        //       border: Border.all(color: const Color(0xFFD9D9D9)),
-        //     ),
-        //     alignment: Alignment.center,
-        //     child: const Icon(Icons.arrow_back, color: Colors.black, size: 22),
-        //   ),
-        // ),
+
         Back_Button(
           onTap: () => Navigator.push(
             context,

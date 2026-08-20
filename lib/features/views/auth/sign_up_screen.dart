@@ -352,20 +352,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 edgeInsets: EdgeInsets.only(bottom: 10, top: 4),
               ),
             ),
-            // LocationSelectorField(
-            //   onLocationSelected: (LocationData locationData) {
-            //     setState(() {
-            //       _selectedLocation = locationData.address ?? '';
-            //       _country = locationData.country ?? '';
-            //       _state = locationData.state ?? '';
-            //       _city = locationData.city ?? '';
-            //       _latitude = locationData.latitude.toString();
-            //       _longitude = locationData.longitude.toString();
-            //       _locationError = null;
-            //     });
-            //     print("Selected Coordinates: $_latitude, $_longitude");
-            //   },
-            // ),
             LocationSelectorField(
               onLocationSelected: (LocationData locationData) {
                 setState(() {

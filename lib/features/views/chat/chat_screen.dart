@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
-// ADDED
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -43,9 +42,6 @@ class _ChatScreenState extends State<ChatScreen> {
     Future.microtask(() async {
       await _loadCurrentUser();
       await context.read<ChatViewModel>().fetchedChatHistory(widget.receiverId);
-
-      // Subscribe to the global socket for this conversation.
-      // Replaces the old startHistoryPolling().
       if (mounted) {
         context.read<ChatViewModel>().startListening(widget.receiverId);
       }
@@ -54,9 +50,6 @@ class _ChatScreenState extends State<ChatScreen> {
 
   @override
   void dispose() {
-    // Unsubscribe from this conversation's messages. The global socket
-    // itself stays connected — other screens (presence, unread badges)
-    // still depend on it, same as RN.
     context.read<ChatViewModel>().stopListening();
     _messageController.dispose();
     super.dispose();
