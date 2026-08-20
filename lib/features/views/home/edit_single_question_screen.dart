@@ -1,11 +1,4 @@
-// lib/features/home/edit_single_question_screen.dart
-//
-// Flutter port of React Native's `EditQuestionsScreen`
-// (src/Screens/AppScreens/EditQuestionScreen/index.js).
-//
-// Reached by tapping "Change" on CategoryQuestionsScreen. Lets the CURRENT
-// user pick a different answer for one already-answered question, then
-// saves it and pops back (returning `true` so the list screen refreshes).
+
 
 import 'package:flutter/material.dart';
 import 'package:two_are_one/core/widgets/back_button.dart';
@@ -14,8 +7,6 @@ import 'package:two_are_one/data/services/question_service.dart';
 const Color _kMehroon = Color(0xFF77153C);
 
 class EditSingleQuestionScreen extends StatefulWidget {
-  /// The question item as returned by CategoryQuestionsScreen's list
-  /// (expects: question_id, question, user_answer_id, category_name).
   final Map<String, dynamic> item;
   final int categoryId;
 
@@ -102,30 +93,6 @@ class _EditSingleQuestionScreenState extends State<EditSingleQuestionScreen> {
     }
   }
 
-  // void _showResultDialog(String message, {required bool success}) {
-  //   showDialog(
-  //     context: context,
-  //     builder: (dialogContext) => AlertDialog(
-  //       backgroundColor: Colors.white,
-  //       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-  //       title: Text(success ? "Success" : "Oops, Failed!"),
-  //       content: Text(message),
-  //       actions: [
-  //         TextButton(
-  //           onPressed: () {
-  //             Navigator.of(dialogContext).pop(); // close dialog
-  //             if (success) {
-  //               Navigator.of(context).pop(true); // pop screen, ask list to refresh
-  //             }
-  //           },
-  //           child: const Text("OK",
-  //               style: TextStyle(
-  //                   color: _kMehroon, fontWeight: FontWeight.bold)),
-  //         ),
-  //       ],
-  //     ),
-  //   );
-  // }
   void _showResultDialog(String message, {required bool success}) {
     showDialog(
       context: context,

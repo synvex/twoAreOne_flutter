@@ -23,24 +23,14 @@ class _SplashScreenState extends State<SplashScreen> {
     _checkPermissions();
   }
 
-  // ----------------------------------------------------------
-  // PERMISSION FLOW
-  // ----------------------------------------------------------
-
   Future<void> _checkPermissions() async {
-    // Ask for permissions (shows system dialogs).
-    // We don't care about the result — allow or deny,
-    // the app continues either way.
+
     await PermissionManager.instance.requestRequiredPermissions();
 
     if (!mounted) return;
 
     _handleSession();
   }
-
-  // ----------------------------------------------------------
-  // SESSION FLOW
-  // ----------------------------------------------------------
 
   Future<void> _handleSession() async {
     try {
@@ -65,10 +55,6 @@ class _SplashScreenState extends State<SplashScreen> {
     }
   }
 
-  // ----------------------------------------------------------
-  // NAVIGATION
-  // ----------------------------------------------------------
-
   void _goTo(Widget screen) {
     if (!mounted) return;
 
@@ -78,9 +64,6 @@ class _SplashScreenState extends State<SplashScreen> {
     );
   }
 
-  // ----------------------------------------------------------
-  // UI
-  // ----------------------------------------------------------
 
   @override
   Widget build(BuildContext context) {

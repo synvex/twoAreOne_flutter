@@ -107,16 +107,8 @@ class _LoginScreenState extends State<LoginScreen> {
         if (!mounted) return;
         Navigator.pushAndRemoveUntil(
           context,
-// <<<<<<< saqlain-02
           MaterialPageRoute(builder: (context) => nextScreen),
             (route) => false,
-          //     const MainBarScreen(
-          //       initialIndex: 0,)),
-          // (route) => false,
-// =======
-//           MaterialPageRoute(builder: (context) => const CustomNavBar()),
-//           (route) => false,
-// >>>>>>> refector
         );
       } else {
         // FAILURE - The alert/snackbar will now show the real error from PHP
@@ -232,8 +224,6 @@ class _LoginScreenState extends State<LoginScreen> {
                   colors: [Color(0xFF77153C), Color(0xFFDD276F)],
                 ),
               ),
-              //   Texts(text: "Login Failed",
-              //       size: 18, fontWeight: FontWeight.w600,)
             ],
           ),
         ),

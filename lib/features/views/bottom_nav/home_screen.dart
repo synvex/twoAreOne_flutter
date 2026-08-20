@@ -181,29 +181,6 @@ class _HomeScreenState extends State<HomeScreen> {
     setState(() => _loadingBlocks.remove(user.id));
   }
 
-  // void _handleBlock(FilterMatchModel user) async {
-  //   setState(() => _loadingBlocks.add(user.id));
-  //   final success = await _homeService.blockUser(user.id);
-  //   if (success && mounted) {
-  //     setState(() {
-  //       _users.removeWhere((u) => u.id == user.id);
-  //     });
-  //     context.read<UserStatsViewModel>().userBlocked(
-  //       wasFavorite: user.isFavorite,
-  //       wasInterested: user.isInterested,
-  //     );
-  //     TopToast.show(context, title: "User blocked", type: ToastType.success);
-  //   } else if (mounted) {
-  //     TopToast.show(
-  //       context,
-  //       title: "Couldn't block user",
-  //       message: "Please check your connection and try again.",
-  //       type: ToastType.error,
-  //     );
-  //   }
-  //   setState(() => _loadingBlocks.remove(user.id));
-  // }
-
   final Map<String, DateTime> _chatCooldowns = {};
   void _handleSilentChat(FilterMatchModel user) {
     final userId = user.id.toString();
@@ -231,10 +208,6 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // ✅ Watching the shared stats VM here makes this whole subtree rebuild
-    // the instant ANY screen (Favourites/Interested/Blocked/Settings/this
-    // screen) calls one of its mutator methods - no polling, no reliance
-    // on this screen's own initState ever running again.
     final stats = context.watch<UserStatsViewModel>();
     return Scaffold(
       key: _scaffoldKey,
@@ -391,8 +364,6 @@ class _HomeScreenState extends State<HomeScreen> {
                       ],
                     ),
                     const SizedBox(height: 18),
-
-                    // Divider Placeholder
                     Container(
                       height: 1,
                       width: double.infinity,
