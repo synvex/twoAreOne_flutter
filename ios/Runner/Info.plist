@@ -2,20 +2,18 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>CADisableMinimumFrameDurationOnPhone</key>
-	<true/>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>NSCameraUsageDescription</key>
-    <string>We need camera access to take photos and record videos for your profile.</string>
-    <key>NSMicrophoneUsageDescription</key>
-    <string>We need microphone access to record videos for your profile.</string>
-    <key>NSPhotoLibraryUsageDescription</key>
-    <string>We need gallery access to upload photos and videos for your profile.</string>
-    <key>NSLocationWhenInUseUsageDescription</key>
-    <string>We need your location to help you find matches in your area.</string>
-    <key>ITSAppUsesNonExemptEncryption</key>
-    <false/>
+	<string>We need camera access to take photos and record videos for your profile.</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>We need microphone access to record videos for your profile.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>We need gallery access to upload photos and videos for your profile.</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>We need your location to help you find matches in your area.</string>
+	<key>ITSAppUsesNonExemptEncryption</key>
+	<false/>
 	<key>CFBundleDisplayName</key>
 	<string>TwoAreOne</string>
 	<key>CFBundleExecutable</key>
