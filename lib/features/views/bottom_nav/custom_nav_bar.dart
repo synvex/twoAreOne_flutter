@@ -21,7 +21,6 @@ class CustomNavBar extends StatefulWidget {
   @override
   State<CustomNavBar> createState() => _CustomNavBarState();
 }
-
 class _CustomNavBarState extends State<CustomNavBar> {
   late int _selectedIndex;
   final List<Widget> _screens = const [
@@ -30,17 +29,14 @@ class _CustomNavBarState extends State<CustomNavBar> {
     MessageScreen(),
     ProfileScreen(),
   ];
-
   @override
   void initState() {
     super.initState();
     _selectedIndex = widget.initialIndex;
   }
-
   void _onTabChanged(int index) {
     setState(() => _selectedIndex = index);
   }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -71,13 +67,11 @@ class _CustomNavBarState extends State<CustomNavBar> {
 class CustomBottomNavBar extends StatelessWidget {
   final int selectedIndex;
   final ValueChanged<int> onTabChanged;
-
   const CustomBottomNavBar({
     super.key,
     required this.selectedIndex,
     required this.onTabChanged,
   });
-
   static const List<String> _imgStr = [
     "assets/svg_images/home.svg",
     "assets/svg_images/Tabbar/InActiveExplore.svg",
@@ -95,7 +89,6 @@ class CustomBottomNavBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final double screenWidth = MediaQuery.of(context).size.width;
-
     final chatViewModel = context.watch<ChatViewModel>();
     return SizedBox(
       width: screenWidth,
@@ -134,19 +127,23 @@ class CustomBottomNavBar extends StatelessWidget {
                 ),
               ),
             ),
-            // main white bar
-            ClipPath(
-              clipper: _CurveClipper(
-                curveDepth: _kCurveDepth,
-                barHeight: _kBarHeight,
-              ),
-              child: Container(
-                width: screenWidth,
-                height: _kBarHeight,
-                color: Colors.white,
+            Positioned(
+             top: 0,
+              bottom: 0,
+              left: 0,
+              right: 0,
+              child: ClipPath(
+                clipper: _CurveClipper(
+                  curveDepth: _kCurveDepth,
+                  barHeight: _kBarHeight,
+                ),
+                child: Container(
+                  width: screenWidth,
+                  height: _kBarHeight,
+                  color: Colors.white,
+                ),
               ),
             ),
-            // tab items
             Positioned(
               top: 75.h,
               left: 5.h,
