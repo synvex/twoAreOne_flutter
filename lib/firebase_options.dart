@@ -45,7 +45,6 @@ class DefaultFirebaseOptions {
         );
     }
   }
-
   static const FirebaseOptions android = FirebaseOptions(
     apiKey: 'AIzaSyDROQ8RTiKhmgjRFI5inqYv0F_ZdzfcAVA',
     appId: '1:525365788008:android:745f45ce5afb8482152add',
@@ -59,7 +58,7 @@ class DefaultFirebaseOptions {
     messagingSenderId: '525365788008',
     projectId: 'two-are-one-llc-36899',
     storageBucket: 'two-are-one-llc-36899.firebasestorage.app',
-    iosBundleId: 'com.twoareone.llc',
+    iosBundleId: 'com.twoAreOne.app',
   );
   static const FirebaseOptions web = FirebaseOptions(
     apiKey: 'AIzaSyDriHKUxp5U66IiOUyHM4mkh9GuWfEs8aE',

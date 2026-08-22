@@ -21,7 +21,6 @@ class CustomNavBar extends StatefulWidget {
   @override
   State<CustomNavBar> createState() => _CustomNavBarState();
 }
-
 class _CustomNavBarState extends State<CustomNavBar> {
   late int _selectedIndex;
   final List<Widget> _screens = const [
@@ -30,17 +29,14 @@ class _CustomNavBarState extends State<CustomNavBar> {
     MessageScreen(),
     ProfileScreen(),
   ];
-
   @override
   void initState() {
     super.initState();
     _selectedIndex = widget.initialIndex;
   }
-
   void _onTabChanged(int index) {
     setState(() => _selectedIndex = index);
   }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -71,13 +67,11 @@ class _CustomNavBarState extends State<CustomNavBar> {
 class CustomBottomNavBar extends StatelessWidget {
   final int selectedIndex;
   final ValueChanged<int> onTabChanged;
-
   const CustomBottomNavBar({
     super.key,
     required this.selectedIndex,
     required this.onTabChanged,
   });
-
   static const List<String> _imgStr = [
     "assets/svg_images/home.svg",
     "assets/svg_images/Tabbar/InActiveExplore.svg",
@@ -93,138 +87,8 @@ class CustomBottomNavBar extends StatelessWidget {
   static const List<String> _tabNames = ["Home", "Favorite", "Chat", "Profile"];
 
   @override
-  @override
-  // Widget build(BuildContext context) {
-  //   final double screenWidth = MediaQuery.of(context).size.width;
-  //   final double bottomInset = MediaQuery.viewPaddingOf(context).bottom;
-  //   final double barAreaHeight = _kBarHeight + 20.h;
-  //
-  //   final chatViewModel = context.watch<ChatViewModel>();
-  //
-  //   return SizedBox(
-  //     width: screenWidth,
-  //     height: barAreaHeight + bottomInset,
-  //     child: Column(
-  //       children: [
-  //         SizedBox(
-  //           width: screenWidth,
-  //           height: barAreaHeight,
-  //           child: Stack(
-  //             clipBehavior: Clip.none,
-  //             children: [
-  //               Positioned.fill(
-  //                 child: CustomPaint(
-  //                   painter: _ShadowPainter(
-  //                     curveDepth: _kCurveDepth,
-  //                     barHeight: _kBarHeight,
-  //                   ),
-  //                 ),
-  //               ),
-  //
-  //               Positioned(
-  //                 top: 25.h,
-  //                 left: 0,
-  //                 right: 0,
-  //                 bottom: -20.h,
-  //                 child: Transform.translate(
-  //                   offset: const Offset(0, 6),
-  //                   child: ClipPath(
-  //                     clipper: _CurveClipper(
-  //                       curveDepth: _kCurveDepth,
-  //                       barHeight: _kBarHeight,
-  //                     ),
-  //                     child: Container(
-  //                       color: const Color(0xFF77153C)
-  //                           .withValues(alpha: 0.12),
-  //                     ),
-  //                   ),
-  //                 ),
-  //               ),
-  //
-  //               ClipPath(
-  //                 clipper: _CurveClipper(
-  //                   curveDepth: _kCurveDepth,
-  //                   barHeight: _kBarHeight,
-  //                 ),
-  //                 child: Container(
-  //                   width: screenWidth,
-  //                   height: _kBarHeight,
-  //                   color: Colors.white,
-  //                 ),
-  //               ),
-  //
-  //               Positioned(
-  //                 top: 55.h,
-  //                 left: 5.w,
-  //                 right: 5.w,
-  //                 bottom: 8.h,
-  //                 child: Row(
-  //                   mainAxisAlignment: MainAxisAlignment.spaceAround,
-  //                   crossAxisAlignment: CrossAxisAlignment.center,
-  //                   children: List.generate(_imgStr.length, (index) {
-  //                     final bool isSelected = selectedIndex == index;
-  //
-  //                     return Expanded(
-  //                       child: Padding(
-  //                         padding: EdgeInsets.symmetric(horizontal: 8.w),
-  //                         child: Stack(
-  //                           clipBehavior: Clip.none,
-  //                           children: [
-  //                             _NavItem(
-  //                               imgStr: isSelected
-  //                                   ? _selectedImgStr[index]
-  //                                   : _imgStr[index],
-  //                               label: _tabNames[index],
-  //                               isSelected: isSelected,
-  //                               onTap: () => onTabChanged(index),
-  //                             ),
-  //
-  //                             if (index == 2)
-  //                               Positioned(
-  //                                 right: 4.w,
-  //                                 top: 0,
-  //                                 child: Visibility(
-  //                                   visible: chatViewModel
-  //                                       .unreadConversationCount !=
-  //                                       0,
-  //                                   child: CircleAvatar(
-  //                                     radius: 10.r,
-  //                                     backgroundColor: isSelected
-  //                                         ? Colors.transparent
-  //                                         : AppColors.red,
-  //                                     child: Text(
-  //                                       isSelected
-  //                                           ? ''
-  //                                           : chatViewModel
-  //                                           .unreadConversationCount
-  //                                           .toString(),
-  //                                       style: GoogleFonts.poppins(
-  //                                         color: AppColors.white,
-  //                                         fontSize: 11.sp,
-  //                                       ),
-  //                                     ),
-  //                                   ),
-  //                                 ),
-  //                               ),
-  //                           ],
-  //                         ),
-  //                       ),
-  //                     );
-  //                   }),
-  //                 ),
-  //               ),
-  //             ],
-  //           ),
-  //         ),
-  //         // Reserves space for Android's system navigation bar.
-  //         // SizedBox(height: bottomInset),
-  //       ],
-  //     ),
-  //   );
-  // }
   Widget build(BuildContext context) {
     final double screenWidth = MediaQuery.of(context).size.width;
-
     final chatViewModel = context.watch<ChatViewModel>();
     return SizedBox(
       width: screenWidth,
@@ -263,19 +127,23 @@ class CustomBottomNavBar extends StatelessWidget {
                 ),
               ),
             ),
-            // main white bar
-            ClipPath(
-              clipper: _CurveClipper(
-                curveDepth: _kCurveDepth,
-                barHeight: _kBarHeight,
-              ),
-              child: Container(
-                width: screenWidth,
-                height: _kBarHeight,
-                color: Colors.white,
+            Positioned(
+             top: 0,
+              bottom: 0,
+              left: 0,
+              right: 0,
+              child: ClipPath(
+                clipper: _CurveClipper(
+                  curveDepth: _kCurveDepth,
+                  barHeight: _kBarHeight,
+                ),
+                child: Container(
+                  width: screenWidth,
+                  height: _kBarHeight,
+                  color: Colors.white,
+                ),
               ),
             ),
-            // tab items
             Positioned(
               top: 75.h,
               left: 5.h,
