@@ -74,5 +74,24 @@
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
+	<!-- Firebase Phone Auth URL Scheme -->
+    	<key>CFBundleURLTypes</key>
+    	<array>
+    		<dict>
+    			<key>CFBundleTypeRole</key>
+    			<string>Editor</string>
+    			<key>CFBundleURLSchemes</key>
+    			<array>
+	            <string>com.googleusercontent.apps.525365788008-vpfv2s5hm843munkt9lsotk0qc5kbjd0</string>
+    			</array>
+    		</dict>
+    	</array>
+
+    	<!-- Enable Remote Notifications -->
+    	<key>UIBackgroundModes</key>
+    	<array>
+    		<string>fetch</string>
+    		<string>remote-notification</string>
+    	</array>
 </dict>
 </plist>
